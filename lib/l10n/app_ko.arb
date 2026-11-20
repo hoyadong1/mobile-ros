@@ -7,6 +7,7 @@
   "fleetServer": "함대 서버",
   "messageDefinitions": "메시지 정의",
   "supportApp": "앱 후원",
+  "openSourceLicenses": "오픈소스 라이선스",
   "myRobots": "내 로봇",
   "connectTitle": "로봇 연결",
   "connectError": "연결할 수 없음",

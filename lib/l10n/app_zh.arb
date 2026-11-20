@@ -7,6 +7,7 @@
   "fleetServer": "车队服务器",
   "messageDefinitions": "消息定义",
   "supportApp": "支持应用",
+  "openSourceLicenses": "开源许可",
   "myRobots": "我的机器人",
   "connectTitle": "连接机器人",
   "connectError": "无法连接",

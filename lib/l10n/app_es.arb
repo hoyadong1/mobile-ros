@@ -7,6 +7,7 @@
   "fleetServer": "Servidor de flota",
   "messageDefinitions": "Definiciones de mensajes",
   "supportApp": "Apoyar la app",
+  "openSourceLicenses": "Licencias de código abierto",
   "myRobots": "Mis robots",
   "connectTitle": "Conecta tu robot",
   "connectError": "No se pudo conectar",

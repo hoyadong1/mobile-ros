@@ -380,6 +380,8 @@ class _ConnectPageState extends State<ConnectPage> {
               case 'fleet': Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const FleetServerConnectPage()));
               case 'messages': Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const MessageDefinitionsPage()));
               case 'support': Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const SupportPage()));
+              case 'licenses': showLicensePage(context: context, applicationName: 'Mobile ROS',
+                  applicationLegalese: 'Apache License 2.0');
             }
           },
           itemBuilder: (_) => [
@@ -391,6 +393,8 @@ class _ConnectPageState extends State<ConnectPage> {
             if (directRosSupported || zenohSupported)
               PopupMenuItem(value: 'messages', child: ListTile(leading: const Icon(Icons.data_object), title: Text(context.strings.messageDefinitions))),
             PopupMenuItem(value: 'support', child: ListTile(leading: const Icon(Icons.favorite_outline, color: Color(0xFFD81B60)), title: Text(context.strings.supportApp))),
+            PopupMenuItem(value: 'licenses', key: const Key('app-licenses'),
+              child: ListTile(leading: const Icon(Icons.gavel_outlined), title: Text(context.strings.openSourceLicenses))),
           ])],
       ),
       body: SafeArea(child: Align(alignment: Alignment.topCenter, child: SingleChildScrollView(

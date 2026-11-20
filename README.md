@@ -97,4 +97,5 @@ on the phone. Maps, places and incident records stay on your phone.
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE). "Mobile ROS" and its logo are the project's names; forks should use their own.
+Apache License 2.0 — see [LICENSE](LICENSE). The app also contains llama.cpp (MIT), Eclipse Cyclone DDS (EPL-2.0 / EDL-1.0)
+and Eclipse zenoh-pico (EPL-2.0 / Apache-2.0): see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). "Mobile ROS" and its logo are the project's names; forks should use their own.

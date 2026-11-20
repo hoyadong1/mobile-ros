@@ -7,6 +7,8 @@
   "fleetServer": "Fleet server",
   "messageDefinitions": "Message definitions",
   "supportApp": "Support the app",
+  "openSourceLicenses": "Open-source licenses",
+  "@openSourceLicenses": {"description": "Menu item that opens the list of open-source licenses (app packages and native libraries)."},
   "myRobots": "My robots",
   "connectTitle": "Connect to your robot",
   "connectError": "Could not connect",

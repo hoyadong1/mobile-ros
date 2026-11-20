@@ -2,3 +2,9 @@ Mobile ROS
 Copyright 2025-2026 Mobile ROS authors
 
 This product includes software developed for the Mobile ROS project (https://mobile-ros.com).
+
+This product also includes third-party software:
+  - llama.cpp / ggml (MIT License), Copyright (c) 2023-2026 The ggml authors
+  - Eclipse Cyclone DDS (EPL-2.0 or EDL-1.0), copyright its respective authors (see its NOTICE)
+  - Eclipse zenoh-pico (EPL-2.0 or Apache-2.0), copyright its respective authors (see its NOTICE)
+See THIRD_PARTY_NOTICES.md and assets/licenses/ for their licenses, notices and sources.

@@ -58,6 +58,8 @@ flutter:
     - assets/message_types.json
     - assets/app_icon.png
     - assets/ros2_interfaces.json
+    # Notices of the native libraries in the app (lib/third_party_licenses.dart, THIRD_PARTY_NOTICES.md).
+    - assets/licenses/
     # Installed on the robot computer by Remote access setup (over SSH).
     - robot_side/install_agent.sh
     - robot_side/register_robot.py

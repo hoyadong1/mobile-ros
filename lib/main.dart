@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'app_theme.dart';
+import 'third_party_licenses.dart';
 import 'app_language.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'background_service.dart';
@@ -19,6 +20,7 @@ import 'app_links.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  registerThirdPartyLicenses(); // native libraries' notices on the licenses page
   // Edge to edge on every Android version, as Android 15+ already does (screens keep clear of the bars
   // with SafeArea); without this older phones would show the app inside opaque bars.
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

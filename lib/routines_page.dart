@@ -84,7 +84,7 @@ class _RoutinesPageState extends State<RoutinesPage> {
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(context.strings.runningNamed(p.routine), style: TextStyle(fontWeight: FontWeight.w800, color: cs.onPrimaryContainer)),
           const SizedBox(height: 2),
-          Text('${p.roundText} · $detail', style: TextStyle(color: cs.onPrimaryContainer)),
+          Text('${p.roundText(context.strings)} · $detail', style: TextStyle(color: cs.onPrimaryContainer)),
           const SizedBox(height: 8),
           LinearProgressIndicator(value: p.steps == 0 ? null : p.step / p.steps),
         ])),

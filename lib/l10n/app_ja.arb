@@ -921,5 +921,14 @@
   "noMembers": "まだ誰とも共有していません。",
   "openInvites": "未使用のコード {count} 件",
   "memberLabel": "{n} 人目",
-  "peopleWithAccess": "アクセスできる人"
+  "peopleWithAccess": "アクセスできる人",
+  "presenceConnected": "接続中 · タップして開く",
+  "presenceNext": "次: {time} {routine}",
+  "presenceRunningMany": "{count} 件のルーチンを実行中",
+  "routineRound": "{round} 回目",
+  "routineRoundOf": "{rounds} 回中 {round} 回目",
+  "widgetReady": "待機中",
+  "widgetNotConnected": "未接続",
+  "widgetStopRoutine": "■  ルーチンを停止",
+  "widgetNewWarnings": "⚠  新しい警告 {count} 件"
 }

@@ -4,6 +4,7 @@ import '../memory.dart';
 import '../robot_persona.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import '../l10n/generated/app_localizations.dart';
 import '../controllers/arm_controller.dart';
 import '../controllers/drive_controller.dart';
 import '../controllers/navigation_controller.dart';
@@ -70,7 +71,7 @@ class RoutineProgress {
   /// Set while waiting between rounds.
   final DateTime? waitingUntil;
 
-  String get roundText => rounds == 0 ? 'Round $round' : 'Round $round of $rounds';
+  String roundText(AppLocalizations s) => rounds == 0 ? s.routineRound(round) : s.routineRoundOf(round, rounds);
 
   RoutineProgress copyWith({int? round, int? step, int? steps, String? doing, DateTime? waitingUntil,
       bool clearWait = false}) => RoutineProgress(routine: routine, round: round ?? this.round, rounds: rounds,

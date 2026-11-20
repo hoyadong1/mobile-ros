@@ -8,7 +8,9 @@
   "messageDefinitions": "Message definitions",
   "supportApp": "Support the app",
   "openSourceLicenses": "Open-source licenses",
-  "@openSourceLicenses": {"description": "Menu item that opens the list of open-source licenses (app packages and native libraries)."},
+  "@openSourceLicenses": {
+    "description": "Menu item that opens the list of open-source licenses (app packages and native libraries)."
+  },
   "myRobots": "My robots",
   "connectTitle": "Connect to your robot",
   "connectError": "Could not connect",
@@ -2031,5 +2033,72 @@
       }
     }
   },
-  "peopleWithAccess": "People with access"
+  "peopleWithAccess": "People with access",
+  "presenceConnected": "Connected · tap to open",
+  "@presenceConnected": {
+    "description": "Background notification while connected to a robot."
+  },
+  "presenceNext": "Next: {routine} at {time}",
+  "@presenceNext": {
+    "description": "Background notification: the next scheduled routine.",
+    "placeholders": {
+      "routine": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "presenceRunningMany": "Running {count} routines",
+  "@presenceRunningMany": {
+    "description": "Notification title while several routines run.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "routineRound": "Round {round}",
+  "@routineRound": {
+    "description": "Progress of a routine that repeats until stopped.",
+    "placeholders": {
+      "round": {
+        "type": "int"
+      }
+    }
+  },
+  "routineRoundOf": "Round {round} of {rounds}",
+  "@routineRoundOf": {
+    "description": "Progress of a routine that repeats a set number of times.",
+    "placeholders": {
+      "round": {
+        "type": "int"
+      },
+      "rounds": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetReady": "Ready",
+  "@widgetReady": {
+    "description": "Home screen widget: connected, nothing running."
+  },
+  "widgetNotConnected": "Not connected",
+  "@widgetNotConnected": {
+    "description": "Home screen widget: no robot connected."
+  },
+  "widgetStopRoutine": "■  Stop routine",
+  "@widgetStopRoutine": {
+    "description": "Home screen widget button while a routine runs."
+  },
+  "widgetNewWarnings": "{count, plural, =1{⚠  1 new warning} other{⚠  {count} new warnings}}",
+  "@widgetNewWarnings": {
+    "description": "Home screen widget: new warnings in the robot log.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -8,6 +8,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'app_language.dart';
+
 /// The home screen widget (Android: android/app/src/main/kotlin/.../RobotWidgetProvider.kt): shows what
 /// the background notification shows, and its Stop button opens the app with mobileros://stop, which
 /// stops every robot. Opening the app for it is on purpose: it works whatever state the app was in,
@@ -58,7 +60,7 @@ class RobotWidget {
     if (!supported) return Future.value();
     // Keep each snapshot together; a pending connected update must not overwrite disconnected.
     return _updates = _updates.then((_) async {
-      final key = '$title|$text|$detail|$where|$problems|$connected|$battery|$routineId|$routineName|$running|$canConnect';
+      final key = '${appLocale.value}|$title|$text|$detail|$where|$problems|$connected|$battery|$routineId|$routineName|$running|$canConnect';
       if (key == _last) return;
       try {
         await HomeWidget.saveWidgetData<String>('title', title);
@@ -74,6 +76,13 @@ class RobotWidget {
         await HomeWidget.saveWidgetData<String>('routine_name', connected ? routineName : '');
         await HomeWidget.saveWidgetData<bool>('running', connected && running);
         await HomeWidget.saveWidgetData<bool>('can_connect', !connected && canConnect);
+        // The widget's own words in the app's language (the widget falls back to English).
+        final s = appStrings;
+        await HomeWidget.saveWidgetData<String>('label_stop', s.stop);
+        await HomeWidget.saveWidgetData<String>('label_stop_routine', s.widgetStopRoutine);
+        await HomeWidget.saveWidgetData<String>('label_connect', s.connect);
+        await HomeWidget.saveWidgetData<String>('label_no_problems', s.noProblems);
+        await HomeWidget.saveWidgetData<String>('label_warnings', problems > 0 ? s.widgetNewWarnings(problems) : '');
         await HomeWidget.updateWidget(qualifiedAndroidName: _provider);
         _last = key;
       } catch (_) {}
@@ -148,7 +157,7 @@ class RobotWidget {
   static Future<void> disconnected() async {
     await clearMap();
     final last = await lastRobot();
-    await show(title: last ?? 'Mobile ROS', text: 'Not connected', connected: false, canConnect: last != null);
+    await show(title: last ?? 'Mobile ROS', text: appStrings.widgetNotConnected, connected: false, canConnect: last != null);
   }
 
   static const _robotKey = 'widget_robot';

@@ -921,5 +921,14 @@
   "noMembers": "Aún no se comparte con nadie.",
   "openInvites": "{count, plural, one {1 código sin usar} other {{count} códigos sin usar}}",
   "memberLabel": "Persona {n}",
-  "peopleWithAccess": "Personas con acceso"
+  "peopleWithAccess": "Personas con acceso",
+  "presenceConnected": "Conectado · toca para abrir",
+  "presenceNext": "Siguiente: {routine} a las {time}",
+  "presenceRunningMany": "Ejecutando {count} rutinas",
+  "routineRound": "Ronda {round}",
+  "routineRoundOf": "Ronda {round} de {rounds}",
+  "widgetReady": "Listo",
+  "widgetNotConnected": "Sin conexión",
+  "widgetStopRoutine": "■  Detener rutina",
+  "widgetNewWarnings": "{count, plural, =1{⚠  1 aviso nuevo} other{⚠  {count} avisos nuevos}}"
 }

@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ros_tester/agent/agent.dart' show RoutineProgress;
 import 'package:ros_tester/agent/skill.dart';
 import 'package:ros_tester/background_service.dart';
+import 'package:ros_tester/l10n/generated/app_localizations.dart';
 import 'package:ros_tester/main_page.dart';
 import 'package:ros_tester/routines.dart';
 import 'support/fake_ros_connection.dart';
@@ -40,6 +42,19 @@ void main() {
     final run = presenceFor(running: const [('', '순찰', 'Round 2 of 5 · Go to a saved place · 부엌 (1/3)')],
         next: ('', '순찰', DateTime(2026, 11, 14, 14)), now: now, connectedTo: 'r')!;
     expect((run.title, run.text, run.stoppable), ('Running 순찰', 'Round 2 of 5 · Go to a saved place · 부엌 (1/3)', true));
+  });
+
+  test('the notification speaks the app language', () {
+    final ko = lookupAppLocalizations(const Locale('ko'));
+    final now = DateTime(2026, 11, 14, 9);
+    expect(presenceFor(running: const [], next: null, now: now, connectedTo: 'r', strings: ko)!.text,
+        '연결됨 · 눌러서 열기');
+    expect(presenceFor(running: const [], next: ('', '순찰', DateTime(2026, 11, 14, 14, 5)), now: now,
+        connectedTo: 'r', strings: ko)!.text, '다음: 14:05 순찰');
+    expect(presenceFor(running: const [('', '순찰', ''), ('', '충전', '')], next: null, now: now,
+        connectedTo: 'r', strings: ko)!.title, '루틴 2개 실행 중');
+    const progress = RoutineProgress(routine: '순찰', round: 2, rounds: 5);
+    expect(progress.roundText(ko), '5회 중 2회차');
   });
 
   testWidgets('a running routine shows in the notification, whose Stop stops it', (tester) async {

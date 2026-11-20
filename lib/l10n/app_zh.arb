@@ -921,5 +921,14 @@
   "noMembers": "尚未与任何人共享。",
   "openInvites": "{count} 个未使用的代码",
   "memberLabel": "第 {n} 人",
-  "peopleWithAccess": "可访问的人"
+  "peopleWithAccess": "可访问的人",
+  "presenceConnected": "已连接 · 点按打开",
+  "presenceNext": "下一个：{time} {routine}",
+  "presenceRunningMany": "正在运行 {count} 个例程",
+  "routineRound": "第 {round} 轮",
+  "routineRoundOf": "第 {round}/{rounds} 轮",
+  "widgetReady": "就绪",
+  "widgetNotConnected": "未连接",
+  "widgetStopRoutine": "■  停止例程",
+  "widgetNewWarnings": "⚠  {count} 条新警告"
 }

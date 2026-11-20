@@ -38,6 +38,9 @@ class RobotWidgetProvider : HomeWidgetProvider() {
         val mapPath = widgetData.getString("map_path", null) ?: ""
         val where = widgetData.getString("where", null) ?: ""
         val problems = widgetData.getInt("problems", -1)
+        // Words in the app's language, written by the app (English until it has run once).
+        fun label(key: String, english: String) =
+            widgetData.getString(key, null)?.takeIf { it.isNotEmpty() } ?: english
         // The app's picture of the map around the robot (only while connected).
         val map = if (connected && mapPath.isNotEmpty() && File(mapPath).exists())
             BitmapFactory.decodeFile(mapPath) else null
@@ -53,9 +56,10 @@ class RobotWidgetProvider : HomeWidgetProvider() {
                 // One glance line (a 4 x 2 widget has room for one, measured on the emulator: a second
                 // line was squeezed to nothing): new warnings first, else where it is, else "No problems".
                 val (glance, color) = when {
-                    problems > 0 -> ("\u26A0  $problems new warning" + (if (problems == 1) "" else "s")) to 0xFFFFB74D.toInt()
+                    problems > 0 -> label("label_warnings",
+                        "\u26A0  $problems new warning" + (if (problems == 1) "" else "s")) to 0xFFFFB74D.toInt()
                     where.isNotEmpty() -> "\uD83D\uDCCD  $where" to 0xFFCFDAE3.toInt()
-                    problems == 0 -> "\u2713  No problems" to 0xFF4FD1A5.toInt()
+                    problems == 0 -> "\u2713  ${label("label_no_problems", "No problems")}" to 0xFF4FD1A5.toInt()
                     else -> "" to 0
                 }
                 setTextViewText(R.id.widget_where, glance)
@@ -66,6 +70,7 @@ class RobotWidgetProvider : HomeWidgetProvider() {
                 if (connected) R.drawable.widget_dot_on else R.drawable.widget_dot_off)
             setTextViewText(R.id.widget_battery, battery)
             setViewVisibility(R.id.widget_battery, if (battery.isNotEmpty()) View.VISIBLE else View.GONE)
+            setTextViewText(R.id.widget_stop, label("label_stop", "Stop"))
             setOnClickPendingIntent(R.id.widget_root,
                 HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java, Uri.parse("mobileros://open")))
             setOnClickPendingIntent(R.id.widget_stop,
@@ -76,6 +81,7 @@ class RobotWidgetProvider : HomeWidgetProvider() {
                 setViewVisibility(R.id.widget_buttons, if (connected || canConnect) View.VISIBLE else View.GONE)
                 setViewVisibility(R.id.widget_stop, if (connected && !running) View.VISIBLE else View.GONE)
                 setViewVisibility(R.id.widget_stop_wide, if (connected && running) View.VISIBLE else View.GONE)
+                setTextViewText(R.id.widget_stop_wide, label("label_stop_routine", "■  Stop routine"))
                 setOnClickPendingIntent(R.id.widget_stop_wide,
                     HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java, Uri.parse("mobileros://stop")))
                 if (connected) {
@@ -87,7 +93,7 @@ class RobotWidgetProvider : HomeWidgetProvider() {
                         MainActivity::class.java, Uri.parse("mobileros://run?routine=" + Uri.encode(routineId))))
                 } else {
                     setViewVisibility(R.id.widget_run, View.VISIBLE)
-                    setTextViewText(R.id.widget_run, "Connect")
+                    setTextViewText(R.id.widget_run, label("label_connect", "Connect"))
                     setOnClickPendingIntent(R.id.widget_run, HomeWidgetLaunchIntent.getActivity(context,
                         MainActivity::class.java, Uri.parse("mobileros://connect")))
                 }

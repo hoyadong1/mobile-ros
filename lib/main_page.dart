@@ -274,9 +274,10 @@ class _MainPageState extends State<MainPage> {
     final version = ++_presenceVersion;
     final p = _presence;
     final online = !widget.connection.isClosed;
-    String detail(RoutineProgress r) => r.waitingUntil != null
-        ? '${r.roundText} · next round in ${secondsLeft(r.waitingUntil!)} s'
-        : r.steps == 0 ? '${r.roundText} · starting' : '${r.roundText} · ${r.doing} (${r.step}/${r.steps})';
+    final s = context.strings;
+    String detail(RoutineProgress r) => '${r.roundText(s)} · ${r.waitingUntil != null
+        ? s.nextRound(secondsLeft(r.waitingUntil!))
+        : r.steps == 0 ? s.starting : '${r.doing} (${r.step}/${r.steps})'}';
     final running = [
       for (final r in robots)
         if (r.routineAgent.progress case final pr?) (robots.length > 1 ? r.session.name : '', pr.routine, detail(pr)),
@@ -291,7 +292,7 @@ class _MainPageState extends State<MainPage> {
     final battery = robots.map((r) => r.battery).firstWhere((b) => b.isNotEmpty, orElse: () => '');
     final name = robotLabel ?? widget.address ?? '${widget.ip}:${widget.port}';
     final want = presenceFor(running: running, next: next, now: DateTime.now(),
-        connectedTo: online ? name : null, battery: battery);
+        connectedTo: online ? name : null, battery: battery, strings: s);
     // The home screen widget says the same as the notification, with the battery and a Run button.
     if (want == null) {
       RobotWidget.disconnected();
@@ -300,8 +301,8 @@ class _MainPageState extends State<MainPage> {
         if (!mounted || _closing || version != _presenceVersion) return;
         // The widget: the robot's name and battery on top, what it does (large) and the detail under it.
         final (status, detail) = running.isEmpty
-            ? ('Connected', next == null ? 'Ready' : want.text)
-            : running.length == 1 ? ('Running ${running.first.$2}', running.first.$3) : (want.title, want.text);
+            ? (s.connected, next == null ? s.widgetReady : want.text)
+            : running.length == 1 ? (s.runningNamed(running.first.$2), running.first.$3) : (want.title, want.text);
         await RobotWidget.show(title: name, text: status, detail: detail, where: _where,
           problems: robots.fold<int>(0, (n, r) => n + r.session.robotLog.unseenProblems),
           connected: true, battery: battery, running: running.isNotEmpty,
@@ -777,7 +778,7 @@ class _MainPageState extends State<MainPage> {
         final routine = r?.routineAgent.progress;
         final navigating = r?.session.nav.status == NavStatus.active;
         final doing = !online ? address
-            : routine != null ? '${routine.routine} · ${routine.roundText}'
+            : routine != null ? '${routine.routine} · ${routine.roundText(context.strings)}'
             : navigating ? context.strings.drivingToGoal : address;
         final battery = r?.battery ?? '';
         final compact = MediaQuery.textScalerOf(context).scale(10) > 13 || MediaQuery.sizeOf(context).width < 360;

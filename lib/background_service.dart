@@ -5,6 +5,9 @@ import 'dart:ui' show Color;
 
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
+import 'app_language.dart';
+import 'l10n/generated/app_localizations.dart';
+
 /// Keeps the app working with the screen off or another app in front, as an Android foreground service,
 /// for as long as it is connected to a robot: Android freezes a background app within seconds (measured
 /// on the emulator: the robot link dropped after 30 s in the background), which would end a running
@@ -200,14 +203,16 @@ class _PresenceHandler extends TaskHandler {
   required DateTime now,
   String? connectedTo,
   String battery = '',
+  AppLocalizations? strings,
 }) {
   if (connectedTo == null) return null;
+  final s = strings ?? appStrings;
   final robotLine = battery.isEmpty ? connectedTo : '$connectedTo · $battery';
   if (running.isNotEmpty) {
     final (robot, routine, detail) = running.first;
     return (
-      title: running.length == 1 ? 'Running $routine${robot.isEmpty ? '' : ' · $robot'}'
-          : 'Running ${running.length} routines',
+      title: running.length == 1 ? '${s.runningNamed(routine)}${robot.isEmpty ? '' : ' · $robot'}'
+          : s.presenceRunningMany(running.length),
       text: running.length == 1 ? detail : running.map((r) => '${r.$2}: ${r.$3}').join(' | '),
       stoppable: true,
     );
@@ -217,7 +222,7 @@ class _PresenceHandler extends TaskHandler {
     String two(int v) => v.toString().padLeft(2, '0');
     final sameDay = at.year == now.year && at.month == now.month && at.day == now.day;
     final when = '${sameDay ? '' : '${at.month}/${at.day} '}${two(at.hour)}:${two(at.minute)}';
-    return (title: robot.isEmpty ? robotLine : robot, text: 'Next: $routine at $when', stoppable: true);
+    return (title: robot.isEmpty ? robotLine : robot, text: s.presenceNext(routine, when), stoppable: true);
   }
-  return (title: robotLine, text: 'Connected · tap to open', stoppable: true);
+  return (title: robotLine, text: s.presenceConnected, stoppable: true);
 }

@@ -5,7 +5,8 @@ the robot what to do in plain words, and keeps the tools you reach for while tes
 
 ![Driving a TurtleBot3 from the app, then "Turn left 90 degrees, then go forward half a meter" carried out in the Gazebo simulator](.github/media/demo.gif)
 
-*Driving with the live camera, then a plain-language command checked step by step and carried out (TurtleBot3 + Nav2 in Gazebo).*
+*Driving with the live camera, then a plain-language command checked step by step and carried out (TurtleBot3 + Nav2 in Gazebo).
+Full one-minute demo: https://youtu.be/iMq66I9VfAg*
 
 **Get it on Google Play:** https://play.google.com/store/apps/details?id=com.hoyadong.ros_tester
 

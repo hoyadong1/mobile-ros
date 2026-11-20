@@ -22,7 +22,7 @@
         android:icon="@mipmap/ic_launcher">
         <!-- Home screen widget: the robot's state and a Stop button (lib/robot_widget.dart). -->
         <receiver android:name="com.example.ros_tester.RobotWidgetProvider"
-            android:label="Robot"
+            android:label="@string/robot_widget_label"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

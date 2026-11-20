@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="robot_widget_label">Robot</string>
     <string name="robot_widget_description">Your robot\'s state, with a Stop button</string>
 </resources>

@@ -2100,5 +2100,81 @@
         "type": "int"
       }
     }
+  },
+  "editRoutine": "Edit routine",
+  "@editRoutine": {
+    "description": "Title of the routine editor for a saved routine."
+  },
+  "routineSteps": "{count, plural, =1{1 step} other{{count} steps}}",
+  "@routineSteps": {
+    "description": "How many steps a routine has.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pauseSeconds": "{seconds} s",
+  "@pauseSeconds": {
+    "description": "A wait between routine rounds, in seconds.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "pauseMinutes": "{minutes} min",
+  "@pauseMinutes": {
+    "description": "A wait between routine rounds, in minutes.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "repeatApart": "{times}, {pause} apart",
+  "@repeatApart": {
+    "description": "How often a routine repeats and the wait between rounds, e.g. \"3 times, 30 s apart\".",
+    "placeholders": {
+      "times": {
+        "type": "String"
+      },
+      "pause": {
+        "type": "String"
+      }
+    }
+  },
+  "everyDay": "Every day",
+  "@everyDay": {
+    "description": "A routine schedule on all seven days."
+  },
+  "weekdaysOnly": "Weekdays",
+  "@weekdaysOnly": {
+    "description": "A routine schedule on Monday to Friday."
+  },
+  "weekdayNames": "Mon Tue Wed Thu Fri Sat Sun",
+  "@weekdayNames": {
+    "description": "Short names of the weekdays, Monday first, separated by single spaces (exactly seven)."
+  },
+  "scheduleOff": "{schedule} (off)",
+  "@scheduleOff": {
+    "description": "A routine schedule that is switched off.",
+    "placeholders": {
+      "schedule": {
+        "type": "String"
+      }
+    }
+  },
+  "logRepeated": "{count} times, last at {time}",
+  "@logRepeated": {
+    "description": "A robot log line that repeated, with the time of the last one.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -930,5 +930,15 @@
   "widgetReady": "就绪",
   "widgetNotConnected": "未连接",
   "widgetStopRoutine": "■  停止例程",
-  "widgetNewWarnings": "⚠  {count} 条新警告"
+  "widgetNewWarnings": "⚠  {count} 条新警告",
+  "editRoutine": "编辑例程",
+  "routineSteps": "{count} 个步骤",
+  "pauseSeconds": "{seconds} 秒",
+  "pauseMinutes": "{minutes} 分钟",
+  "repeatApart": "{times}，间隔 {pause}",
+  "everyDay": "每天",
+  "weekdaysOnly": "工作日",
+  "weekdayNames": "周一 周二 周三 周四 周五 周六 周日",
+  "scheduleOff": "{schedule}（已关闭）",
+  "logRepeated": "{count} 次，最近一次 {time}"
 }

@@ -930,5 +930,15 @@
   "widgetReady": "待機中",
   "widgetNotConnected": "未接続",
   "widgetStopRoutine": "■  ルーチンを停止",
-  "widgetNewWarnings": "⚠  新しい警告 {count} 件"
+  "widgetNewWarnings": "⚠  新しい警告 {count} 件",
+  "editRoutine": "ルーチンを編集",
+  "routineSteps": "{count}ステップ",
+  "pauseSeconds": "{seconds}秒",
+  "pauseMinutes": "{minutes}分",
+  "repeatApart": "{times}、{pause}間隔",
+  "everyDay": "毎日",
+  "weekdaysOnly": "平日",
+  "weekdayNames": "月 火 水 木 金 土 日",
+  "scheduleOff": "{schedule}(オフ)",
+  "logRepeated": "{count}回、最後は{time}"
 }

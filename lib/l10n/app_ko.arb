@@ -159,7 +159,7 @@
   "warningCount": "새 경고·오류 {count}건",
   "movingRobots": "이동 중이던 로봇: {names}",
   "sameRobotQuestion": "{name} 로봇인가요?",
-  "sameRobotHint": "이 로봇은 마지막에 {address}로 연결한 {name}과(와) 같아 보여요. 같은 로봇이면 이름, 장소, 루틴과 저장한 설정을 불러와요.",
+  "sameRobotHint": "이 로봇은 마지막에 {address}(으)로 연결한 {name}과(와) 같아 보여요. 같은 로봇이면 이름, 장소, 루틴과 저장한 설정을 불러와요.",
   "sameRobot": "같은 로봇",
   "differentRobot": "다른 로봇",
   "reconnectRoutine": "루틴을 실행하려면 먼저 다시 연결하세요.",
@@ -930,5 +930,15 @@
   "widgetReady": "대기 중",
   "widgetNotConnected": "연결 안 됨",
   "widgetStopRoutine": "■  루틴 정지",
-  "widgetNewWarnings": "⚠  새 경고 {count}개"
+  "widgetNewWarnings": "⚠  새 경고 {count}개",
+  "editRoutine": "루틴 편집",
+  "routineSteps": "{count}단계",
+  "pauseSeconds": "{seconds}초",
+  "pauseMinutes": "{minutes}분",
+  "repeatApart": "{times}, {pause} 간격",
+  "everyDay": "매일",
+  "weekdaysOnly": "평일",
+  "weekdayNames": "월 화 수 목 금 토 일",
+  "scheduleOff": "{schedule} (꺼짐)",
+  "logRepeated": "{count}번, 마지막 {time}"
 }

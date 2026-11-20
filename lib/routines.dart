@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'agent/skill.dart';
+import 'app_language.dart';
+import 'l10n/generated/app_localizations.dart';
 
 /// One step of a routine: a skill call, or another routine run in its place (by id, so renaming a
 /// routine keeps the references).
@@ -107,12 +109,16 @@ class Routine {
 }
 
 /// "Once", "3 times", "Until stopped" (+ the wait between rounds).
-String repeatText(Routine r) {
-  final times = r.repeat == 0 ? 'Until stopped' : r.repeat == 1 ? 'Once' : '${r.repeat} times';
+String repeatText(Routine r, [AppLocalizations? strings]) {
+  final s = strings ?? appStrings;
+  final times = r.repeat == 0 ? s.untilStopped : r.repeat == 1 ? s.once : s.timesCount(r.repeat);
   if (r.repeat == 1 || r.pauseSeconds == 0) return times;
-  final p = r.pauseSeconds;
-  return '$times, ${p % 60 == 0 ? '${p ~/ 60} min' : '$p s'} apart';
+  return s.repeatApart(times, pauseText(r.pauseSeconds, s));
 }
+
+/// "30 s", "5 min".
+String pauseText(int seconds, AppLocalizations s) =>
+    seconds % 60 == 0 ? s.pauseMinutes(seconds ~/ 60) : s.pauseSeconds(seconds);
 
 class RoutineError implements Exception {
   const RoutineError(this.message);

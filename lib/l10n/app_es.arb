@@ -930,5 +930,15 @@
   "widgetReady": "Listo",
   "widgetNotConnected": "Sin conexión",
   "widgetStopRoutine": "■  Detener rutina",
-  "widgetNewWarnings": "{count, plural, =1{⚠  1 aviso nuevo} other{⚠  {count} avisos nuevos}}"
+  "widgetNewWarnings": "{count, plural, =1{⚠  1 aviso nuevo} other{⚠  {count} avisos nuevos}}",
+  "editRoutine": "Editar rutina",
+  "routineSteps": "{count, plural, =1{1 paso} other{{count} pasos}}",
+  "pauseSeconds": "{seconds} s",
+  "pauseMinutes": "{minutes} min",
+  "repeatApart": "{times}, cada {pause}",
+  "everyDay": "Todos los días",
+  "weekdaysOnly": "Entre semana",
+  "weekdayNames": "lun mar mié jue vie sáb dom",
+  "scheduleOff": "{schedule} (desactivado)",
+  "logRepeated": "{count} veces, la última a las {time}"
 }

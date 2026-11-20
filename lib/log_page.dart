@@ -227,7 +227,7 @@ class _RobotLogPageState extends State<RobotLogPage> {
             const SizedBox(width: 8),
             Text(e.level.label, style: TextStyle(fontWeight: FontWeight.w800, color: color)),
             const Spacer(),
-            Text(e.count > 1 ? '${e.count} times, last at ${LogEntry.clock(e.time)}' : LogEntry.clock(e.time),
+            Text(e.count > 1 ? context.strings.logRepeated(e.count, LogEntry.clock(e.time)) : LogEntry.clock(e.time),
               style: TextStyle(color: context.muted)),
           ]),
           const SizedBox(height: 8),

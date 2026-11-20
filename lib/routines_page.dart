@@ -1,6 +1,7 @@
 import 'widgets/readable_width.dart';
 import 'tool_tabs.dart';
 import 'app_language.dart';
+import 'l10n/generated/app_localizations.dart';
 import 'package:material_ui/material_ui.dart';
 import 'agent/skill_labels.dart';
 import 'agent/agent.dart';
@@ -19,15 +20,21 @@ class NoPlanner extends AgentBackend {
       const AgentPlan(reply: 'Use the AI assistant to give instructions in words.');
 }
 
-const _weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+/// Monday first, in the app's language.
+List<String> _weekdayNames(AppLocalizations t) {
+  final names = t.weekdayNames.split(' ');
+  return names.length == 7 ? names : const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+}
 
-String scheduleText(RoutineSchedule s) {
+String scheduleText(RoutineSchedule s, [AppLocalizations? strings]) {
+  final t = strings ?? appStrings;
   final days = s.weekdays.length == 7
-      ? 'Every day'
+      ? t.everyDay
       : s.weekdays.length == 5 && s.weekdays.containsAll({1, 2, 3, 4, 5}) && !s.weekdays.contains(6)
-          ? 'Weekdays'
-          : (s.weekdays.toList()..sort()).map((d) => _weekdayNames[d - 1]).join(' ');
-  return '$days ${s.label}${s.enabled ? '' : ' (off)'}';
+          ? t.weekdaysOnly
+          : (s.weekdays.toList()..sort()).map((d) => _weekdayNames(t)[d - 1]).join(' ');
+  final text = '$days ${s.label}';
+  return s.enabled ? text : t.scheduleOff(text);
 }
 
 /// Saved routines: run one, build or change one, and set when it runs by itself. Every step still goes
@@ -142,9 +149,9 @@ class _RoutinesPageState extends State<RoutinesPage> {
                 key: Key('routine-${r.name}'),
                 title: Text(r.name, style: const TextStyle(fontWeight: FontWeight.w700)),
                 subtitle: Text([
-                  '${r.steps.length} step${r.steps.length == 1 ? '' : 's'}',
-                  if (r.repeat != 1) repeatText(r),
-                  ...r.schedules.map(scheduleText),
+                  context.strings.routineSteps(r.steps.length),
+                  if (r.repeat != 1) repeatText(r, context.strings),
+                  for (final s in r.schedules) scheduleText(s, context.strings),
                 ].join(' · ')),
                 onTap: () => _edit(r),
                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -225,7 +232,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(widget.routine.name.isEmpty ? 'New routine' : 'Edit routine'), actions: [
+    appBar: AppBar(title: Text(widget.routine.name.isEmpty ? context.strings.newRoutine : context.strings.editRoutine), actions: [
       TextButton(key: const Key('routine-save'), onPressed: _save, child: Text(context.strings.save)),
     ]),
     body: ReadableWidth(maxWidth: 720, child: SafeArea(child: ListView(padding: const EdgeInsets.all(16), children: [
@@ -281,7 +288,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
         Text(context.strings.waitBetween),
         const SizedBox(width: 12),
         DropdownButton<int>(key: const Key('routine-pause'), value: _pauses.contains(_pause) ? _pause : 0,
-          items: [for (final p in _pauses) DropdownMenuItem(value: p, child: Text(_pauseText(p)))],
+          items: [for (final p in _pauses) DropdownMenuItem(value: p, child: Text(p == 0 ? context.strings.none : pauseText(p, context.strings)))],
           onChanged: (v) => setState(() => _pause = v ?? 0)),
       ])),
       if (_repeat != 1) Padding(padding: const EdgeInsets.only(top: 4), child: Text(
@@ -299,7 +306,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                 onPressed: () => setState(() => _schedules = [..._schedules]..removeAt(i))),
           ]),
           Wrap(spacing: 4, children: [
-            for (var d = 1; d <= 7; d++) FilterChip(label: Text(_weekdayNames[d - 1]), selected: s.weekdays.contains(d),
+            for (var d = 1; d <= 7; d++) FilterChip(label: Text(_weekdayNames(context.strings)[d - 1]), selected: s.weekdays.contains(d),
                 onSelected: (on) => setState(() => _schedules[i] =
                     s.copyWith(weekdays: on ? {...s.weekdays, d} : ({...s.weekdays}..remove(d))))),
           ]),
@@ -311,7 +318,6 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
 }
 
 const _pauses = [0, 10, 30, 60, 300, 600, 1800, 3600];
-String _pauseText(int s) => s == 0 ? 'None' : s < 60 ? '$s s' : '${s ~/ 60} min';
 
 /// Picks one skill and fills in its arguments; the result is checked by the validator before it is
 /// added, so a routine never holds a step that could not run.

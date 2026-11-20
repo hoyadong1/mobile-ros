@@ -1,0 +1,64 @@
+name: ros_tester
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 2.2.1+15
+
+environment:
+  # Android builds use AGP 9.3 (android/settings.gradle), which needs Flutter 3.50 or later.
+  sdk: ^3.14.0
+  flutter: ">=3.50.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: 0.20.3
+
+  # RTSP playback. (flutter_vlc_player was dropped: on pub.dev its Android side and Dart interface
+  # no longer talk to each other, and the older version does not build on current Flutter.)
+  media_kit: ^1.2.6
+  media_kit_video: ^2.0.1
+  media_kit_libs_video: ^1.0.7
+
+  web_socket_channel: ^3.0.1
+  flutter_joystick: ^0.2.1
+  path_provider: ^2.1.5
+  fl_chart: ^1.2.0
+  shared_preferences: ^2.2.3
+  # Remote-access setup: installs the robot agent over SSH (released 2026-09-04).
+  dartssh2: 4.1.0
+  # In-app QR scan of a robot's approval code (Android/iOS camera). 7.4.2 released 2026-09-14.
+  mobile_scanner: 7.4.2
+  flutter_secure_storage: 11.2.0
+  ffi: ^2.1.0
+  material_ui: ^1.11.0
+  http: ^1.6.0
+  flutter_local_notifications: 22.3.3
+  flutter_foreground_task: 11.0.3
+  home_widget: 0.10.0
+  in_app_purchase: 3.3.1
+  vector_math: ^2.4.4
+  gamepads: 0.1.14
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+  assets:
+    - assets/message_types.json
+    - assets/app_icon.png
+    - assets/ros2_interfaces.json
+    # Installed on the robot computer by Remote access setup (over SSH).
+    - robot_side/install_agent.sh
+    - robot_side/register_robot.py
+    - robot_side/mobile_ros_agent.py

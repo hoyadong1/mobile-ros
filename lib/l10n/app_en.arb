@@ -1,0 +1,2033 @@
+{
+  "@@locale": "en",
+  "language": "Language",
+  "menu": "Menu",
+  "appearance": "Appearance",
+  "connectionGuide": "Connection guide",
+  "fleetServer": "Fleet server",
+  "messageDefinitions": "Message definitions",
+  "supportApp": "Support the app",
+  "myRobots": "My robots",
+  "connectTitle": "Connect to your robot",
+  "connectError": "Could not connect",
+  "addRobot": "Add a robot",
+  "direct": "Direct",
+  "robotAddress": "Robot address",
+  "robotIpOptional": "Robot IP (optional)",
+  "discoverOnWifi": "Empty: find robots on this Wi-Fi",
+  "addressExample": "192.168.1.100 or wss://…",
+  "enterHost": "Enter an IP address or host name.",
+  "enterRobotAddress": "Enter the robot address.",
+  "enterWebsocket": "Enter a host/IP or a valid ws:// or wss:// URL.",
+  "port": "Port",
+  "enterDomain": "Enter a domain ID from 0 to 232.",
+  "enterPort": "Enter a port from 1 to 65535.",
+  "connect": "Connect",
+  "connecting": "Connecting…",
+  "cancelConnection": "Cancel connection",
+  "cancel": "Cancel",
+  "save": "Save",
+  "gotIt": "Got it",
+  "ok": "OK",
+  "back": "Back",
+  "name": "Name",
+  "rename": "Rename",
+  "forget": "Forget",
+  "nameRobot": "Name this robot",
+  "nameExample": "Warehouse TurtleBot",
+  "nameHint": "Leave empty to use the detected robot type.",
+  "robotOptions": "Robot options",
+  "showLess": "Show less",
+  "showAll": "Show all ({count})",
+  "@showAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accessToken": "Access token",
+  "tokenHint": "From the robot owner. Saved on this device for this address.",
+  "enterToken": "Enter the access token supplied by the robot owner.",
+  "relayError": "Could not connect to the relay. Check the access token, your internet connection, and that the robot agent is online. Another operator may already be connected.",
+  "rosbridgeError": "Could not reach {address}. Check the address, use the same network as the robot, and make sure rosbridge is running.",
+  "@rosbridgeError": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "directError": "No ROS 2 robot answered on domain {domain}. Use the same Wi-Fi as the robot and the same ROS_DOMAIN_ID. If your network blocks multicast, enter the robot’s IP address.",
+  "@directError": {
+    "placeholders": {
+      "domain": {
+        "type": "String"
+      }
+    }
+  },
+  "zenohError": "Could not reach the Zenoh router at {address}. Check the address and that the robot runs rmw_zenohd (port 7447).",
+  "@zenohError": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "drive": "Drive",
+  "map": "Map",
+  "aiRoutines": "AI & routines",
+  "status": "Status",
+  "driveHint": "Live camera and driving",
+  "mapHint": "Send it somewhere, or make a map",
+  "aiHint": "Tell it what to do in plain words, or run a saved routine",
+  "statusHint": "Sensors, graphs and the robot log",
+  "more": "More",
+  "tuneRobot": "Tune the robot",
+  "fleet": "Fleet",
+  "namePersonality": "Name and personality",
+  "memoryHint": "What it remembers about itself and you",
+  "aboutRobot": "About this robot",
+  "remoteAccess": "Remote access",
+  "remoteAccessHint": "Reach this robot from anywhere",
+  "addWidget": "Add a home screen widget",
+  "developerTools": "Developer tools",
+  "rosExplorer": "ROS explorer",
+  "rosExplorerHint": "Nodes, topics and services",
+  "publishMessage": "Publish a message",
+  "publishMessageHint": "Compose and send ROS messages",
+  "disconnectQuestion": "Disconnect from the robot?",
+  "disconnectDetail": "Driving, AI tasks and routines from this app stop.",
+  "stay": "Stay",
+  "disconnect": "Disconnect",
+  "disconnectReturn": "Disconnect and return",
+  "connected": "Connected",
+  "disconnected": "Disconnected",
+  "reconnect": "Reconnect",
+  "connectionLost": "Connection lost",
+  "stop": "STOP",
+  "stopAll": "Stop all",
+  "stopRequested": "Stop requested.",
+  "stopAllRequested": "Stop requested for all robots.",
+  "robot": "Robot",
+  "robotCount": "{count} robots",
+  "@robotCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "drivingToGoal": "Driving to a goal",
+  "meetRobot": "Meet {name}",
+  "@meetRobot": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "introHint": "Give it a name and tell it what it is for. The assistant remembers it, on this phone only.",
+  "notNow": "Not now",
+  "sayHello": "Say hello",
+  "noCamera": "No camera configured",
+  "cameraUnavailable": "Camera unavailable",
+  "waitingCamera": "Waiting for camera frames",
+  "chooseCamera": "Choose camera",
+  "noCameraPicture": "No camera picture",
+  "noPictureFrom": "No picture from {source}",
+  "@noPictureFrom": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "robotSettings": "Robot settings",
+  "speedPreset": "Speed preset",
+  "slow": "Slow",
+  "normal": "Normal",
+  "fast": "Fast",
+  "arm": "Arm",
+  "hold": "HOLD",
+  "turn": "Turn",
+  "move": "Move",
+  "rotate": "Rotate",
+  "throttle": "Throttle",
+  "steer": "Steer",
+  "climbYaw": "Climb · Yaw",
+  "stickLabel": "{action} stick",
+  "@stickLabel": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "releaseToRearm": "Release to re-arm",
+  "command": "COMMAND",
+  "actual": "ACTUAL",
+  "noAutoStop": "No auto-stop",
+  "connectionDropTitle": "If the connection drops",
+  "linkLossMoving": "Connection lost while the robot was moving. It may keep moving on its last command. Stop it at the robot (emergency stop) if it does not stop by itself.",
+  "linkLossNotice": "If this app loses its connection while driving, the robot may keep its last speed until something on the robot stops it. Make sure the base stops when commands stop arriving: a command timeout in its driver, twist_mux, or robot_side/cmd_vel_watchdog.py from this app.",
+  "mapNavigation": "Map & navigation",
+  "makeMap": "Make a map",
+  "goal": "Goal",
+  "setPose": "Set pose",
+  "makeMapShort": "Make map",
+  "navigation": "Navigation",
+  "savedPlaces": "Saved places",
+  "places": "Places",
+  "layers": "Layers",
+  "topics": "Topics",
+  "view3d": "3D view",
+  "robotPositionUnknown": "Robot position unknown",
+  "tapFloor": "Tap the floor to choose a destination",
+  "tapMap": "Tap the map to choose a destination",
+  "selectedDestination": "Selected destination",
+  "clearDestination": "Clear destination",
+  "savePlace": "Save place",
+  "go": "Go",
+  "navigating": "NAVIGATING",
+  "planningRoute": "Planning the route…",
+  "robotLog": "Robot log",
+  "retry": "Retry",
+  "saveMap": "Save map",
+  "saving": "Saving…",
+  "findRobotOnMap": "Finding the robot on the map…",
+  "mapRecenter": "Back to the robot",
+  "routines": "Routines",
+  "sensors": "Sensors",
+  "graphs": "Graphs",
+  "logs": "Logs",
+  "assistant": "Assistant",
+  "fleetOverview": "Fleet overview",
+  "connectionHelp": "1. Connect this device and the robot to the same network.\n\n2. Start rosbridge and rosapi on the robot.\n\n3. Enter the robot host and WebSocket port. The default port is 9090.\n\nFor TLS or a reverse-proxy path, enter a full ws:// or wss:// URL. A port included in the URL takes precedence.\n\nDirect ROS 2: no rosbridge needed. The phone joins the robot's ROS 2 network like another node. Use the same Wi-Fi as the robot and its ROS_DOMAIN_ID (usually 0). The robot IP is optional; enter it if the network blocks multicast. Messages from packages the app does not know cannot be shown.\n\nZenoh: for robots running ROS 2 with RMW_IMPLEMENTATION=rmw_zenoh_cpp. Enter the robot address (its Zenoh router, port 7447 unless you add another) and its ROS_DOMAIN_ID. One TCP connection, no multicast, so it also works across networks, over a VPN, or over USB with adb reverse.",
+  "systemTheme": "Same as the phone",
+  "lightTheme": "Light",
+  "darkTheme": "Dark",
+  "robotStatus": "Robot status",
+  "log": "Log",
+  "robots": "Robots",
+  "ask": "Ask",
+  "warningCount": "{count, plural, one {1 new warning or error} other {{count} new warnings or errors}}",
+  "@warningCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "movingRobots": "Robots that were moving: {names}",
+  "@movingRobots": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "sameRobotQuestion": "Is this {name}?",
+  "@sameRobotQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sameRobotHint": "This robot looks like {name}, last reached at {address}. If it is the same robot, its name, places, routines and other saved settings will be used here.",
+  "@sameRobotHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "sameRobot": "Same robot",
+  "differentRobot": "A different robot",
+  "reconnectRoutine": "Reconnect before running a routine.",
+  "arrived": "Arrived",
+  "navigationCanceled": "Navigation canceled",
+  "navigationFailed": "Navigation failed",
+  "distanceLeft": "{distance} left",
+  "@distanceLeft": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetMapTitle": "All robots on one map",
+  "fleetWaitingMap": "Waiting for a map. Robot markers appear when map-frame poses are available.",
+  "fleetBattery": "Battery: {value}",
+  "@fleetBattery": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetPosition": "Position: {value}",
+  "@fleetPosition": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetTask": "Current task: {value}",
+  "@fleetTask": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetError": "Error: {value}",
+  "@fleetError": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "unknown": "Unknown",
+  "none": "None",
+  "idle": "Idle",
+  "navActive": "Navigating",
+  "driving": "Driving ({source})",
+  "@driving": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "newRoutine": "New routine",
+  "noRoutines": "No routines yet",
+  "routineHint": "Steps the robot runs in order, now or on a schedule.",
+  "runRoutine": "Run",
+  "delete": "Delete",
+  "stopRoutine": "Stop",
+  "notSet": "Not set",
+  "thingsToRemember": "Things to keep in mind",
+  "recentEvents": "Recent events",
+  "role": "What it is for",
+  "tone": "How it talks",
+  "kind": "What kind of robot it is",
+  "callPerson": "What it calls you (all robots)",
+  "mapWaiting": "Waiting for the map",
+  "mapLooking": "Looking for the map…",
+  "robotNoMap": "This robot has no map",
+  "noMapDetail": "Nothing publishes a map (nav_msgs/OccupancyGrid). Start a map server or SLAM, for example slam_toolbox, on the robot, or choose the map topic.",
+  "mapMissing": "No map from {topic} yet",
+  "@mapMissing": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCheckSource": "Check that the map server or SLAM is running, or choose another map topic.",
+  "chooseMapTopic": "Choose map topic",
+  "detectingNav": "Detecting navigation…",
+  "assistantSettings": "Assistant settings",
+  "clearHistory": "Clear history",
+  "setUp": "Set up",
+  "tellRobot": "Tell the robot what to do",
+  "checksEachStep": "Every step is checked first.",
+  "robotAbilities": "What it can do here",
+  "setUpFirst": "Set up the assistant first",
+  "send": "Send",
+  "howRobotMoves": "How does this robot move?",
+  "startDriving": "Start driving",
+  "startFlying": "Start flying",
+  "start": "Start",
+  "shortRelease": "Release to re-arm",
+  "exampleForward": "Move forward 0.5 meters",
+  "exampleLeft": "Turn left 90 degrees",
+  "exampleStatus": "What are you doing?",
+  "exampleGo": "Go to {name}",
+  "@exampleGo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exampleBattery": "How is the battery?",
+  "exampleProblem": "Is anything wrong with the robot?",
+  "exampleLocation": "Find where you are on the map",
+  "exampleSavePlace": "Save this spot as \"kitchen\"",
+  "exampleLook": "What do you see?",
+  "introLooks": "Hi! From what I can find, I am {what}. Is that right?",
+  "@introLooks": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      }
+    }
+  },
+  "introUnknown": "Hi! I could not tell what kind of robot I am. What am I?",
+  "introKindHint": "e.g. a delivery robot with a lidar",
+  "introRight": "That's right",
+  "introNotQuite": "Not quite",
+  "introKindAgain": "Sorry! What kind of robot am I?",
+  "introKindAgainHint": "e.g. a robot arm on a mobile base",
+  "introName": "What would you like to call me?",
+  "introNameHint": "A name",
+  "introNameLiked": "{name}. I like it!",
+  "@introNameLiked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "introCallMe": "And what should I call you?",
+  "introCallMeHint": "Your name or a nickname",
+  "introRole": "What will I mostly do?",
+  "introRoleHint": "e.g. night patrol of the warehouse",
+  "rolePatrol": "Patrol",
+  "roleDelivery": "Delivery",
+  "roleGuide": "Guiding people",
+  "roleResearch": "Research and testing",
+  "roleFun": "Just for fun",
+  "toneFriendly": "Friendly",
+  "toneCalm": "Calm and polite",
+  "toneShort": "Short and to the point",
+  "tonePlayful": "Playful",
+  "introTone": "How should I talk to you?",
+  "introNotes": "Anything I should always keep in mind? Places to avoid, rules, habits.",
+  "introNotesHint": "e.g. stay away from the stairs",
+  "introDone": "Nice to meet you{call}! I am {name}. You can change any of this in \"Name and personality\", or just tell me in the assistant.",
+  "@introDone": {
+    "placeholders": {
+      "call": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "introTitle": "Getting to know each other",
+  "skip": "Skip",
+  "skipped": "(skip)",
+  "answer": "Answer",
+  "done": "Done",
+  "memNoteTitle": "Something to keep in mind",
+  "add": "Add",
+  "sharedWith": "Shared with {names}.",
+  "@sharedWith": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "notShared": "{name}: not shared ({why}).",
+  "@notShared": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "why": {
+        "type": "String"
+      }
+    }
+  },
+  "noOtherRobot": "No other robot to share with.",
+  "forgetAllQuestion": "Forget everything about {name}?",
+  "@forgetAllQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "forgetAllDetail": "Its name, job, manner and notes are deleted from this phone. What it knows about you stays.",
+  "memSaveError": "Could not save to this phone ({error}). Changes last until the app closes.",
+  "@memSaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "memIntro": "The assistant speaks as this robot and uses what is here. It is kept on this phone only. You can also just tell the assistant: \"your name is Sunny\", \"call me Minsu\", \"remember: ...\".",
+  "memNameHint": "A name for the robot",
+  "memRoleHint": "e.g. night patrol",
+  "memToneHint": "e.g. friendly",
+  "memKindHint": "If the app got it wrong",
+  "nothingYet": "Nothing yet.",
+  "memEventsHint": "What it was asked and how it went; the online assistant reads these.",
+  "clear": "Clear",
+  "learnedCount": "Learned ({count})",
+  "@learnedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "learnedHint": "Shortcuts it made from what you often ask, and your own words for things.",
+  "toolSteps": "{count} steps: {steps}",
+  "@toolSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "steps": {
+        "type": "String"
+      }
+    }
+  },
+  "shareOthers": "Share with the other robots",
+  "phraseMeans": "\"{phrase}\" means {meaning}",
+  "@phraseMeans": {
+    "placeholders": {
+      "phrase": {
+        "type": "String"
+      },
+      "meaning": {
+        "type": "String"
+      }
+    }
+  },
+  "forAllRobots": "For all robots",
+  "talkAgain": "Get to know each other again",
+  "forgetMemory": "Forget this robot's memory",
+  "youSaid": "You: {text}",
+  "@youSaid": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "runRoutineLine": "Run routine: {name}",
+  "@runRoutineLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteQuestion": "Delete \"{name}\"?",
+  "@deleteQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetRoutineDeleteDetail": "The robots keep their own routines; only this fleet routine is removed.",
+  "fleetAssistant": "Fleet assistant",
+  "assistantConnection": "Assistant connection",
+  "fleetNoModel": "Download the on-device model or set up the online assistant to direct multiple robots in words. Saved fleet routines run without it.",
+  "fleetHowTo": "Name each robot in your request. Different robots can work at the same time.",
+  "runNamed": "Run \"{name}\"",
+  "@runNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetHint": "Robot 1 to the charger, robot 2 to the entrance",
+  "stopAllRobots": "Stop all robots",
+  "allRobotsStopped": "All robots stopped.",
+  "fleetConnectionTitle": "Fleet assistant connection",
+  "proxyUrl": "Proxy URL",
+  "proxyToken": "Proxy token",
+  "findingOut": "Finding out what this robot can do…",
+  "summaryError": "Could not read the robot's description: {error}",
+  "@summaryError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "thisRobot": "This robot",
+  "lookAgain": "Look again",
+  "noDescription": "The robot did not describe itself (rosapi did not answer), so its features are unknown. Driving and other tools still work with the usual topic names.",
+  "foundAt": "Found at:\n{topics}",
+  "@foundAt": {
+    "placeholders": {
+      "topics": {
+        "type": "String"
+      }
+    }
+  },
+  "notDetected": "Not detected on this robot.",
+  "waitingJoints": "Waiting for /joint_states…",
+  "gripper": "GRIPPER",
+  "open": "Open",
+  "close": "Close",
+  "home": "Home",
+  "savePose": "Save pose",
+  "ignore": "Ignore",
+  "onDeviceStart": "On-device only: download the on-device model to start.",
+  "needModelOrOnline": "Download the on-device model or set the online assistant to start.",
+  "modelUnavailable": "The on-device model is not available on this platform.",
+  "modelReady": "On-device model ready",
+  "modelForPhone": "Model for this phone ({size} GB, download once)",
+  "@modelForPhone": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "modelOptional": "Optional: phone model for simple requests ({size} GB)",
+  "@modelOptional": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "download": "Download",
+  "readyPhone": "Ready. Simple driving and status requests run on this phone.",
+  "downloadToStart": "Download the model to start.",
+  "enterProxy": "Enter the address and token of the assistant on your PC.",
+  "readyBoth": "Ready. Simple requests run on this phone, camera and complex ones online.",
+  "readyOnline": "Ready. Requests go to the assistant on your PC.",
+  "modePhone": "On this phone",
+  "modePhoneHint": "Private and offline. No camera.",
+  "modeOnline": "Online, through your PC",
+  "modeOnlineHint": "Claude or Gemini. Sees the camera.",
+  "proxyAddress": "Assistant address on your PC",
+  "token": "Token",
+  "nextRound": "Next round in {seconds} s",
+  "@nextRound": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "starting": "Starting…",
+  "stepOf": "Step {step} of {steps}: {doing}",
+  "@stepOf": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "steps": {
+        "type": "int"
+      },
+      "doing": {
+        "type": "String"
+      }
+    }
+  },
+  "runningNamed": "Running {name}",
+  "@runningNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "usedBy": "It is used by {names}, which will stop working.",
+  "@usedBy": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "addRoutineStep": "Add a routine as a step",
+  "noOtherRoutines": "No other routines yet.",
+  "steps": "Steps",
+  "remove": "Remove",
+  "noSteps": "No steps yet.",
+  "addStep": "Add a step",
+  "addRoutine": "Add a routine",
+  "repeat": "Repeat",
+  "once": "Once",
+  "times": "Times",
+  "untilStopped": "Until stopped",
+  "fewer": "Fewer",
+  "moreTimes": "More",
+  "timesCount": "{count} times",
+  "@timesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waitBetween": "Wait between rounds",
+  "keepsGoing": "Keeps going in the background.",
+  "schedule": "Schedule",
+  "addTime": "Add time",
+  "whatRobotDoes": "What the robot does",
+  "useAssistantWords": "Use the AI assistant to give instructions in words.",
+  "robotDisconnectedControl": "Robot disconnected. Control unavailable.",
+  "saveArmPose": "Save arm pose",
+  "armPoseHint": "e.g. carry, look down",
+  "holdToTakeOff": "Press and hold to take off",
+  "holdTakeOffButton": "Hold to take off",
+  "land": "Land",
+  "returnHome": "Return",
+  "typeDiff": "Differential",
+  "typeOmni": "Omnidirectional",
+  "typeCar": "Car-like",
+  "typeArm": "Fixed arm",
+  "typeDrone": "Drone",
+  "hintDiff": "Turns in place. TurtleBot, most AMRs.",
+  "hintOmni": "Also moves sideways. Mecanum or omni wheels.",
+  "hintCar": "Steers like a car. Cannot turn in place.",
+  "hintArm": "No mobile base. Arm controls only.",
+  "hintDrone": "Multirotor via MAVROS (PX4 or ArduPilot).",
+  "suggested": "SUGGESTED",
+  "changeLater": "You can change this later in settings.",
+  "enterTopic": "Enter a topic like /cmd_vel",
+  "howRobotMovesLabel": "How the robot moves",
+  "commandTopic": "Command topic",
+  "robotArm": "Robot arm",
+  "robotArmHint": "JointTrajectoryController + optional gripper action",
+  "armTopic": "Arm trajectory topic",
+  "gripperAction": "Gripper action (optional)",
+  "jointStatesTopic": "Joint states topic",
+  "odomTopic": "Odometry topic",
+  "odomHelper": "nav_msgs/Odometry, for the speed readout",
+  "camera": "Camera",
+  "camRos": "ROS image topic",
+  "camRtsp": "RTSP stream",
+  "camNone": "No camera",
+  "cameraTopicLabel": "Camera topic (sensor_msgs/Image)",
+  "enterRtsp": "Enter a valid rtsp:// address.",
+  "enterHttp": "Enter a valid http:// address.",
+  "armPoseSaved": "Saved arm pose \"{name}\". The AI assistant can now move the arm there.",
+  "@armPoseSaved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "uncompressedCamera": "Uncompressed camera: {fps} fps. A /compressed topic gives smooth video.",
+  "@uncompressedCamera": {
+    "placeholders": {
+      "fps": {
+        "type": "String"
+      }
+    }
+  },
+  "suggestedFrom": "Suggested from its ROS topics: {what}.",
+  "@suggestedFrom": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      }
+    }
+  },
+  "autoTopic": "Auto: {topic}",
+  "@autoTopic": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
+  "topSpeed": "Top speed (Fast preset): {speed} m/s",
+  "@topSpeed": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "maxSteering": "Max steering: {deg}°",
+  "@maxSteering": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "maxTurnRate": "Max turn rate (Fast preset): {rate} rad/s",
+  "@maxTurnRate": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "floors": "Floors",
+  "noFloorName": "This map has no floor name",
+  "mapShownNow": "The map shown now",
+  "noMapFileFloor": "No map file: edit it on that floor to switch here",
+  "noMapLoader": "The robot has no map loader (Nav2 map_server load_map)",
+  "finishTripFirst": "Finish or cancel the trip first",
+  "switchFloor": "Switch",
+  "floorsHelp": "Name each floor while its map is shown; then switch between them here.",
+  "localizeHint": "Tell localization where it stands now. Nothing moves.",
+  "findAutomatically": "Find it automatically",
+  "findAutoHint": "Compares the laser with the map of this floor. You check it before it is set.",
+  "showOnMap": "Show it on the map",
+  "nameThisFloor": "Name this floor",
+  "noPlacesYet": "No places yet. Tap the map to pick a spot, then save it with the bookmark button.",
+  "tapPlacePreview": "Tap a place to preview it as the goal.",
+  "robotDisconnectedShort": "Robot disconnected.",
+  "makingGoodMap": "Making a good map",
+  "mapTip1": "Drive slowly and turn gently: fast turns smear the walls.",
+  "mapTip2": "Tap the white (already seen) area to send the robot there.",
+  "mapTip3": "Come back to where you started: the map closes the loop and straightens.",
+  "mapTip4": "Save when the rooms you need are covered.",
+  "mapHintDrive": "Drive slowly. End where you started.",
+  "mapHintAround": "Drive the robot around to grow the map.",
+  "checkingMapping": "Checking mapping…",
+  "makingMap": "Making a map",
+  "notMapping": "Not mapping right now",
+  "startMappingTitle": "Start mapping on the robot",
+  "startMappingHelp": "No mapping program (SLAM) is running. The app cannot start programs on the robot: run its mapping mode there, then check again. Common ways:",
+  "copy": "Copy",
+  "copied": "Copied",
+  "checkAgain": "Check again",
+  "noLaserRobot": "This robot has no laser scan to compare with the map. Set the position by hand.",
+  "noLaserYet": "No laser scan yet. Wait a moment and try again, or set the position by hand.",
+  "cannotSearch": "Could not search this map. Set the position by hand.",
+  "chooseValidPosition": "Choose a valid map position.",
+  "outsideMap": "Outside the map. Choose a destination on the mapped floor.",
+  "onObstacle": "That destination is on a wall or obstacle. Choose open floor.",
+  "positionSet": "Robot position set. Localization will refine it as the robot moves.",
+  "saveDestinationHint": "Save a destination to reuse it here.",
+  "remoteNavigation": "Remote navigation",
+  "plannedPath": "Planned path",
+  "plannedPathNone": "Planned path (none)",
+  "centerOnRobot": "Center on robot",
+  "setRobotPosition": "Set robot position",
+  "findAuto": "Find automatically",
+  "comparingLaser": "Comparing the laser with the whole map…",
+  "noSpotFits": "No spot fits well: the room may have changed, or the robot mostly sees things that are not on the map. Set the position by hand.",
+  "foundIt": "Found it. Check that the purple dots sit on the walls, then Set position.",
+  "tapWhereRobot": "Tap where the robot really is on the map.",
+  "tapAndTurn": "Tap where the robot really is and turn the arrow until the purple dots sit on the walls.",
+  "faces": "Faces",
+  "setPosition": "Set position",
+  "dragHeading": "Drag to choose where the robot faces on arrival (or press and drag on the map)",
+  "travelDirection": "Travel direction",
+  "mappingFailHint": "Choose a spot in the white (already seen) area, or drive there.",
+  "lostHint": "Laser dots off the walls? Set pose → Find automatically, then try again.",
+  "savedOnRobotAndPhone": "Saved on the robot (as .pgm and .yaml, where its map saver runs) and a copy on this phone.",
+  "savedOnPhoneOnly": "This robot has no map saver running, so it is saved on this phone only.",
+  "saveAsPlace": "Save as a place",
+  "placeHint": "e.g. Kitchen, charging dock",
+  "floor": "Floor",
+  "floorHint": "e.g. 1F, Basement",
+  "floorMapFile": "Map file on the robot (optional)",
+  "floorMapFileHelp": "Lets the app switch the robot to this floor.",
+  "placeSaved": "Saved \"{name}\". The AI assistant can now go there by name.",
+  "@placeSaved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "loadFloorError": "Could not load {floor}: {error}",
+  "@loadFloorError": {
+    "placeholders": {
+      "floor": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "floorNotArrived": "Loaded {floor}, but its map has not arrived yet (or differs from the one named).",
+  "@floorNotArrived": {
+    "placeholders": {
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
+  "onFloorWhere": "On {floor}. Where is the robot?",
+  "@onFloorWhere": {
+    "placeholders": {
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
+  "atPlace": "At {name}",
+  "@atPlace": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteNamed": "Delete {name}",
+  "@deleteNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "connectionFailed": "Connection failed: {error}",
+  "@connectionFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "topicSaveFailed": "Topic settings apply now but could not be saved: {error}",
+  "@topicSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "mapDataError": "Map data error: {error}",
+  "@mapDataError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneCopyFailed": "Phone copy failed: {error}",
+  "@phoneCopyFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "mapSavedOnRobot": "Saved \"{name}\" on the robot.",
+  "@mapSavedOnRobot": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mapSavedOnPhone": "Saved \"{name}\" on this phone.",
+  "@mapSavedOnPhone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mapSavedBoth": "Saved \"{name}\" on the robot and on this phone.",
+  "@mapSavedBoth": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "searchFailed": "Search failed: {error}",
+  "@searchFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "setPositionFailed": "Failed to set position: {error}",
+  "@setPositionFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "sendGoalFailed": "Failed to send goal: {error}",
+  "@sendGoalFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "laserFits": "Purple laser fits the walls ({percent}%)",
+  "@laserFits": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "laserNotFits": "Purple laser does not fit the walls well ({percent}%)",
+  "@laserNotFits": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "foundLookalike": "Found it. {count} spots look alike here; this is the one nearest where the robot thought it was. Check the purple dots, then Set position.",
+  "@foundLookalike": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "arrivalHeading": "Arrival heading {deg} degrees",
+  "@arrivalHeading": {
+    "placeholders": {
+      "deg": {
+        "type": "int"
+      }
+    }
+  },
+  "rosapiListError": "Could not list topics (is rosapi running?): {error}",
+  "@rosapiListError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noNumericFields": "This message has no numeric fields to chart.",
+  "fieldsError": "Could not read the message fields: {error}",
+  "@fieldsError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addCustomSensor": "Add a custom sensor",
+  "rosTopic": "ROS topic",
+  "searchTopics": "Search topics or types",
+  "valueToChart": "Value to chart",
+  "addSensor": "Add sensor",
+  "saveSensorError": "Could not save custom sensor: {error}",
+  "@saveSensorError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "removeSensorError": "Could not remove custom sensor: {error}",
+  "@removeSensorError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unreadableMessage": "Unreadable message: {error}",
+  "@unreadableMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "showUpToSensors": "Show up to {count} standard sensors",
+  "@showUpToSensors": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dismiss": "Dismiss",
+  "lookingSensors": "Looking for sensor topics…",
+  "noSensorTopics": "No sensor topics found",
+  "addValueFromTopic": "Add a value from a topic",
+  "waitingData": "Waiting for data",
+  "updatedAgo": "Updated {seconds} s ago",
+  "@updatedAgo": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "noDataFor": "No data for {seconds} s",
+  "@noDataFor": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "graph": "Graph",
+  "removeCustomSensor": "Remove custom sensor",
+  "copiedLines": "{count, plural, one {Copied 1 line} other {Copied {count} lines}}",
+  "@copiedLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchLog": "Search the log",
+  "copyShownLines": "Copy shown lines",
+  "all": "All",
+  "problems": "Problems",
+  "problemsCount": "Problems {count}",
+  "@problemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errors": "Errors",
+  "errorsCount": "Errors {count}",
+  "@errorsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paused": "Paused",
+  "pausedNew": "Paused · {count} new",
+  "@pausedNew": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resume": "Resume",
+  "listeningLog": "Listening for log messages…",
+  "listeningLogHint": "Lines appear as the robot's nodes log them (from /rosout). A quiet robot may log nothing for a while.",
+  "nothingMatches": "Nothing matches",
+  "tryAnother": "Try another search or node.",
+  "noLogLines": "No log lines",
+  "clearedHint": "Cleared. New lines will appear here.",
+  "noProblems": "No problems",
+  "noErrorsSince": "No errors from the robot since you connected.",
+  "noWarningsSince": "No warnings or errors from the robot since you connected.",
+  "onlyThisNode": "Only this node",
+  "settingsReadError": "Could not read the robot's settings: {error}",
+  "@settingsReadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "readAgain": "Read again",
+  "common": "Common",
+  "allParameters": "All parameters",
+  "readingSettings": "Reading settings from the robot…",
+  "appliesUntilRestart": "Applies at once, until the robot restarts.",
+  "backToFirst": "Back to the values from when you connected",
+  "undo": "Undo",
+  "applying": "Applying…",
+  "applyChanges": "{count, plural, one {Apply 1 change} other {Apply {count} changes}}",
+  "@applyChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noNavStack": "No Nav2 or move_base found. See All parameters.",
+  "less": "Less",
+  "partsDisagree": "Parts of the robot disagree ({values} {unit}); the lowest one wins. Applying sets them all.",
+  "@partsDisagree": {
+    "placeholders": {
+      "values": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "nowOnRobot": "Now {value} on the robot",
+  "@nowOnRobot": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "searchParameters": "Search parameters",
+  "searchNodes": "Search nodes",
+  "nothingFound": "Nothing found",
+  "nodeNoAnswer": "This node did not answer: {error}",
+  "@nodeNoAnswer": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paramFixed": "This parameter cannot be changed here.",
+  "nowValue": "Now {value}.",
+  "@nowValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "setTo": "Set to {value}",
+  "@setTo": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "commaValues": "Values separated by commas",
+  "paramChanged": "{name} changed. It lasts until the robot restarts.",
+  "@paramChanged": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notChanged": "Not changed: {reason}",
+  "@notChanged": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "setSpeed": "Top speed",
+  "setSpeedHelp": "When it drives on its own.",
+  "setTurn": "Turning speed",
+  "setTurnHelp": "Turning on the spot, on its own.",
+  "setClearance": "Distance from obstacles",
+  "setClearanceHelp": "Larger is safer; too large and it will not fit through gaps.",
+  "setRadius": "Robot size (radius)",
+  "setRadiusHelp": "Too small clips corners; too big will not fit.",
+  "setArrive": "Close enough to arrive",
+  "setArriveHelp": "How near counts as arrived.",
+  "setHeading": "Heading accuracy on arrival",
+  "setHeadingHelp": "How exactly it must face the chosen way.",
+  "setSight": "Obstacle sensing distance",
+  "setSightHelp": "How far it looks for obstacles.",
+  "playOnly": "Available in the app from Google Play.",
+  "playLoadError": "Could not load from Google Play.",
+  "playReachError": "Could not reach Google Play.",
+  "thankYou": "Thank you!",
+  "paymentPending": "Waiting for the payment to go through. It finishes in Google Play.",
+  "restoreToFinish": "Restore remote benefits to finish delivery.",
+  "remoteAccessTitle": "Remote access",
+  "supportTitle": "Support Mobile ROS",
+  "supportIntroRemote": "Support development.\nRemote benefits have usage limits.",
+  "supportIntro": "Free, with every feature.\nSupport it if it helps you.",
+  "thanksSupport": "Thank you for your support!",
+  "supportDev": "Support development",
+  "dataMeasured": "Data is measured across the robot and app connections, including connection overhead. No automatic top-ups.",
+  "tryAgain": "Try again",
+  "throughPlay": "Through Google Play. Cancel monthly any time.",
+  "paymentFailed": "Payment failed{detail}",
+  "@paymentFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentStartFailed": "Could not start the payment.\n{error}",
+  "@paymentStartFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "resetLinkUsed": "This reset link was already used. Request a new one from Sign in.",
+  "emailConfirmed": "Your email is confirmed. Sign in to continue.",
+  "confirmLinkFailed": "That confirmation link could not be used. Try signing in or create your account again.",
+  "requestFailed": "Could not complete this request. Please try again.",
+  "remoteUnreachable": "Could not reach remote access.",
+  "restoreBenefitsQ": "Restore remote benefits?",
+  "restore": "Restore",
+  "openFromPlay": "Open the Android app from Google Play to restore purchases.",
+  "noPurchasesFound": "No eligible purchases were found. Check the Google Play account used for your purchase. Past tips may need support review.",
+  "benefitsRestored": "Remote benefits restored. Your allowance is up to date.",
+  "enterRegCode": "Enter the 8-character code shown on the robot computer, like K7QM-4XTD.",
+  "removeRobotQ": "Remove robot?",
+  "pwChangeUnconfirmed": "Could not confirm the password change. Sign in or request a new reset link from Forgot password.",
+  "pwChanged": "Your password is changed. Sign in with the new password on each device.",
+  "accountDeleted": "Your account, robots and remote data are deleted.",
+  "accountClosed": "Your robots and remote data are deleted and the account is closed. Its sign-in is removed within 7 days.",
+  "otherSetupWays": "Other ways to set up",
+  "setupNearby": "Connected to the robot nearby? Open it in the app, then More > Remote access: the app installs everything over SSH with the robot computer’s password or key.",
+  "setupName": "Name the robot: add  -s -- --name \"Warehouse robot\"  after bash. Without systemd, or to run it by hand from the Mobile ROS repository:",
+  "noCredentialNeeded": "The app never needs the robot credential file.",
+  "backToSignIn": "Back to sign in",
+  "signOut": "Sign out",
+  "setNewPassword": "Set a new password",
+  "everyDeviceSignsIn": "Every device signs in again afterwards.",
+  "newPassword": "New password",
+  "min12": "Use at least 12 characters.",
+  "confirmPassword": "Confirm password",
+  "pwMismatch": "Passwords do not match.",
+  "saveNewPassword": "Save new password",
+  "step2Verify": "Step 2 of 2 · Verify email",
+  "checkEmail": "Check your email",
+  "openConfirmLink": "Open the confirmation link we sent to:",
+  "afterConfirm": "After confirming your email, sign in to register your first robot.",
+  "signInToFinish": "Sign in to finish setting up your account.",
+  "iConfirmed": "I've confirmed my email",
+  "differentEmail": "Use a different email",
+  "step1Account": "Step 1 of 2 · Account details",
+  "createAnAccount": "Create an account",
+  "signIn": "Sign in",
+  "createThenVerify": "Create your account, then verify your email to get started.",
+  "accessRegistered": "Access your registered robots.",
+  "email": "Email",
+  "enterEmail": "Enter your email address.",
+  "password": "Password",
+  "enterPassword": "Enter your password.",
+  "createAccount": "Create account",
+  "haveAccount": "Already have an account? Sign in",
+  "newHere": "New here? Create an account",
+  "forgotPassword": "Forgot password?",
+  "connectNearbyInstead": "Connect to a nearby robot instead",
+  "signedIn": "Signed in",
+  "noRobotsYet": "No robots yet. Register your first robot to connect from anywhere.",
+  "online": "Online",
+  "offline": "Offline",
+  "removeRobot": "Remove robot",
+  "registerRobot": "Register a robot",
+  "step1Terminal": "1. In a terminal on the robot computer, run:",
+  "commandCopied": "Command copied",
+  "step2Qr": "2. It installs Mobile ROS, starts it at boot and shows a QR code. Scan it with this phone’s camera and approve, or enter the code shown under it here. It expires after 10 minutes.",
+  "scanQr": "Scan QR code",
+  "registrationCode": "Registration code",
+  "refresh": "Refresh",
+  "connectNearby": "Connect nearby",
+  "remoteUsage": "Remote usage",
+  "freeAllowance": "Free allowance",
+  "subscriberAllowance": "Subscriber allowance",
+  "remotePaused": "Remote access is paused until usage resets. Nearby connections are available.",
+  "remote80": "You have used 80% of your remote allowance. Access pauses at the limit.",
+  "noOverage": "No automatic overage charges. Remote access pauses at the limit.",
+  "restoreBenefits": "Restore remote benefits",
+  "remotePreviewNote": "Remote preview: 30 minutes per session. Leaving the app ends remote access. Manual drive is capped at 0.25 m/s and 0.6 rad/s. Navigation uses the robot’s configured speed limits.",
+  "deleteAccount": "Delete account",
+  "resetPassword": "Reset password",
+  "weEmailLink": "We email a link to set a new password.",
+  "deleteAccountQ": "Delete account?",
+  "deleteAccountBody": "Your account, all robots registered to it and their remote access are deleted. Robots must be registered again to use remote access. This cannot be undone.",
+  "nearbyWithoutAccount": "Connecting to robots nearby keeps working without an account.",
+  "deleteNoCancelSub": "Account deletion does not cancel Google Play subscriptions. Cancel them in Google Play to stop renewal.",
+  "linkPurchasesTo": "Link eligible Google Play purchases to {account}. Each purchase can belong to one Mobile ROS account. Past coffee and lunch tips may need support review.",
+  "@linkPurchasesTo": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "thisAccount": "this account",
+  "removeRobotBody": "{name} will be removed from your account and all remote connections will end. Register it again from the robot computer to reconnect.",
+  "@removeRobotBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "resetLinkSent": "If an account uses {email}, a reset link is on its way. Open it on this device.",
+  "@resetLinkSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteRobotsAtATime": "{count, plural, one {1 remote robot at a time} other {{count} remote robots at a time}}",
+  "@remoteRobotsAtATime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "isThisComputer": "Is this your robot computer?",
+  "hostKeyHelp": "On a network you trust, continue. To be sure, compare it with the output of\nssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub\non the robot computer.",
+  "signingInComputer": "Signing in to the robot computer",
+  "setupNotFinished": "Setup did not finish. Try again.",
+  "reachAnywhere": "Reach this robot from anywhere",
+  "signInFirst": "Sign in to your Mobile ROS account first. The robot is added to it.",
+  "remoteIsOn": "Remote access is on",
+  "alreadySetUp": "Already set up",
+  "alreadySetUpBody": "Remote access was set up on this robot computer before. If the robot is not in My robots, set it up again.",
+  "openMyRobots": "Open My robots",
+  "setUpAgain": "Set it up again",
+  "replacesEarlier": "This replaces the earlier registration of this robot computer.",
+  "setupExplain": "The app signs in to the robot computer once, installs Mobile ROS there and starts it at boot. Your password or key is used only for this and is not saved.",
+  "robotName": "Robot name",
+  "enterRobotName": "Enter a robot name.",
+  "computerAddress": "Robot computer address",
+  "enterComputerAddress": "Enter the robot computer address.",
+  "computerUser": "User on the robot computer",
+  "sudoAccount": "An account that can use sudo.",
+  "enterUserName": "Enter the user name.",
+  "privateKey": "Private key",
+  "enterThePassword": "Enter the password.",
+  "pasteWholeKey": "Paste the whole key (OpenSSH or PEM).",
+  "pastePrivateKey": "Paste the private key.",
+  "keyPassphrase": "Key passphrase (if any)",
+  "sudoPassword": "sudo password (if asked)",
+  "sudoNoPassword": "Leave empty when sudo needs no password.",
+  "alsoRosbridge": "Also start rosbridge when the robot computer starts",
+  "settingUp": "Setting up…",
+  "setUpRemote": "Set up remote access",
+  "linkInvalid": "This link is not valid. Open it again from the robot computer.",
+  "mrosUnreachable": "Could not reach Mobile ROS. Check the connection and try again.",
+  "addARobot": "Add a robot",
+  "connectAnywhereDone": "Connect to it from anywhere. The robot computer shows Done too.",
+  "addRobotToAccount": "Add a robot to your account",
+  "addThisRobotQ": "Add this robot to your account?",
+  "approveOwnOnly": "Only approve a robot you set up yourself just now. Its owner can drive it remotely.",
+  "adding": "Adding…",
+  "addToMyAccount": "Add to my account",
+  "firstConnectionTo": "First connection to {host}. Its identity is:",
+  "@firstConnectionTo": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "hostChanged": "The robot computer at {host} has a different identity than last time. Nothing was installed. If it was reinstalled, remove it from the app data or check the network.",
+  "@hostChanged": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "inMyRobotsStarts": "{name} is in My robots and starts with the robot computer. Connect from anywhere.",
+  "@inMyRobotsStarts": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "robotInMyRobots": "{name} is in My robots",
+  "@robotInMyRobots": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "theRobot": "The robot",
+  "signInToApprove": "Sign in to Mobile ROS to approve robot {code}.",
+  "@signInToApprove": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "statusCode": "{status} · code {code}",
+  "@statusCode": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "rosapiGraphError": "Could not read the ROS graph (is rosapi running?): {error}",
+  "@rosapiGraphError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "searchNamesTypes": "Search names and types",
+  "nodes": "Nodes",
+  "services": "Services",
+  "nothingHereYet": "Nothing here yet. Refresh after the robot starts.",
+  "noMatches": "No matches.",
+  "messageCopied": "Message copied.",
+  "typeLabel": "Type",
+  "rate": "Rate",
+  "waitingMessages": "Waiting for messages…",
+  "heavyRate": "{hz} Hz shown (large messages, at most 1 Hz)",
+  "@heavyRate": {
+    "placeholders": {
+      "hz": {
+        "type": "String"
+      }
+    }
+  },
+  "received": "Received",
+  "publishers": "Publishers",
+  "subscribers": "Subscribers",
+  "noMessageYet": "No message yet. Nothing may be publishing on this topic.",
+  "pausedFrozen": "Paused: the message above is frozen; the rate keeps counting.",
+  "nodeDetails": "Node details",
+  "publishes": "Publishes",
+  "subscribesTo": "Subscribes to",
+  "requestInvalid": "Request is not valid: {error}",
+  "@requestInvalid": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "readingType": "Reading type…",
+  "typeUnknown": "Type unknown",
+  "requestJson": "Request (JSON)",
+  "noFieldsService": "This service takes no fields, or its type is unknown.",
+  "prefilled": "Pre-filled with defaults from {type}.",
+  "@prefilled": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "callService": "Call service",
+  "callsActForReal": "Calls run on the robot immediately. Services that move hardware or change state act for real.",
+  "removedTypeUsable": "Removed {type}. It stays usable until you reconnect.",
+  "@removedTypeUsable": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "addDefinition": "Add definition",
+  "editDefinition": "Edit definition",
+  "definitionsIntro": "Direct ROS 2 reads messages using their definitions. Standard ROS 2 packages are built in; add the .msg, .srv and .action files of your robot's own packages here. rosbridge connections do not need this.",
+  "neededByRobot": "NEEDED BY THIS ROBOT",
+  "cannotReadYet": "Topics or services of this type cannot be read yet",
+  "yourDefinitions": "YOUR DEFINITIONS",
+  "noneYet": "None yet.",
+  "fieldsCount": "{count, plural, one {1 field} other {{count} fields}}",
+  "@fieldsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alsoNeeds": "Also needs {types}",
+  "@alsoNeeds": {
+    "placeholders": {
+      "types": {
+        "type": "String"
+      }
+    }
+  },
+  "nameTypeLike": "Name it like my_robot_msgs/msg/Status (or …/srv/…, …/action/…)",
+  "pasteDefinition": "Paste the contents of the .msg, .srv or .action file",
+  "typeFormatHelp": "Package / msg, srv or action / Name",
+  "definition": "Definition",
+  "usesUnknownTypes": "Uses types the app does not know yet: {types}. Save this and add them too.",
+  "@usesUnknownTypes": {
+    "placeholders": {
+      "types": {
+        "type": "String"
+      }
+    }
+  },
+  "replacesBuiltIn": "This replaces the built-in definition of {type}.",
+  "@replacesBuiltIn": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingOnTopic": "Waiting for messages on {topic}…",
+  "@waitingOnTopic": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
+  "noNumbersYet": "No numbers to show yet.",
+  "addAnotherValue": "Add another value from this topic",
+  "graphPaused": "Paused: the graph is frozen; values keep being recorded.",
+  "searchValues": "Search values",
+  "noNumbersInMessage": "No numbers in this message",
+  "mapTopics": "Map topics",
+  "mapTopicsHelp": "Leave a field empty to find it automatically. Pick from the robot's topics or type any name.",
+  "allAutomatic": "All automatic",
+  "apply": "Apply",
+  "autoNotFound": "Auto (not found)",
+  "autoValue": "Auto: {value}",
+  "@autoValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "chooseFromRobot": "Choose from the robot",
+  "startWithSlash": "Start with / and use no spaces.",
+  "slotMap": "Map",
+  "slotMapHelp": "Occupancy grid to draw",
+  "slotOdom": "Odometry",
+  "slotOdomHelp": "Robot motion; also names the base frame",
+  "slotTf": "TF",
+  "slotTfHelp": "Transforms (map → odom → base)",
+  "slotTfStatic": "Static TF",
+  "slotTfStaticHelp": "Fixed transforms (sensor mounts)",
+  "slotScan": "LiDAR",
+  "slotScanHelp": "Laser scan overlay",
+  "slotPlanHelp": "Global plan overlay",
+  "slotNavAction": "Nav2 action",
+  "slotNavActionHelp": "NavigateToPose action server (ROS 2). Set to use goals with progress",
+  "slotGoal": "Goal topic",
+  "slotGoalHelp": "Used when there is no action server (ROS 2)",
+  "slotInitialPose": "Initial pose",
+  "slotInitialPoseHelp": "Set pose publishes here",
+  "fleetServerPreview": "Fleet server (Preview)",
+  "connectToSite": "Connect to your site",
+  "siteServerHelp": "The on-site server keeps tracking robots and tasks while this device is away.",
+  "serverUrl": "Server URL",
+  "operatorToken": "Operator token",
+  "openFleetDashboard": "Open fleet dashboard",
+  "needFreeRobotDest": "A free online robot and a saved destination are needed.",
+  "requestTransport": "Request a transport task",
+  "destination": "Destination",
+  "requestTask": "Request task",
+  "fleetOperations": "Fleet operations",
+  "dashboardStale": "Could not update the dashboard. Displayed data may be out of date.\n{error}",
+  "@dashboardStale": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "robotsCountStatus": "{count} robots · {status}",
+  "@robotsCountStatus": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "statusUnavailable": "Status unavailable",
+  "connectedShort": "Connected",
+  "robotNetworkOffline": "Robot network offline",
+  "noRobotsFoundServer": "No robots found. Check the server connection to your robot network.",
+  "sharedMap": "Shared map",
+  "taskQueue": "Task queue and history",
+  "noTasksYet": "No tasks yet.",
+  "cancelTask": "Cancel task",
+  "askAgainCancel": "Ask again to cancel",
+  "batteryLine": "Battery: {value}",
+  "@batteryLine": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "positionLine": "Position: {value}",
+  "@positionLine": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "taskLine": "Task: {value}",
+  "@taskLine": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLine": "Error: {value}",
+  "@errorLine": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingSiteMap": "Waiting for the site map.",
+  "savedTypesInvalid": "Saved custom types were invalid and have been ignored.",
+  "offlineTypesError": "Could not load offline message types: {error}",
+  "@offlineTypesError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "robotRejected": "Robot rejected a request: {message}",
+  "@robotRejected": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "connectionError": "Connection error: {error}",
+  "@connectionError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "robotConnectionClosed": "Robot connection closed.",
+  "cannotConnectRobot": "Could not connect to the robot: {error}",
+  "@cannotConnectRobot": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rosTopicsReadError": "Could not read ROS topics. Check that rosapi is running: {error}",
+  "@rosTopicsReadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "schemaLoadError": "Could not load the schema for {type}{detail}",
+  "@schemaLoadError": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "enterValidValue": "Enter a valid value.",
+  "recursiveField": "This message contains a recursive or unavailable field definition.",
+  "jsonArray": "JSON array",
+  "exactlyItems": "JSON array · exactly {count} items",
+  "@exactlyItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "trueLabel": "True",
+  "falseLabel": "False",
+  "chooseTrueFalse": "Choose true or false.",
+  "fixJsonFirst": "Fix the JSON before switching to form mode: {error}",
+  "@fixJsonFirst": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "checkHighlighted": "Check the highlighted fields.",
+  "publishSent": "Publish request sent to {topic}. Robot delivery is not confirmed.",
+  "@publishSent": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotPublish": "Could not publish: {error}",
+  "@cannotPublish": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "publishingAt": "Publishing at {hz} Hz. Press Stop to end.",
+  "@publishingAt": {
+    "placeholders": {
+      "hz": {
+        "type": "int"
+      }
+    }
+  },
+  "repeatStopped": "Repeated publishing stopped: {error}",
+  "@repeatStopped": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "repeatStartFailed": "Could not start repeated publishing: {error}",
+  "@repeatStartFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "stoppedZero": "Stopped and sent a zero velocity command.",
+  "connectionUnavailable": "Robot connection is unavailable.",
+  "enterValidTopic": "Enter a valid topic name.",
+  "addCustomType": "Add a custom message type",
+  "typeName": "Type name",
+  "fieldsAsJson": "Fields as JSON",
+  "enterTypeAndJson": "Enter a type name and a JSON object.",
+  "invalidCustomType": "Invalid custom type: {error}",
+  "@invalidCustomType": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addType": "Add type",
+  "addedType": "Added {type}.",
+  "@addedType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "customTypesSaveError": "Could not save custom types: {error}",
+  "@customTypesSaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "customTypes": "Custom message types",
+  "noCustomTypes": "No custom message types yet.",
+  "removedTypeShort": "Removed {type}.",
+  "@removedTypeShort": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "publish": "Publish",
+  "stopCount": "Stop · {count}",
+  "@stopCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "repeatHz": "Repeat · {hz} Hz",
+  "@repeatHz": {
+    "placeholders": {
+      "hz": {
+        "type": "int"
+      }
+    }
+  },
+  "repeatRate": "Repeat rate",
+  "refreshRobotTopics": "Refresh robot topics",
+  "addCustomTypeShort": "Add custom type",
+  "manageCustomTypes": "Manage custom types",
+  "composeMessage": "Compose a ROS message",
+  "composeHelp": "Pick a live topic to fill its type automatically, or enter a topic and type yourself.",
+  "topicName": "Topic name",
+  "topicNoSpaces": "Enter a topic name without spaces.",
+  "messageType": "Message type",
+  "selectMessageType": "Select a message type.",
+  "messageContent": "MESSAGE CONTENT",
+  "form": "Form",
+  "definitionUnavailable": "Message definition unavailable. Check rosapi or choose an offline type.",
+  "messageJson": "Message JSON",
+  "jsonCheckedHelp": "Nested values and arrays are checked against the selected ROS schema.",
+  "enterValidJson": "Enter valid JSON.",
+  "needsAttention": "Needs attention",
+  "publishStatus": "Publish status",
+  "recentMessages": "RECENT MESSAGES",
+  "connectedLoadingTopics": "Connected · loading ROS topics…",
+  "connectedToRobot": "Connected to the robot",
+  "connectingToRobot": "Connecting to the robot…",
+  "tips": "Tips",
+  "turnLeft45": "Turn left 45°",
+  "turnRight45": "Turn right 45°",
+  "sensorTopicLimit": "Sensor topic limit",
+  "findSensorsAgain": "Find sensors again",
+  "graphAValue": "Graph a value",
+  "copyAsJson": "Copy message as JSON",
+  "registerRobotShort": "Register robot",
+  "sendLink": "Send link",
+  "continueLabel": "Continue",
+  "noCommonSettings": "No common settings found",
+  "scanRobotQr": "Scan the robot’s QR code",
+  "mapAroundRobot": "Map around the robot",
+  "wholeMap": "Whole map",
+  "allNodes": "All nodes",
+  "closeSearch": "Close search",
+  "search": "Search",
+  "batteryLowNotice": "Battery low: {level}. Send it to charge before it stops on the way.",
+  "@batteryLowNotice": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "routineStartingNotice": "Scheduled routine \"{routine}\" is starting on {robot}.",
+  "@routineStartingNotice": {
+    "placeholders": {
+      "routine": {
+        "type": "String"
+      },
+      "robot": {
+        "type": "String"
+      }
+    }
+  },
+  "routineFailedNotice": "Scheduled routine \"{routine}\" did not finish: {reason}",
+  "@routineFailedNotice": {
+    "placeholders": {
+      "routine": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "failed": "Failed.",
+  "otherDriver": "Something else is moving this robot (navigation, a joystick or another phone). Your stick and its commands will fight.",
+  "lagMs": "Lag {ms} ms",
+  "@lagMs": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "lagHelp": "Commands take {ms} ms to reach the robot and come back. With this much lag the robot reacts late: drive slowly.",
+  "@lagHelp": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "navStuckNotice": "It has not got closer to its goal for a while ({left} left). It may be stuck: check on it.",
+  "@navStuckNotice": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "incidentRecords": "Incident records",
+  "incidentRecordsHint": "The last minutes before something went wrong",
+  "incidentHint": "The app keeps the robot's last 5 minutes (where it was, what drove it, trips, the assistant's steps, warnings and errors) and saves them when something goes wrong: the link drops while moving, a trip gets stuck or fails, a scheduled routine fails. Save them yourself any time. Kept on this phone only.",
+  "saveLastMinutes": "Save the last 5 minutes",
+  "noIncidents": "No records yet.",
+  "incidentSaved": "Saved the last 5 minutes.",
+  "eventsCount": "{count, plural, one {1 event} other {{count} events}}",
+  "@eventsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "copyRecord": "Copy the record (JSON)",
+  "noEventsYet": "Nothing happened before this moment.",
+  "reasonManual": "Saved by hand",
+  "reasonLinkLost": "Connection lost while moving",
+  "reasonStuck": "Trip stopped getting closer",
+  "reasonNavFailed": "Trip failed",
+  "reasonRoutineFailed": "Scheduled routine failed",
+  "foxgloveError": "Could not reach a Foxglove bridge at {address}. Check that foxglove_bridge runs on the robot (port 8765 by default) and that this phone is on the same network.",
+  "@foxgloveError": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "shareRobot": "Share…",
+  "leaveRobot": "Leave this robot",
+  "roleViewer": "View only",
+  "roleOperator": "Can drive",
+  "roleViewerHelp": "Sees the robot and its camera, and can always stop it. Cannot drive.",
+  "roleOperatorHelp": "Can drive and send it places. One person drives at a time.",
+  "shareIntro": "Give this code to the person. They enter it in Mobile ROS under My robots → Join a shared robot. It works once, for 7 days. They use their own remote allowance.",
+  "createCode": "Create code",
+  "codeExpires": "Expires {date}",
+  "@codeExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "joinShared": "Join a shared robot",
+  "invitationCode": "Invitation code",
+  "join": "Join",
+  "joinedRobot": "{name} is now in My robots ({role}).",
+  "@joinedRobot": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "sharedByOwner": "Shared with you · {role}",
+  "@sharedByOwner": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "noMembers": "Not shared with anyone yet.",
+  "openInvites": "{count, plural, one {1 unused code} other {{count} unused codes}}",
+  "@openInvites": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memberLabel": "Person {n}",
+  "@memberLabel": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "peopleWithAccess": "People with access"
+}

@@ -1,0 +1,47 @@
+diff --git a/src/core/ddsi/src/q_ddsi_discovery.c b/src/core/ddsi/src/q_ddsi_discovery.c
+index 973fa42..ba5a05f 100644
+--- a/src/core/ddsi/src/q_ddsi_discovery.c
++++ b/src/core/ddsi/src/q_ddsi_discovery.c
+@@ -190,9 +190,24 @@ static struct addrset *addrset_from_locatorlists (const struct ddsi_domaingv *gv
+   }
+   //GVTRACE(" allow_loopback=%d\n", allow_loopback);
+ 
++  // Mobile ROS patch: if any advertised unicast address is directly reachable (same subnet as one of our
++  // interfaces), ignore the "distant" ones. Hosts often advertise addresses that cannot be reached from
++  // here (WSL mirrored 10.255.255.254, docker bridges, VPNs); picking one of those first silently breaks
++  // SEDP even though a perfectly good address is in the same list.
++  bool any_nearby = false;
++  for (struct nn_locators_one *l = uc->first; l != NULL && !any_nearby; l = l->next)
++  {
++    if (!allow_loopback && ddsi_is_loopbackaddr (gv, &l->loc))
++      continue;
++    any_nearby = (ddsi_is_nearby_address (gv, &l->loc, (size_t) gv->n_interfaces, gv->interfaces, NULL) == DNAR_LOCAL);
++  }
++
+   bool direct = false;
+   for (struct nn_locators_one *l = uc->first; l != NULL; l = l->next)
+   {
++    if (any_nearby && !ddsi_is_loopbackaddr (gv, &l->loc) &&
++        ddsi_is_nearby_address (gv, &l->loc, (size_t) gv->n_interfaces, gv->interfaces, NULL) == DNAR_DISTANT)
++      continue;
+ #if 0
+     {
+       char buf[DDSI_LOCSTRLEN];
+diff --git a/src/ddsrt/src/threads/posix/threads.c b/src/ddsrt/src/threads/posix/threads.c
+index 0191ec4..1c76896 100644
+--- a/src/ddsrt/src/threads/posix/threads.c
++++ b/src/ddsrt/src/threads/posix/threads.c
+@@ -299,11 +299,13 @@ ddsrt_thread_create (
+       DDS_ERROR("ddsrt_thread_create(%s): pthread_attr_setschedparam(priority = %d) failed with error %d\n", name, tattr.schedPriority, result);
+       goto err;
+     }
++#if !defined(__ANDROID__) || __ANDROID_API__ >= 28 /* bionic has it from API 28 */
+     if ((result = pthread_attr_setinheritsched (&attr, PTHREAD_EXPLICIT_SCHED)) != 0)
+     {
+       DDS_ERROR("ddsrt_thread_create(%s): pthread_attr_setinheritsched(EXPLICIT) failed with error %d\n", name, result);
+       goto err;
+     }
++#endif
+   }
+ 
+   /* Construct context structure & start thread */

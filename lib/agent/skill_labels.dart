@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'skill.dart';
+import '../app_language.dart';
+import '../l10n/generated/app_localizations.dart';
 
 /// People-facing names for the agent's skills. The manifest's descriptions are written for the model
 /// ("Use it to answer questions about…"); screens where a person picks or reads steps use these instead.
@@ -10,29 +12,43 @@ class SkillLabel {
   final IconData icon;
 }
 
-const _labels = <String, SkillLabel>{
-  'move': SkillLabel('Drive forward or back', 'Drives a set distance. A negative distance goes backward.', Icons.straight),
-  'rotate': SkillLabel('Turn in place', 'Turns by an angle. Positive turns left.', Icons.rotate_left),
-  'strafe': SkillLabel('Slide sideways', 'Moves sideways. Positive goes left.', Icons.swap_horiz),
-  'go_to_place': SkillLabel('Go to a saved place', 'Navigates to a place saved on the map.', Icons.place_outlined),
-  'navigate_to': SkillLabel('Go to a map point', 'Navigates to x, y on the map.', Icons.near_me_outlined),
-  'look': SkillLabel('Take a camera picture', 'Takes a picture with the robot\'s camera.', Icons.photo_camera_outlined),
-  'get_status': SkillLabel('Report status', 'Says what the robot is doing.', Icons.info_outline),
-  'cancel_navigation': SkillLabel('Cancel navigation', 'Cancels the current navigation goal.', Icons.cancel_outlined),
-  'stop': SkillLabel('Stop', 'Stops all motion.', Icons.stop_circle_outlined),
-  'run_routine': SkillLabel('Run a routine', 'Runs another saved routine.', Icons.playlist_play),
-  'save_routine': SkillLabel('Save as routine', 'Saves the last actions as a routine.', Icons.save_outlined),
-  'check_robot': SkillLabel('Check the robot', 'Battery and recent warnings or errors.', Icons.health_and_safety_outlined),
-  'find_position': SkillLabel('Find its position', 'Matches the laser to the map and sets the position.', Icons.travel_explore),
-  'save_place': SkillLabel('Save this spot', 'Saves where the robot is as a named place.', Icons.bookmark_add_outlined),
-  'save_map': SkillLabel('Save the map', 'Saves the map being made.', Icons.save_alt),
+const _icons = <String, IconData>{
+  'move': Icons.straight, 'rotate': Icons.rotate_left, 'strafe': Icons.swap_horiz,
+  'go_to_place': Icons.place_outlined, 'navigate_to': Icons.near_me_outlined, 'look': Icons.photo_camera_outlined,
+  'get_status': Icons.info_outline, 'cancel_navigation': Icons.cancel_outlined, 'stop': Icons.stop_circle_outlined,
+  'run_routine': Icons.playlist_play, 'save_routine': Icons.save_outlined,
+  'check_robot': Icons.health_and_safety_outlined, 'find_position': Icons.travel_explore,
+  'save_place': Icons.bookmark_add_outlined, 'save_map': Icons.save_alt,
 };
 
 /// The order skills are offered in: everyday motion first.
 const _order = ['move', 'rotate', 'strafe', 'go_to_place', 'navigate_to', 'look', 'get_status', 'check_robot',
   'find_position', 'cancel_navigation', 'stop', 'run_routine', 'save_routine', 'save_place', 'save_map'];
 
-SkillLabel skillLabel(String name) => _labels[name] ?? SkillLabel(name, '', Icons.bolt);
+/// [name]'s label in the app's language ([strings], or the chosen language); a skill without one (a
+/// learned tool) shows its own name.
+SkillLabel skillLabel(String name, [AppLocalizations? strings]) {
+  final s = strings ?? appStrings;
+  final (title, description) = switch (name) {
+    'move' => (s.skillMove, s.skillMoveDesc),
+    'rotate' => (s.skillRotate, s.skillRotateDesc),
+    'strafe' => (s.skillStrafe, s.skillStrafeDesc),
+    'go_to_place' => (s.skillGoToPlace, s.skillGoToPlaceDesc),
+    'navigate_to' => (s.skillNavigateTo, s.skillNavigateToDesc),
+    'look' => (s.skillLook, s.skillLookDesc),
+    'get_status' => (s.skillGetStatus, s.skillGetStatusDesc),
+    'cancel_navigation' => (s.skillCancelNavigation, s.skillCancelNavigationDesc),
+    'stop' => (s.skillStop, s.skillStopDesc),
+    'run_routine' => (s.skillRunRoutine, s.skillRunRoutineDesc),
+    'save_routine' => (s.skillSaveRoutine, s.skillSaveRoutineDesc),
+    'check_robot' => (s.skillCheckRobot, s.skillCheckRobotDesc),
+    'find_position' => (s.skillFindPosition, s.skillFindPositionDesc),
+    'save_place' => (s.skillSavePlace, s.skillSavePlaceDesc),
+    'save_map' => (s.skillSaveMap, s.skillSaveMapDesc),
+    _ => (name, ''),
+  };
+  return SkillLabel(title, description, _icons[name] ?? Icons.bolt);
+}
 
 List<Skill> inEverydayOrder(Iterable<Skill> skills) {
   int rank(Skill s) {
@@ -42,21 +58,30 @@ List<Skill> inEverydayOrder(Iterable<Skill> skills) {
   return skills.toList()..sort((a, b) => rank(a).compareTo(rank(b)));
 }
 
-const _paramLabels = <String, String>{
-  'distance_m': 'Distance (m)',
-  'angle_deg': 'Angle (°)',
-  'speed': 'Speed',
-  'x': 'x (m)',
-  'y': 'y (m)',
-  'yaw_deg': 'Final heading (°)',
-  'name': 'Name',
-};
+String paramLabel(SkillParam p, [AppLocalizations? strings]) {
+  final s = strings ?? appStrings;
+  final label = switch (p.name) {
+    'distance_m' => s.paramDistance,
+    'angle_deg' => s.paramAngle,
+    'speed' => s.paramSpeed,
+    'x' => 'x (m)',
+    'y' => 'y (m)',
+    'yaw_deg' => s.paramFinalHeading,
+    'name' => s.name,
+    _ => p.name,
+  };
+  return p.required ? label : s.paramOptional(label);
+}
 
-String paramLabel(SkillParam p) => '${_paramLabels[p.name] ?? p.name}${p.required ? '' : ' (optional)'}';
+/// A choice's words: the speed names in the app's language, anything else as it is.
+String valueLabel(String value, [AppLocalizations? strings]) {
+  final s = strings ?? appStrings;
+  return switch (value) { 'slow' => s.slow, 'normal' => s.normal, 'fast' => s.fast, _ => value };
+}
 
 /// One readable line for a step: "Drive forward or back · 0.5 m · slow".
-String describeCall(SkillCall call) {
-  final l = skillLabel(call.name);
+String describeCall(SkillCall call, [AppLocalizations? strings]) {
+  final l = skillLabel(call.name, strings);
   String value(String key, Object? raw) {
     // 360.0 reads as 360; 0.25 stays 0.25.
     final v = raw is double && raw == raw.roundToDouble() ? raw.toInt() : raw;
@@ -65,6 +90,7 @@ String describeCall(SkillCall call) {
     'angle_deg' || 'yaw_deg' => '$v°',
     'x' => 'x $v',
     'y' => 'y $v',
+    'speed' => valueLabel('$v', strings),
     _ => '$v',
     };
   }

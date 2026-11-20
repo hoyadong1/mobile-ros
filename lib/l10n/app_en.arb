@@ -2176,5 +2176,154 @@
         "type": "String"
       }
     }
+  },
+  "skillMove": "Drive forward or back",
+  "skillMoveDesc": "Drives a set distance. A negative distance goes backward.",
+  "@skillMove": {
+    "description": "Name of the robot action \"move\" in the routine editor and step lists."
+  },
+  "@skillMoveDesc": {
+    "description": "One-line explanation of the robot action \"move\"."
+  },
+  "skillRotate": "Turn in place",
+  "skillRotateDesc": "Turns by an angle. Positive turns left.",
+  "@skillRotate": {
+    "description": "Name of the robot action \"rotate\" in the routine editor and step lists."
+  },
+  "@skillRotateDesc": {
+    "description": "One-line explanation of the robot action \"rotate\"."
+  },
+  "skillStrafe": "Slide sideways",
+  "skillStrafeDesc": "Moves sideways. Positive goes left.",
+  "@skillStrafe": {
+    "description": "Name of the robot action \"strafe\" in the routine editor and step lists."
+  },
+  "@skillStrafeDesc": {
+    "description": "One-line explanation of the robot action \"strafe\"."
+  },
+  "skillGoToPlace": "Go to a saved place",
+  "skillGoToPlaceDesc": "Navigates to a place saved on the map.",
+  "@skillGoToPlace": {
+    "description": "Name of the robot action \"go_to_place\" in the routine editor and step lists."
+  },
+  "@skillGoToPlaceDesc": {
+    "description": "One-line explanation of the robot action \"go_to_place\"."
+  },
+  "skillNavigateTo": "Go to a map point",
+  "skillNavigateToDesc": "Navigates to x, y on the map.",
+  "@skillNavigateTo": {
+    "description": "Name of the robot action \"navigate_to\" in the routine editor and step lists."
+  },
+  "@skillNavigateToDesc": {
+    "description": "One-line explanation of the robot action \"navigate_to\"."
+  },
+  "skillLook": "Take a camera picture",
+  "skillLookDesc": "Takes a picture with the robot's camera.",
+  "@skillLook": {
+    "description": "Name of the robot action \"look\" in the routine editor and step lists."
+  },
+  "@skillLookDesc": {
+    "description": "One-line explanation of the robot action \"look\"."
+  },
+  "skillGetStatus": "Report status",
+  "skillGetStatusDesc": "Says what the robot is doing.",
+  "@skillGetStatus": {
+    "description": "Name of the robot action \"get_status\" in the routine editor and step lists."
+  },
+  "@skillGetStatusDesc": {
+    "description": "One-line explanation of the robot action \"get_status\"."
+  },
+  "skillCancelNavigation": "Cancel navigation",
+  "skillCancelNavigationDesc": "Cancels the current navigation goal.",
+  "@skillCancelNavigation": {
+    "description": "Name of the robot action \"cancel_navigation\" in the routine editor and step lists."
+  },
+  "@skillCancelNavigationDesc": {
+    "description": "One-line explanation of the robot action \"cancel_navigation\"."
+  },
+  "skillStop": "Stop",
+  "skillStopDesc": "Stops all motion.",
+  "@skillStop": {
+    "description": "Name of the robot action \"stop\" in the routine editor and step lists."
+  },
+  "@skillStopDesc": {
+    "description": "One-line explanation of the robot action \"stop\"."
+  },
+  "skillRunRoutine": "Run a routine",
+  "skillRunRoutineDesc": "Runs another saved routine.",
+  "@skillRunRoutine": {
+    "description": "Name of the robot action \"run_routine\" in the routine editor and step lists."
+  },
+  "@skillRunRoutineDesc": {
+    "description": "One-line explanation of the robot action \"run_routine\"."
+  },
+  "skillSaveRoutine": "Save as routine",
+  "skillSaveRoutineDesc": "Saves the last actions as a routine.",
+  "@skillSaveRoutine": {
+    "description": "Name of the robot action \"save_routine\" in the routine editor and step lists."
+  },
+  "@skillSaveRoutineDesc": {
+    "description": "One-line explanation of the robot action \"save_routine\"."
+  },
+  "skillCheckRobot": "Check the robot",
+  "skillCheckRobotDesc": "Battery and recent warnings or errors.",
+  "@skillCheckRobot": {
+    "description": "Name of the robot action \"check_robot\" in the routine editor and step lists."
+  },
+  "@skillCheckRobotDesc": {
+    "description": "One-line explanation of the robot action \"check_robot\"."
+  },
+  "skillFindPosition": "Find its position",
+  "skillFindPositionDesc": "Matches the laser to the map and sets the position.",
+  "@skillFindPosition": {
+    "description": "Name of the robot action \"find_position\" in the routine editor and step lists."
+  },
+  "@skillFindPositionDesc": {
+    "description": "One-line explanation of the robot action \"find_position\"."
+  },
+  "skillSavePlace": "Save this spot",
+  "skillSavePlaceDesc": "Saves where the robot is as a named place.",
+  "@skillSavePlace": {
+    "description": "Name of the robot action \"save_place\" in the routine editor and step lists."
+  },
+  "@skillSavePlaceDesc": {
+    "description": "One-line explanation of the robot action \"save_place\"."
+  },
+  "skillSaveMap": "Save the map",
+  "skillSaveMapDesc": "Saves the map being made.",
+  "@skillSaveMap": {
+    "description": "Name of the robot action \"save_map\" in the routine editor and step lists."
+  },
+  "@skillSaveMapDesc": {
+    "description": "One-line explanation of the robot action \"save_map\"."
+  },
+  "paramDistance": "Distance (m)",
+  "@paramDistance": {
+    "description": "Label of a robot action setting in the routine editor."
+  },
+  "paramAngle": "Angle (°)",
+  "@paramAngle": {
+    "description": "Label of a robot action setting in the routine editor."
+  },
+  "paramSpeed": "Speed",
+  "@paramSpeed": {
+    "description": "Label of a robot action setting in the routine editor."
+  },
+  "paramFinalHeading": "Final heading (°)",
+  "@paramFinalHeading": {
+    "description": "Label of a robot action setting in the routine editor."
+  },
+  "paramOptional": "{label} (optional)",
+  "@paramOptional": {
+    "description": "A setting that may be left empty.",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "deletedRoutine": "(deleted routine)",
+  "@deletedRoutine": {
+    "description": "A routine step that runs a routine which was deleted since."
   }
 }

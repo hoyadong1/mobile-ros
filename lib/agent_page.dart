@@ -264,7 +264,7 @@ class AgentPageState extends State<AgentPage> {
           for (final s in inEverydayOrder(manifest!.skills))
             if (s.name != 'stop' && s.name != 'cancel_navigation')
               Chip(visualDensity: VisualDensity.compact,
-                avatar: Icon(skillLabel(s.name).icon, size: 16), label: Text(skillLabel(s.name).title)),
+                avatar: Icon(skillLabel(s.name).icon, size: 16), label: Text(skillLabel(s.name, context.strings).title)),
         ]),
       ],
     ])));

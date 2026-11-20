@@ -193,8 +193,8 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
   }
 
   String _stepText(RoutineStep s) {
-    if (s.call != null) return describeCall(s.call!);
-    return '▶ ${widget.book.byId(s.routineId!)?.name ?? '(deleted routine)'}';
+    if (s.call != null) return describeCall(s.call!, context.strings);
+    return '▶ ${widget.book.byId(s.routineId!)?.name ?? context.strings.deletedRoutine}';
   }
 
   Future<void> _save() async {
@@ -370,28 +370,28 @@ class _SkillStepDialogState extends State<_SkillStepDialog> {
         isExpanded: true, itemHeight: null,
         decoration: InputDecoration(labelText: context.strings.whatRobotDoes),
         items: [for (final s in skills) DropdownMenuItem(value: s, child: Row(children: [
-          Icon(skillLabel(s.name).icon, size: 20),
+          Icon(skillLabel(s.name, context.strings).icon, size: 20),
           const SizedBox(width: 10),
-          Expanded(child: Text(skillLabel(s.name).title)),
+          Expanded(child: Text(skillLabel(s.name, context.strings).title)),
         ]))],
         onChanged: (s) => setState(() {
           _skill = s;
           _error = null;
         })),
       if (_skill != null) Padding(padding: const EdgeInsets.only(top: 4),
-          child: Text(skillLabel(_skill!.name).description, style: const TextStyle(fontSize: 12))),
+          child: Text(skillLabel(_skill!.name, context.strings).description, style: const TextStyle(fontSize: 12))),
       for (final p in _skill?.params ?? const <SkillParam>[])
         Padding(padding: const EdgeInsets.only(top: 12), child: p.values != null
           ? DropdownButtonFormField<String>(key: Key('routine-param-${p.name}'), initialValue: _choice[p.name],
               isExpanded: true, itemHeight: null,
-              decoration: InputDecoration(labelText: paramLabel(p)),
-              items: [for (final v in p.values!) DropdownMenuItem(value: v, child: Text(v))],
+              decoration: InputDecoration(labelText: paramLabel(p, context.strings)),
+              items: [for (final v in p.values!) DropdownMenuItem(value: v, child: Text(valueLabel(v, context.strings)))],
               onChanged: (v) => _choice[p.name] = v)
           : TextField(key: Key('routine-param-${p.name}'),
               controller: _text.putIfAbsent(p.name, TextEditingController.new),
               keyboardType: p.type == ParamType.number
                   ? const TextInputType.numberWithOptions(signed: true, decimal: true) : TextInputType.text,
-              decoration: InputDecoration(labelText: paramLabel(p),
+              decoration: InputDecoration(labelText: paramLabel(p, context.strings),
                   helperText: p.min != null && p.max != null ? '${p.min} .. ${p.max}' : null))),
       if (_error != null) Padding(padding: const EdgeInsets.only(top: 8),
           child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error))),

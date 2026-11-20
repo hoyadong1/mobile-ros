@@ -58,3 +58,6 @@ server/.env
 /map_*.pgm
 /map_*.yaml
 server/node_modules/
+
+# The private server (mobile-ros-cloud), copied in only to run server/app_tests. Never commit it.
+/server/

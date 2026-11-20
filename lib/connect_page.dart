@@ -432,21 +432,28 @@ class _ConnectPageState extends State<ConnectPage> {
                 child: recentRobots.isNotEmpty && !_addingRobot ? const SizedBox(width: double.infinity)
                     : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               SizedBox(height: recentRobots.isEmpty ? 24 : 16),
-              ...[SegmentedButton<ConnectMode>(
-                key: const Key('connection-mode'),
-                direction: MediaQuery.textScalerOf(context).scale(14) > 19 &&
-                    MediaQuery.sizeOf(context).width < 640 ? Axis.vertical : Axis.horizontal,
-                segments: [
-                  const ButtonSegment(value: ConnectMode.rosbridge, label: Text('rosbridge'), icon: Icon(Icons.cable)),
-                  if (directRosSupported)
-                    ButtonSegment(value: ConnectMode.direct, label: Text(context.strings.direct), icon: const Icon(Icons.hub_outlined)),
-                  if (zenohSupported)
-                    const ButtonSegment(value: ConnectMode.zenoh, label: Text('Zenoh'), icon: Icon(Icons.lan_outlined)),
-                  const ButtonSegment(value: ConnectMode.foxglove, label: Text('Foxglove'), icon: Icon(Icons.podcasts)),
-                ],
-                selected: {mode},
-                onSelectionChanged: isConnecting ? null : (v) => _setMode(v.first),
-              ),
+              ...[Builder(builder: (context) {
+                // Four modes on a phone: icons would squeeze the names until "rosbridge" broke mid-word, so
+                // narrow screens show names only, each kept on one line (shrunk a little if it must).
+                final narrow = MediaQuery.sizeOf(context).width < 600;
+                ButtonSegment<ConnectMode> segment(ConnectMode value, String name, IconData icon) => ButtonSegment(
+                  value: value, icon: narrow ? null : Icon(icon),
+                  label: FittedBox(fit: BoxFit.scaleDown, child: Text(name, maxLines: 1, softWrap: false)));
+                return SegmentedButton<ConnectMode>(
+                  key: const Key('connection-mode'),
+                  showSelectedIcon: !narrow,
+                  direction: MediaQuery.textScalerOf(context).scale(14) > 19 &&
+                      MediaQuery.sizeOf(context).width < 640 ? Axis.vertical : Axis.horizontal,
+                  segments: [
+                    segment(ConnectMode.rosbridge, 'rosbridge', Icons.cable),
+                    if (directRosSupported) segment(ConnectMode.direct, context.strings.direct, Icons.hub_outlined),
+                    if (zenohSupported) segment(ConnectMode.zenoh, 'Zenoh', Icons.lan_outlined),
+                    segment(ConnectMode.foxglove, 'Foxglove', Icons.podcasts),
+                  ],
+                  selected: {mode},
+                  onSelectionChanged: isConnecting ? null : (v) => _setMode(v.first),
+                );
+              }),
               const SizedBox(height: 16)],
               TextFormField(
                 key: const Key('robot-host'), controller: _ipController, enabled: !isConnecting,

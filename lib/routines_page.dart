@@ -330,7 +330,9 @@ class _SkillStepDialog extends StatefulWidget {
 }
 
 class _SkillStepDialogState extends State<_SkillStepDialog> {
-  static const _hidden = {'save_routine', 'run_routine', 'get_status', 'stop'};
+  // Not offered as steps: routine control, read-only status, and the assistant's own memory tools.
+  static const _hidden = {'save_routine', 'run_routine', 'get_status', 'stop', 'update_profile', 'remember',
+    'learn_phrase', 'define_tool'};
   late final skills = inEverydayOrder([for (final s in widget.manifest.skills) if (!_hidden.contains(s.name)) s]);
   late Skill? _skill = skills.firstOrNull;
   final Map<String, TextEditingController> _text = {};

@@ -120,7 +120,7 @@ class ForegroundPresence implements BackgroundPresence {
     if (running && key == _last) return;
     _last = key;
     _init();
-    final buttons = stoppable ? const [NotificationButton(id: 'stop', text: 'Stop')] : <NotificationButton>[];
+    final buttons = stoppable ? [NotificationButton(id: 'stop', text: appStrings.stop)] : <NotificationButton>[];
     if (!running) await _askForNotifications();
     if (running) {
       await FlutterForegroundTask.updateService(notificationTitle: title, notificationText: text,

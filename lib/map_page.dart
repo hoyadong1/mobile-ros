@@ -1220,15 +1220,18 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       );
 
   /// Goal / Set pose / Make a map. Making a map needs the workspace's stick ([MapVisualizationPage.drive]).
+  /// A segment name on one line, shrunk a little on narrow phones rather than broken ("Make / map").
+  static Widget _oneLine(String text) => FittedBox(fit: BoxFit.scaleDown, child: Text(text, maxLines: 1, softWrap: false));
+
   Widget _toolToggle() => limitedRemote ? Padding(padding: const EdgeInsets.all(8), child: Text(context.strings.remoteNavigation)) : SegmentedButton<String>(
     key: const Key('map-tool'),
     style: SegmentedButton.styleFrom(visualDensity: VisualDensity.compact),
     showSelectedIcon: false,
     segments: [
-      ButtonSegment(value: 'goal', icon: const Icon(Icons.flag_outlined, size: 18), label: Text(context.strings.goal)),
-      ButtonSegment(value: 'pose', icon: const Icon(Icons.my_location, size: 18), label: Text(context.strings.setPose)),
+      ButtonSegment(value: 'goal', icon: const Icon(Icons.flag_outlined, size: 18), label: _oneLine(context.strings.goal)),
+      ButtonSegment(value: 'pose', icon: const Icon(Icons.my_location, size: 18), label: _oneLine(context.strings.setPose)),
       if (widget.drive != null || mapping)
-        ButtonSegment(value: 'map', icon: const Icon(Icons.radar, size: 18), label: Text(context.strings.makeMapShort)),
+        ButtonSegment(value: 'map', icon: const Icon(Icons.radar, size: 18), label: _oneLine(context.strings.makeMapShort)),
     ],
     selected: {mapping ? 'map' : tool == MapTool.setPose ? 'pose' : 'goal'},
     onSelectionChanged: (s) {

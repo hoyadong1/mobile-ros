@@ -148,6 +148,16 @@ void main() {
 
         if (page == 'workspace') await capture('workspace-top');
         await capture(page); // before the checks, so a failing page still leaves its picture
+        // A segmented button's names must stay on one line: "rosb / ridg / e" and "Make / map" were found on a phone.
+        for (final segmented in find.byWidgetPredicate((w) => w is SegmentedButton).evaluate()) {
+          for (final text in find.descendant(of: find.byWidget(segmented.widget), matching: find.byType(RichText)).evaluate()) {
+            final paragraph = text.renderObject! as RenderParagraph;
+            final length = paragraph.text.toPlainText().length;
+            final lines = {for (final box in paragraph.getBoxesForSelection(TextSelection(baseOffset: 0, extentOffset: length)))
+              box.top.round()}.length;
+            expect(lines, lessThanOrEqualTo(1), reason: 'segment "${paragraph.text.toPlainText()}" wraps on $page');
+          }
+        }
         await checkLabel(text);
         if (page == 'connect') {
           final connect = find.byKey(const Key('connect-button'));

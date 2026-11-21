@@ -2649,5 +2649,112 @@
         "type": "String"
       }
     }
+  },
+  "remoteServiceBlocked": "Remote access can't use this robot feature. Connect on the same network to use it.",
+  "remoteReadOnly": "Remote access can only drive the robot and send map goals. Other messages are read-only.",
+  "remoteSpeedLimit": "Remote driving is limited to 0.25 m/s and 0.6 rad/s.",
+  "remoteBadGoal": "Remote goals must be a point on the map with the default navigation.",
+  "remoteCommandBlocked": "Remote access can't send this command to the robot.",
+  "rtSessionPaused": "Remote access paused. Reconnect when you return to the app.",
+  "rtAccountChanged": "Your account changed. Please try again.",
+  "rtInvalidResponse": "The remote service returned an invalid response.",
+  "rtVerifyEmail": "Check your email to verify your account, then sign in.",
+  "rtSignInAgainCheck": "Sign in again. Check your email and password.",
+  "rtTooManyAttempts": "Too many attempts. Please wait a minute and try again.",
+  "rtRequestFailed": "Could not complete this request. Check your details and try again.",
+  "rtUnreachable": "Could not reach the remote service. Check your internet connection.",
+  "rtPreparing": "Remote access is being prepared. You can still connect locally.",
+  "rtSignInUnavailable": "Remote sign-in is unavailable. Please try again later.",
+  "rtSignInCanceled": "Sign-in was canceled.",
+  "rtSessionStartFailed": "Could not start your session.",
+  "rtVaultFailed": "Could not securely save your sign-in on this device.",
+  "rtSignInToContinue": "Sign in to continue.",
+  "rtInvalidAddress": "Invalid robot address.",
+  "rtConnectFailed": "Could not connect. The robot may be offline or in use.",
+  "rtSessionEnded": "Your remote session ended. Reconnect from My robots.",
+  "rtSessionTimeLimit": "Your 30-minute remote session ended. Reconnect from My robots.",
+  "rtControlPreparing": "Remote control is preparing. Try again.",
+  "rtDiffDriveOnly": "Remote driving supports wheeled robots that turn in place only.",
+  "rtUsageLimit": "This month's remote allowance is used up. Nearby connections still work.",
+  "rtAccessRevoked": "Your access to this robot was removed.",
+  "rtStoppedByViewer": "Someone watching the robot pressed Stop.",
+  "rtTooManyTopics": "Too many topics are open over remote access. Close some screens and reconnect.",
+  "rtSlowLink": "The remote connection is too slow, so it was closed for safety. Reconnect on a better network.",
+  "rtRobotOffline": "The robot went offline.",
+  "rtRobotRemoved": "This robot is no longer in My robots.",
+  "rtRobotReconnected": "The robot reconnected. Connect again.",
+  "rtRobotLimitChanged": "Your remote robot limit changed. Connect again.",
+  "rtAppClosed": "The app was closed.",
+  "rtPasswordLength": "Use at least 12 characters for the password.",
+  "rtSharedLimit": "This robot is already shared with 10 people, the beta limit.",
+  "rtTooManySessions": "Too many remote sessions. Sign out and try again.",
+  "rtTooManyInvites": "This robot has too many open invitations.",
+  "rtRegistrationBusy": "Registration is busy. Try again later.",
+  "rtRegistrationExpired": "This registration code is wrong or has expired. Run the install command again with --reregister for a new code.",
+  "rtUsageMonthChanged": "A new usage month started. Please try again.",
+  "rtOwnRobot": "This is already your robot.",
+  "rtRobotLimit": "This account already has 10 robots, the beta limit.",
+  "rtStartAgent": "Start the Mobile ROS service on the robot computer before registering.",
+  "rtResetExpired": "This reset link has expired. Request a new one.",
+  "rtWrongPassword": "That password is not correct.",
+  "rtAccountDeleted": "This account was deleted.",
+  "rtInviteInvalid": "This invitation code is wrong or has expired.",
+  "rtEnterPasswordConfirm": "Enter your password to confirm.",
+  "rtEnterEmailPassword": "Enter your email and password.",
+  "rtEnterEmail": "Enter your email address.",
+  "rtEnterCode": "Enter the registration code shown on the robot computer.",
+  "rtEnterInvite": "Enter the invitation code.",
+  "rtRobotName": "Enter a robot name (1–60 characters).",
+  "rtChooseRole": "Choose viewer or operator.",
+  "rtStrongerPassword": "Choose a stronger password.",
+  "rtNewPassword": "Choose a password you have not used before.",
+  "rtEmailFailed": "Could not send the email. Try again later.",
+  "rtDeleteLater": "Could not finish this yet. Try again later.",
+  "rtPurchasesUnavailable": "Remote purchase benefits are unavailable right now.",
+  "rtKeyUnreadable": "Could not read the private key. Paste the whole key (-----BEGIN ... PRIVATE KEY----- to the END line) and its passphrase if it has one.",
+  "rtSshUnreachable": "Could not reach the robot computer over SSH. Check that SSH is on (port 22).",
+  "rtHostNotConfirmed": "The robot computer was not confirmed. Nothing was installed.",
+  "rtSshKeyRejected": "Could not sign in with this key. Check the user name and that the key is allowed on the robot computer.",
+  "rtSshPasswordRejected": "Could not sign in to the robot computer. Check the user name and password.",
+  "rtSetupLost": "The connection to the robot computer was lost during setup.",
+  "rtSetupUnfinished": "Setup did not finish. Try again.",
+  "rtSetupInvalid": "The robot returned an invalid registration.",
+  "rtSudoNeedsPassword": "sudo asks {user} for a password. Enter it under \"sudo password\".",
+  "@rtSudoNeedsPassword": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "rtSudoRefused": "{user} cannot use sudo with this password. Use an administrator account.",
+  "@rtSudoRefused": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteUsageSummary": "{used} of {limit} {unit} this month",
+  "@remoteUsageSummary": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "goalFacesOnArrival": "Faces {degrees}° on arrival",
+  "@goalFacesOnArrival": {
+    "placeholders": {
+      "degrees": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'app_language.dart';
 import 'dart:async';
 import 'mini_map.dart';
+import 'relay_messages.dart';
 import 'dart:ui' as ui;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -186,7 +187,8 @@ class ControlScreenState extends State<ControlScreen> with WidgetsBindingObserve
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _controlSubscription = widget.channel.messages.listen((event) {
       if (!mounted) return;
-      if (event['level'] == 'error') setState(() => controlError = '${event['msg']}');
+      final refused = statusErrorIn(event, context.strings);
+      if (refused != null) setState(() => controlError = refused);
       if (event['topic'] == jointStatesTopic && event['msg'] is Map) {
         final names = List<String>.from(event['msg']['name'] as List? ?? const []);
         final values = (event['msg']['position'] as List? ?? const []).map((v) => (v as num).toDouble()).toList();

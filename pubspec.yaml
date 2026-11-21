@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: 'none'
 
-version: 2.3.0+17
+version: 2.3.0+18
 
 environment:
   # Android builds use AGP 9.3 (android/settings.gradle), which needs Flutter 3.50 or later.

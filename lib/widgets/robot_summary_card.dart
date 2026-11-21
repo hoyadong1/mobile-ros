@@ -71,11 +71,11 @@ class _RobotSummaryCardState extends State<RobotSummaryCard> {
       return Text(context.strings.noDescription, style: muted);
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text([s.model, s.kind].whereType<String>().join(' · '),
+      Text([s.model, s.kindIn(context.strings)].whereType<String>().join(' · '),
           key: const Key('robot-summary-kind'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
       const SizedBox(height: 4),
-      Text('${s.rosVersion == RosVersion.ros1 ? 'ROS 1' : 'ROS 2'} over ${widget.connectionKind} · '
-          '${s.topicCount} topics, ${s.nodeCount} nodes, ${s.actionCount} actions', style: muted),
+      Text(context.strings.summaryCounts(s.rosVersion == RosVersion.ros1 ? 'ROS 1' : 'ROS 2', widget.connectionKind,
+          s.topicCount, s.nodeCount, s.actionCount), style: muted),
       const SizedBox(height: 12),
       Wrap(spacing: 6, runSpacing: 6, children: [
         for (final f in s.features)
@@ -84,19 +84,19 @@ class _RobotSummaryCardState extends State<RobotSummaryCard> {
               key: Key('robot-feature-${f.id}'),
               avatar: Icon(f.detected ? Icons.check_circle : Icons.remove_circle_outline, size: 18,
                   color: f.detected ? const Color(0xFF2E7D32) : const Color(0xFF9AA5B1)),
-              label: Text(f.label, style: TextStyle(color: f.detected ? null : const Color(0xFF7A8794))),
+              label: Text(f.labelIn(context.strings), style: TextStyle(color: f.detected ? null : const Color(0xFF7A8794))),
               onPressed: () => _showWhere(context, f),
             ),
       ]),
       const SizedBox(height: 12),
-      Text('The AI assistant can ${s.assistantCan.join(', ')}.', key: const Key('robot-summary-ai'), style: muted),
+      Text(context.strings.assistantCanList(s.assistantCan(context.strings).join(', ')), key: const Key('robot-summary-ai'), style: muted),
     ]);
   }
 
   void _showWhere(BuildContext context, RobotFeature f) => showDialog<void>(context: context, builder: (c) =>
     AlertDialog(
-      title: Text(f.label),
+      title: Text(f.labelIn(context.strings)),
       content: Text(f.detected ? context.strings.foundAt(f.topics.join('\n')) : context.strings.notDetected),
-      actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('OK'))],
+      actions: [TextButton(onPressed: () => Navigator.pop(c), child: Text(context.strings.ok))],
     ));
 }

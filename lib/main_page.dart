@@ -493,7 +493,7 @@ class _MainPageState extends State<MainPage> {
       found = caps.robotNamespaces();
       if (mounted && !_closing && caps.topicNames.isNotEmpty) {
         final summary = RobotSummary.from(caps);
-        final label = found.length > 1 ? '${found.length} robots' : summary.model ?? summary.kind;
+        final label = found.length > 1 ? appStrings.robotCount(found.length) : summary.model ?? summary.kindIn();
         try {
           final key = await _identify(caps, label);
           if (mounted && key != _storeKey) {

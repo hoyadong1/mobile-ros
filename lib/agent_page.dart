@@ -11,6 +11,7 @@ import 'agent/audit_log.dart';
 import 'agent/cloud_backend.dart';
 import 'agent/local/llm.dart';
 import 'agent/manifest.dart';
+import 'agent/log_text.dart';
 import 'agent/skill_labels.dart';
 import 'agent/local/local_backend.dart';
 import 'agent/router_backend.dart';
@@ -482,17 +483,18 @@ class _EntryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final text = logLineIn(entry.kind, entry.text, context.strings);
     switch (entry.kind) {
       case AuditKind.instruction:
-        return Align(alignment: Alignment.centerRight, child: _bubble(entry.text, const Color(0xFF182D42), Colors.white));
+        return Align(alignment: Alignment.centerRight, child: _bubble(text, const Color(0xFF182D42), Colors.white));
       case AuditKind.plan:
-        return Align(alignment: Alignment.centerLeft, child: _bubble(entry.text, context.card, context.ink));
+        return Align(alignment: Alignment.centerLeft, child: _bubble(text, context.card, context.ink));
       case AuditKind.call:
-        return _line(Icons.play_arrow, const Color(0xFF087F8C), entry.text, mono: true);
+        return _line(Icons.play_arrow, const Color(0xFF087F8C), text, mono: text == entry.text);
       case AuditKind.result:
         final line = entry.ok == false
-            ? _line(Icons.error_outline, const Color(0xFFB3261E), entry.text)
-            : _line(Icons.check_circle_outline, const Color(0xFF2E7D32), entry.text);
+            ? _line(Icons.error_outline, const Color(0xFFB3261E), text)
+            : _line(Icons.check_circle_outline, const Color(0xFF2E7D32), text);
         final image = entry.image;
         if (image == null) return line;
         // What the camera showed the model (the `look` skill).
@@ -504,9 +506,9 @@ class _EntryView extends StatelessWidget {
               gaplessPlayback: true, errorBuilder: (_, _, _) => const SizedBox.shrink()))),
         ]);
       case AuditKind.rejected:
-        return _line(Icons.block, const Color(0xFFB3261E), entry.text);
+        return _line(Icons.block, const Color(0xFFB3261E), text);
       case AuditKind.note:
-        return _line(Icons.info_outline, theme.colorScheme.onSurfaceVariant, entry.text);
+        return _line(Icons.info_outline, theme.colorScheme.onSurfaceVariant, text);
     }
   }
 

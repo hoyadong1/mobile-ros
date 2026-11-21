@@ -118,6 +118,10 @@ class _RobotIntroSheetState extends State<RobotIntroSheet> {
     final kind = _summary?.kind.replaceFirstMapped(RegExp(r'^(.+?) \((.+)\)$'), (m) => '${m[1]} that ${m[2]}');
     final looks = _summary == null || !_summary!.discovered || kind == null ? null
         : '${_summary!.model == null ? 'a' : 'a ${_summary!.model},'} ${kind[0].toLowerCase()}${kind.substring(1)}';
+    final localSenses = [
+      for (final f in _summary?.features ?? const <RobotFeature>[])
+        if (f.detected && const {'lidar', 'camera', 'depth', 'imu', 'navigation', 'arm'}.contains(f.id)) f.labelIn(s),
+    ];
     final senses = [
       for (final f in _summary?.features ?? const <RobotFeature>[])
         if (f.detected && const {'lidar', 'camera', 'depth', 'imu', 'navigation', 'arm'}.contains(f.id)) f.label.toLowerCase(),
@@ -126,7 +130,7 @@ class _RobotIntroSheetState extends State<RobotIntroSheet> {
       if (looks != null)
         // In English a sentence; in other languages the summary's own words, listed.
         _Step('kind', s.introLooks(english ? '$looks${senses.isEmpty ? '' : ', with ${senses.join(', ')}'}'
-            : [?_summary!.model, _summary!.kind, ...senses].join(' · ')),
+            : [?_summary!.model, _summary!.kindIn(s), ...localSenses].join(' · ')),
             choices: [s.introRight, s.introNotQuite], free: false)
       else
         _Step('kind', s.introUnknown, hint: s.introKindHint),

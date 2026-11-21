@@ -32,7 +32,7 @@ void main() {
     expect(s.feature('map')!.topics, ['/map'], reason: 'costmaps are navigation working data, not the map');
     expect(s.feature('depth')!.topics, ['/camera/depth/image_raw']);
     expect(s.feature('battery')!.detected, isFalse, reason: 'not seen, so not claimed');
-    expect(s.assistantCan, containsAll(['drive and turn', 'go to points and saved places on the map', 'look through the camera']));
+    expect(s.assistantCan(), containsAll(['drive and turn', 'go to points and saved places on the map', 'look through the camera']));
     expect((s.topicCount, s.nodeCount, s.actionCount), (10, 2, 1));
   });
 
@@ -45,7 +45,7 @@ void main() {
     expect(arm.model, 'Universal Robots arm');
     expect(arm.feature('arm')!.topics, ['/arm_controller/joint_trajectory', '/gripper_controller/gripper_cmd']);
     expect(arm.has('drive'), isFalse);
-    expect(arm.assistantCan, isNot(contains('drive and turn')));
+    expect(arm.assistantCan(), isNot(contains('drive and turn')));
 
     final silent = RobotSummary.from(RobotCapabilities(connection: FakeConnection()));
     expect(silent.discovered, isFalse);

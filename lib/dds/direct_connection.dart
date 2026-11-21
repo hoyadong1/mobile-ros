@@ -568,6 +568,16 @@ class DirectRosSession {
   bool isFastDds(String participantGuid) =>
       graph.participants[participantGuid] ?? false;
 
+  /// Waits (up to [limit]) until every remote participant has said which nodes it holds.
+  Future<void> waitForNodeInfo(Duration limit) async {
+    final watch = Stopwatch()..start();
+    while (!closed && watch.elapsed < limit) {
+      refreshGraph();
+      if (graph.participants.keys.every((p) => p == selfGuid || _nodes.containsKey(p))) return;
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+  }
+
   /// Remote ROS nodes, from what each participant announces on ros_discovery_info.
   List<String> get nodeNames => {
     for (final e in _nodes.entries)
@@ -1007,6 +1017,9 @@ class DirectRosConnection implements RosConnection {
   ]) async {
     await ready;
     if (service.startsWith('/rosapi/')) {
+      // Node names come from each participant's ros_discovery_info, which can arrive seconds after its
+      // topics (a large launch). Answered too early, the robot is not recognised by its node names.
+      if (service == '/rosapi/nodes') await session.waitForNodeInfo(const Duration(seconds: 3));
       session.refreshGraph();
       return _rosapi(service.substring(8), args);
     }

@@ -19,7 +19,7 @@ void main() {
     for (final f in s.features) {
       print('  ${f.detected ? '[x]' : '[ ]'} ${f.label}${f.detected ? ': ${f.topics.take(3).join(', ')}' : ''}');
     }
-    print('  AI can: ${s.assistantCan.join(', ')}');
+    print('  AI can: ${s.assistantCan().join(', ')}');
     expect(s.discovered, isTrue);
     for (final id in ['drive', 'odometry', 'map', 'navigation', 'lidar', 'camera', 'imu']) {
       expect(s.has(id), isTrue, reason: id);

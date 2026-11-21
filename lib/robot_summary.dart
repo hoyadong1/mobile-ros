@@ -1,3 +1,5 @@
+import 'app_language.dart';
+import 'l10n/generated/app_localizations.dart';
 import 'navigation_goal.dart' show RosVersion;
 import 'robot_capabilities.dart';
 import 'robot_profile.dart';
@@ -12,16 +14,50 @@ class RobotFeature {
   final List<String> topics;
 
   bool get detected => topics.isNotEmpty;
+
+  /// [label] in the app's language.
+  String labelIn(AppLocalizations s) => switch (id) {
+    'drive' => s.featureDrive, 'odometry' => s.featureOdometry, 'map' => s.featureMap,
+    'navigation' => s.featureNavigation, 'lidar' => s.featureLidar, 'camera' => s.featureCamera,
+    'depth' => s.featureDepth, 'imu' => s.featureImu, 'battery' => s.featureBattery, 'gps' => s.featureGps,
+    'arm' => s.featureArm, 'flight' => s.featureFlight, _ => label,
+  };
+}
+
+/// What kind of body the robot has.
+enum RobotKind {
+  manipulator, noDrive, turnsInPlace, anyDirection, carLike, drone, arm, fixed;
+
+  /// English, as the assistant and the English introduction read it.
+  String get english => switch (this) {
+    manipulator => 'Mobile manipulator (base + arm)',
+    noDrive => 'Robot (no drive topic found)',
+    turnsInPlace => 'Mobile robot (turns in place)',
+    anyDirection => 'Mobile robot (moves in any direction)',
+    carLike => 'Mobile robot (car-like steering)',
+    drone => 'Drone',
+    arm => 'Robot arm',
+    fixed => 'Robot without a mobile base',
+  };
+
+  String labelIn(AppLocalizations s) => switch (this) {
+    manipulator => s.kindManipulator, noDrive => s.kindNoDrive, turnsInPlace => s.kindTurnsInPlace,
+    anyDirection => s.kindAnyDirection, carLike => s.kindCarLike, drone => s.kindDrone, arm => s.kindArm,
+    fixed => s.kindFixed,
+  };
 }
 
 /// What the connected robot is and what it can do, from what it advertises (rosapi topics, action
 /// servers, nodes). Only what was found is claimed: anything not seen is "not detected", never guessed.
 class RobotSummary {
-  const RobotSummary({required this.kind, required this.rosVersion, required this.features, this.model,
+  const RobotSummary({required this.robotKind, required this.rosVersion, required this.features, this.model,
       this.topicCount = 0, this.nodeCount = 0, this.actionCount = 0, this.discovered = true});
 
-  /// Plain description of the body, e.g. "Mobile robot (turns in place)".
-  final String kind;
+  final RobotKind robotKind;
+  /// Plain description of the body in English, e.g. "Mobile robot (turns in place)".
+  String get kind => robotKind.english;
+  /// The same in the app's language ([strings], or the chosen language).
+  String kindIn([AppLocalizations? strings]) => robotKind.labelIn(strings ?? appStrings);
   /// A known robot model recognised from node or topic names (e.g. "TurtleBot3"), if any.
   final String? model;
   final RosVersion rosVersion;
@@ -34,13 +70,16 @@ class RobotSummary {
   bool has(String id) => feature(id)?.detected ?? false;
 
   /// What the AI assistant will be able to do with this robot, in plain words.
-  List<String> get assistantCan => [
-    if (has('drive')) kind.contains('car') ? 'drive and steer' : 'drive and turn',
-    if (has('navigation')) 'go to points and saved places on the map',
-    if (has('camera')) 'look through the camera',
-    'report status',
-    'run saved routines',
-  ];
+  List<String> assistantCan([AppLocalizations? strings]) {
+    final s = strings ?? appStrings;
+    return [
+      if (has('drive')) robotKind == RobotKind.carLike ? s.canDriveSteer : s.canDriveTurn,
+      if (has('navigation')) s.canGoToPlaces,
+      if (has('camera')) s.canLook,
+      s.canReportStatus,
+      s.canRunRoutines,
+    ];
+  }
 
   static const _models = <(String, String)>[
     ('turtlebot4', 'TurtleBot4'), ('turtlebot3', 'TurtleBot3'), ('turtlebot', 'TurtleBot'),
@@ -105,16 +144,16 @@ class RobotSummary {
       RobotFeature('flight', 'Flight (MAVROS)', p.drive == DriveType.aerial ? [p.commandTopic] : const []),
     ];
     final kind = switch (p.drive) {
-      DriveType.differential when p.arm != null => 'Mobile manipulator (base + arm)',
-      DriveType.holonomic when p.arm != null => 'Mobile manipulator (base + arm)',
-      DriveType.differential => p.commandTopic.isEmpty ? 'Robot (no drive topic found)' : 'Mobile robot (turns in place)',
-      DriveType.holonomic => 'Mobile robot (moves in any direction)',
-      DriveType.ackermann => 'Mobile robot (car-like steering)',
-      DriveType.aerial => 'Drone',
-      DriveType.none => p.arm != null ? 'Robot arm' : 'Robot without a mobile base',
+      DriveType.differential when p.arm != null => RobotKind.manipulator,
+      DriveType.holonomic when p.arm != null => RobotKind.manipulator,
+      DriveType.differential => p.commandTopic.isEmpty ? RobotKind.noDrive : RobotKind.turnsInPlace,
+      DriveType.holonomic => RobotKind.anyDirection,
+      DriveType.ackermann => RobotKind.carLike,
+      DriveType.aerial => RobotKind.drone,
+      DriveType.none => p.arm != null ? RobotKind.arm : RobotKind.fixed,
     };
     return RobotSummary(
-      kind: kind,
+      robotKind: kind,
       model: _recognise([...caps.nodes, ...caps.topicNames]),
       rosVersion: caps.rosVersion,
       features: features,

@@ -2343,5 +2343,294 @@
         "type": "int"
       }
     }
+  },
+  "kindManipulator": "Mobile manipulator (base + arm)",
+  "@kindManipulator": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "kindNoDrive": "Robot (no drive topic found)",
+  "@kindNoDrive": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "kindTurnsInPlace": "Mobile robot (turns in place)",
+  "@kindTurnsInPlace": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "kindAnyDirection": "Mobile robot (moves in any direction)",
+  "@kindAnyDirection": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "kindCarLike": "Mobile robot (car-like steering)",
+  "@kindCarLike": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "kindDrone": "Drone",
+  "@kindDrone": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "kindArm": "Robot arm",
+  "@kindArm": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "kindFixed": "Robot without a mobile base",
+  "@kindFixed": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureDrive": "Driving",
+  "@featureDrive": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureOdometry": "Odometry",
+  "@featureOdometry": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureMap": "Map",
+  "@featureMap": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureNavigation": "Navigation (Nav2)",
+  "@featureNavigation": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureLidar": "LiDAR",
+  "@featureLidar": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureCamera": "Camera",
+  "@featureCamera": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureDepth": "Depth / 3D",
+  "@featureDepth": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureImu": "IMU",
+  "@featureImu": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureBattery": "Battery",
+  "@featureBattery": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureGps": "GPS",
+  "@featureGps": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureArm": "Arm",
+  "@featureArm": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "featureFlight": "Flight (MAVROS)",
+  "@featureFlight": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "canDriveTurn": "drive and turn",
+  "@canDriveTurn": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "canDriveSteer": "drive and steer",
+  "@canDriveSteer": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "canGoToPlaces": "go to points and saved places on the map",
+  "@canGoToPlaces": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "canLook": "look through the camera",
+  "@canLook": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "canReportStatus": "report status",
+  "@canReportStatus": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "canRunRoutines": "run saved routines",
+  "@canRunRoutines": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it."
+  },
+  "assistantCanList": "The AI assistant can {list}.",
+  "@assistantCanList": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it.",
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "summaryCounts": "{ros} over {connection} · {topics} topics, {nodes} nodes, {actions} actions",
+  "@summaryCounts": {
+    "description": "Robot information: what kind of robot was found, what it has, and what the assistant can do with it.",
+    "placeholders": {
+      "ros": {
+        "type": "String"
+      },
+      "connection": {
+        "type": "String"
+      },
+      "topics": {
+        "type": "int"
+      },
+      "nodes": {
+        "type": "int"
+      },
+      "actions": {
+        "type": "int"
+      }
+    }
+  },
+  "logDirForward": "forward",
+  "@logDirForward": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language."
+  },
+  "logDirBackward": "backward",
+  "@logDirBackward": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language."
+  },
+  "logDirLeft": "left",
+  "@logDirLeft": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language."
+  },
+  "logDirRight": "right",
+  "@logDirRight": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language."
+  },
+  "logStopped": "Stopped.",
+  "@logStopped": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language."
+  },
+  "logMoved": "Moved {distance} m {direction}.",
+  "@logMoved": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "logMovedEstimated": "Moved about {distance} m {direction} (estimated from time; no odometry).",
+  "@logMovedEstimated": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "logTurned": "Turned {degrees}° {direction}.",
+  "@logTurned": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      },
+      "degrees": {
+        "type": "String"
+      }
+    }
+  },
+  "logTurnedEstimated": "Turned about {degrees}° {direction} (estimated from time; no odometry).",
+  "@logTurnedEstimated": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      },
+      "degrees": {
+        "type": "String"
+      }
+    }
+  },
+  "logStoppedShortDistance": "Stopped after {moved} m of {target} m: the robot did not get there in time (blocked or slipping?).",
+  "@logStoppedShortDistance": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "moved": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "logStoppedShortAngle": "Stopped after {turned}° of {target}°: the robot did not turn far enough in time.",
+  "@logStoppedShortAngle": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "turned": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "logArrived": "Arrived at {place}.",
+  "@logArrived": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "logNavCanceled": "Navigation canceled.",
+  "@logNavCanceled": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language."
+  },
+  "logNoNavGoal": "No navigation goal was running.",
+  "@logNoNavGoal": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language."
+  },
+  "logNothingToDo": "Nothing to do: the value is 0.",
+  "@logNothingToDo": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language."
+  },
+  "logRunRoutine": "Run routine \"{name}\"",
+  "@logRunRoutine": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "logRunRoutineTimes": "Run routine \"{name}\" {count} times",
+  "@logRunRoutineTimes": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "logRunRoutineUntilStopped": "Run routine \"{name}\" until stopped",
+  "@logRunRoutineUntilStopped": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "logRoutineSteps": "Routine \"{name}\": {count} steps.",
+  "@logRoutineSteps": {
+    "description": "A line of the AI assistant's history (what the robot did), shown in the app's language.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

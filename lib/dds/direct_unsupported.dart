@@ -13,6 +13,12 @@ const _unsupported = 'Direct ROS 2 needs the Android app. In a browser, connect 
 /// Whether this build can open a direct ROS 2 connection at all.
 const directRosSupported = false;
 
+/// Never thrown here; declared so app code compiles the same on every platform.
+class DirectTopicsUnreachable implements Exception {
+  const DirectTopicsUnreachable(this.participants);
+  final int participants;
+}
+
 class DirectRosSession {
   DirectRosSession._();
 

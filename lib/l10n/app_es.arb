@@ -976,5 +976,7 @@
   "paramSpeed": "Velocidad",
   "paramFinalHeading": "Orientación final (°)",
   "paramOptional": "{label} (opcional)",
-  "deletedRoutine": "(rutina eliminada)"
+  "deletedRoutine": "(rutina eliminada)",
+  "directTopicsUnreachable": "Se encontraron {count} programas ROS 2, pero no llegó ninguno de sus tópicos. Si la dirección de red del robot cambió después de iniciar ROS 2, reinicia ROS 2 en el robot. Comprueba también que ningún firewall o VPN bloquee los puertos UDP 7400–7700.",
+  "rosDomain": "dominio {domain}"
 }

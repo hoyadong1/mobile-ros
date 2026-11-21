@@ -9,8 +9,11 @@ import '../robot_summary.dart';
 
 /// On the robot home until the first meeting was had or put off: the robot offers to introduce itself.
 class RobotIntroCard extends StatefulWidget {
-  const RobotIntroCard({super.key, required this.session});
+  const RobotIntroCard({super.key, required this.session, this.recognisedAs});
   final RobotSession session;
+  /// What the robot was recognised as ("TurtleBot3"), used until the person names it; without it the
+  /// card falls back to the connection's name (an address).
+  final String? recognisedAs;
 
   @override
   State<RobotIntroCard> createState() => _RobotIntroCardState();
@@ -36,7 +39,7 @@ class _RobotIntroCardState extends State<RobotIntroCard> {
           Row(children: [
             Icon(Icons.waving_hand_outlined, color: theme.colorScheme.primary),
             const SizedBox(width: 10),
-            Expanded(child: Text(context.strings.meetRobot(widget.session.label), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800))),
+            Expanded(child: Text(context.strings.meetRobot(memory.profile(RobotPersona.nameKey) ?? widget.recognisedAs ?? widget.session.label), style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800))),
           ]),
           const SizedBox(height: 6),
           Text(context.strings.introHint),

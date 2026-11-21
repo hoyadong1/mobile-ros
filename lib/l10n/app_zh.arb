@@ -976,5 +976,7 @@
   "paramSpeed": "速度",
   "paramFinalHeading": "最终朝向 (°)",
   "paramOptional": "{label}（可选）",
-  "deletedRoutine": "（已删除的例程）"
+  "deletedRoutine": "（已删除的例程）",
+  "directTopicsUnreachable": "找到 {count} 个 ROS 2 程序，但没有收到它们的话题。如果 ROS 2 启动后机器人的网络地址发生了变化，请在机器人上重启 ROS 2。另请检查防火墙或 VPN 是否阻止了 UDP 7400–7700 端口。",
+  "rosDomain": "域 {domain}"
 }

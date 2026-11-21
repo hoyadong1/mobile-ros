@@ -2325,5 +2325,23 @@
   "deletedRoutine": "(deleted routine)",
   "@deletedRoutine": {
     "description": "A routine step that runs a routine which was deleted since."
+  },
+  "directTopicsUnreachable": "Found {count} ROS 2 programs, but none of their topics arrived. If the robot's network address changed since ROS 2 started, restart ROS 2 on the robot. Also check that no firewall or VPN blocks UDP ports 7400–7700.",
+  "@directTopicsUnreachable": {
+    "description": "Direct ROS 2 connection: the robot answered discovery but its topics never arrived.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rosDomain": "domain {domain}",
+  "@rosDomain": {
+    "description": "The ROS_DOMAIN_ID of a direct or Zenoh connection, shown after the address.",
+    "placeholders": {
+      "domain": {
+        "type": "int"
+      }
+    }
   }
 }

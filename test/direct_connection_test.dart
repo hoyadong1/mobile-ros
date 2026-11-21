@@ -158,6 +158,17 @@ void main() {
   late DirectRosSession session;
   late DirectRosConnection ros;
 
+  test('a robot that answers discovery but whose topics never arrive is told apart from no robot', () async {
+    await expectLater(
+        DirectRosSession.open(robot: '', domain: 0, backend: FakeDds(), interfaces: bundled(),
+            discoveryTimeout: const Duration(milliseconds: 300)),
+        throwsA(isA<DirectTopicsUnreachable>().having((e) => e.participants, 'participants', 1)));
+    await expectLater(
+        DirectRosSession.open(robot: '', domain: 0, backend: FakeDds()..robotGone = true, interfaces: bundled(),
+            discoveryTimeout: const Duration(milliseconds: 300)),
+        throwsA(isA<StateError>()));
+  });
+
   setUp(() {
     dds = FakeDds()
       ..addRemote('rt/odom', 'nav_msgs::msg::dds_::Odometry_', reliable: false)

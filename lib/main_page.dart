@@ -624,7 +624,8 @@ class _MainPageState extends State<MainPage> {
       // The first meeting, once per robot: it asks its name, its job and what to keep in mind.
       if (online) ...[
         const SizedBox(height: 12),
-        RobotIntroCard(key: ValueKey('intro-${session.storeAddress}'), session: session),
+        RobotIntroCard(key: ValueKey('intro-${session.storeAddress}'), session: session,
+            recognisedAs: robots.length == 1 ? robotLabel : null),
       ],
       if (online && robots.length > 1) ...[
         const SizedBox(height: 12),

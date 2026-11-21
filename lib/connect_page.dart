@@ -1,4 +1,5 @@
 import 'app_language.dart';
+import 'l10n/generated/app_localizations.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'app_theme.dart';
@@ -206,7 +207,7 @@ class _ConnectPageState extends State<ConnectPage> {
       _reconnectWanted = await Navigator.push<bool>(context, MaterialPageRoute<bool>(
         builder: (_) => MainPage(ip: router, port: '$domain', connection: live.connect(ownsSession: true),
           onRobotIdentified: (identity) => _identifyRecent(RecentRobot(ConnectMode.zenoh, router, '$domain'), identity),
-          connectionFactory: (_, _) => live.connect(), address: 'Zenoh · $router · domain $domain'),
+          connectionFactory: (_, _) => live.connect(), address: 'Zenoh · $router · ${context.strings.rosDomain(domain)}'),
       ));
     } catch (error) {
       if (mounted && attempt == _attempt) {
@@ -243,12 +244,15 @@ class _ConnectPageState extends State<ConnectPage> {
         builder: (_) => MainPage(ip: ip, port: '$domain', connection: live.connect(ownsSession: true),
           onRobotIdentified: (identity) => _identifyRecent(RecentRobot(ConnectMode.direct, ip, '$domain'), identity),
           connectionFactory: (_, _) => live.connect(),
-          address: ip.isEmpty ? 'ROS 2 · domain $domain' : 'ROS 2 · $ip · domain $domain'),
+          address: ['ROS 2', if (ip.isNotEmpty) ip, context.strings.rosDomain(domain)].join(' · ')),
       ));
     } catch (error) {
       if (mounted && attempt == _attempt) {
-        setState(() => errorMessage = error is UnsupportedError ? '${error.message}'
-          : context.strings.directError('$domain'));
+        setState(() => errorMessage = switch (error) {
+          UnsupportedError(:final message) => '$message',
+          DirectTopicsUnreachable(:final participants) => context.strings.directTopicsUnreachable(participants),
+          _ => context.strings.directError('$domain'),
+        });
       }
     } finally {
       session?.close();
@@ -545,7 +549,7 @@ extension on _ConnectPageState {
       leading: Icon(r.mode.icon, color: theme.colorScheme.primary),
       title: Text(r.title,
         style: const TextStyle(fontWeight: FontWeight.w700)),
-      subtitle: Text(r.subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: Text(r.subtitle(context.strings), maxLines: 1, overflow: TextOverflow.ellipsis),
       onTap: () => _connectRecent(r),
       trailing: isConnecting && _connectingRecent?.same(r) == true
           ? const Padding(padding: EdgeInsets.all(12),
@@ -581,23 +585,16 @@ class RecentRobot {
 
   /// One line under the name, without repeating it: the type (when named), the address (when it is
   /// not the title) and the connection.
-  String get subtitle => [
+  String subtitle(AppLocalizations s) => [
     if (name.isNotEmpty && robotType.isNotEmpty && robotType != name) robotType,
     if (host.isNotEmpty && host != title) host,
     switch (mode) {
       ConnectMode.rosbridge => portOrDomain == '9090' ? 'rosbridge' : 'rosbridge :$portOrDomain',
-      ConnectMode.direct => portOrDomain == '0' ? 'Direct' : 'Direct · domain $portOrDomain',
-      ConnectMode.zenoh => portOrDomain == '0' ? 'Zenoh' : 'Zenoh · domain $portOrDomain',
+      ConnectMode.direct => portOrDomain == '0' ? s.direct : '${s.direct} · ${s.rosDomain(int.tryParse(portOrDomain) ?? 0)}',
+      ConnectMode.zenoh => portOrDomain == '0' ? 'Zenoh' : 'Zenoh · ${s.rosDomain(int.tryParse(portOrDomain) ?? 0)}',
       ConnectMode.foxglove => portOrDomain == '8765' ? 'Foxglove' : 'Foxglove :$portOrDomain',
     },
   ].join(' · ');
-
-  String get description => switch (mode) {
-    ConnectMode.rosbridge => 'rosbridge · port $portOrDomain',
-    ConnectMode.direct => 'Direct ROS 2 · domain $portOrDomain',
-    ConnectMode.zenoh => 'Zenoh · domain $portOrDomain',
-    ConnectMode.foxglove => 'Foxglove bridge · port $portOrDomain',
-  };
 
   Map<String, String> toJson() => {'mode': mode.name, 'host': host, 'port': portOrDomain,
     'name': name, 'robotType': robotType};

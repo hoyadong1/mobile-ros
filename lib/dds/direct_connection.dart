@@ -154,6 +154,16 @@ Future<(String?, String?)> pickInterface(String robot) async {
 
 const _network = MethodChannel('mobile_ros/network');
 
+/// ROS 2 participants answered discovery, but none of their topics arrived: they announce addresses
+/// this device cannot reach (often an address the robot had before its network changed, a VPN or a
+/// container bridge), or a firewall lets discovery through but not the rest.
+class DirectTopicsUnreachable implements Exception {
+  const DirectTopicsUnreachable(this.participants);
+  final int participants;
+  @override
+  String toString() => 'Found $participants ROS 2 participants but none of their topics.';
+}
+
 class _NodeInfo {
   _NodeInfo(this.name, this.readers, this.writers);
   final String name;
@@ -323,6 +333,8 @@ class DirectRosSession {
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
     if (last > 0) return;
+    final others = graph.participants.keys.where((p) => p != selfGuid).length;
+    if (others > 0) throw DirectTopicsUnreachable(others);
     throw StateError('No ROS 2 nodes found on domain $domain.');
   }
 

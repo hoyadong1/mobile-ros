@@ -976,5 +976,7 @@
   "paramSpeed": "속도",
   "paramFinalHeading": "도착 방향(°)",
   "paramOptional": "{label}(선택)",
-  "deletedRoutine": "(지운 루틴)"
+  "deletedRoutine": "(지운 루틴)",
+  "directTopicsUnreachable": "ROS 2 프로그램 {count}개를 찾았지만 토픽을 받지 못했어요. ROS 2를 켠 뒤 로봇의 네트워크 주소가 바뀌었다면 로봇에서 ROS 2를 다시 시작하세요. 방화벽이나 VPN이 UDP 7400–7700 포트를 막고 있지 않은지도 확인하세요.",
+  "rosDomain": "도메인 {domain}"
 }

@@ -976,5 +976,7 @@
   "paramSpeed": "速度",
   "paramFinalHeading": "最終の向き (°)",
   "paramOptional": "{label}(任意)",
-  "deletedRoutine": "(削除したルーチン)"
+  "deletedRoutine": "(削除したルーチン)",
+  "directTopicsUnreachable": "ROS 2 のプログラムが {count} 個見つかりましたが、トピックを受信できませんでした。ROS 2 を起動した後にロボットのネットワークアドレスが変わった場合は、ロボットで ROS 2 を再起動してください。ファイアウォールや VPN が UDP 7400–7700 を遮断していないかも確認してください。",
+  "rosDomain": "ドメイン {domain}"
 }

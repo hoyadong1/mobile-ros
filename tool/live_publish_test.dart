@@ -61,17 +61,17 @@ void main() {
     addTearDown(observer.close);
 
     await tester.pumpWidget(const MaterialApp(home: PublishPage(ip: host, port: port)));
-    await waitFor(tester, () => find.textContaining(RegExp(r'Found \d+ topics')).evaluate().isNotEmpty,
-        'topic discovery');
-    final found = (find.textContaining(RegExp(r'Found \d+ topics')).evaluate().first.widget as Text).data!;
-    print(found);
-    final typeCount = int.parse(RegExp(r'and (\d+) message types').firstMatch(found)!.group(1)!);
-    expect(typeCount, greaterThan(100), reason: '/rosapi/interfaces lists every installed message type');
-
+    // The robot's topics (from /rosapi/topics) are offered as the topic field is typed into.
     await tester.tap(find.byKey(const Key('publish-topic')));
     await tester.pump();
-    await tester.enterText(find.byKey(const Key('publish-topic')), '$ns/cmd_v');
-    await settle(tester, 300);
+    // Suggestions follow the typed text, so type again until the robot's topics have arrived.
+    final deadline = DateTime.now().add(const Duration(seconds: 20));
+    for (var typed = 0; find.text('$ns/cmd_vel').evaluate().isEmpty; typed++) {
+      if (DateTime.now().isAfter(deadline)) fail('Timed out after 20s waiting for topic discovery');
+      await tester.enterText(find.byKey(const Key('publish-topic')), typed.isEven ? '$ns/cmd_v' : '$ns/cmd_ve');
+      await settle(tester, 500);
+    }
+    print('topics discovered: $ns/cmd_vel offered');
     await tester.tap(find.text('$ns/cmd_vel').last);
     const type = 'geometry_msgs/msg/Twist';
     final linearX = find.byKey(const ValueKey('field:linear/x:$type'));

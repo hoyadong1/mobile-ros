@@ -265,6 +265,11 @@ class _MainPageState extends State<MainPage> {
   Timer? _presenceTimer;
   bool _closing = false;
   int _presenceVersion = 0;
+  /// When the last running routine ended. The widget shows Run where Stop was, so a Stop tapped just as a
+  /// routine finished lands on Run: such a Run is ignored instead of starting the robot again.
+  DateTime? _routineEndedAt;
+  bool _routineWasRunning = false;
+  static const _runGuard = Duration(seconds: 3);
 
   /// Keeps the background notification in line with the robots: a running routine (progress, Stop) or
   /// the next scheduled one (so it runs with the app in the background), else none.
@@ -282,6 +287,8 @@ class _MainPageState extends State<MainPage> {
       for (final r in robots)
         if (r.routineAgent.progress case final pr?) (robots.length > 1 ? r.session.name : '', pr.routine, detail(pr)),
     ];
+    if (_routineWasRunning && running.isEmpty) _routineEndedAt = DateTime.now();
+    _routineWasRunning = running.isNotEmpty;
     (String, String, DateTime)? next;
     if (online) {
       for (final r in robots) {
@@ -341,6 +348,11 @@ class _MainPageState extends State<MainPage> {
   /// `run:ID` from the widget: runs that routine on the robot that has it.
   Future<void> _runFromWidget(String id) async {
     if (_closing || !mounted || id.isEmpty) return;
+    final ended = _routineEndedAt;
+    if (ended != null && DateTime.now().difference(ended) < _runGuard) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.strings.routineJustEnded)));
+      return;
+    }
     if (widget.connection.isClosed) {
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.strings.reconnectRoutine)));
       return;
@@ -351,10 +363,10 @@ class _MainPageState extends State<MainPage> {
       final routine = r.session.routines.byId(id);
       if (routine == null) continue;
       if (r.routineAgent.busy) {
-        if (mounted) _report(r, 'A routine is already running.');
+        if (mounted) _report(r, context.strings.routineAlreadyRunning);
         return;
       }
-      if (mounted) _report(r, 'Starting "${routine.name}" from the widget.');
+      if (mounted) _report(r, context.strings.routineStartingFromWidget(routine.name));
       await r.routineAgent.runRoutine(routine, source: 'widget');
       return;
     }

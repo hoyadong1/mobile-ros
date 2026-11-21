@@ -2632,5 +2632,22 @@
         "type": "int"
       }
     }
+  },
+  "routineJustEnded": "The routine had just ended, so it was not started again. Tap Run again to start it.",
+  "@routineJustEnded": {
+    "description": "Home screen widget: what happened to a Run tap."
+  },
+  "routineAlreadyRunning": "A routine is already running.",
+  "@routineAlreadyRunning": {
+    "description": "Home screen widget: what happened to a Run tap."
+  },
+  "routineStartingFromWidget": "Starting \"{name}\" from the widget.",
+  "@routineStartingFromWidget": {
+    "description": "Home screen widget: what happened to a Run tap.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -8,6 +8,7 @@ import 'package:ros_tester/agent/skill.dart';
 import 'package:ros_tester/background_service.dart';
 import 'package:ros_tester/l10n/generated/app_localizations.dart';
 import 'package:ros_tester/main_page.dart';
+import 'package:ros_tester/robot_widget.dart';
 import 'package:ros_tester/routines.dart';
 import 'support/fake_ros_connection.dart';
 
@@ -55,6 +56,46 @@ void main() {
         connectedTo: 'r', strings: ko)!.title, '루틴 2개 실행 중');
     const progress = RoutineProgress(routine: '순찰', round: 2, rounds: 5);
     expect(progress.roundText(ko), '5회 중 2회차');
+  });
+
+  testWidgets("a widget Run that lands just after a routine ended (where Stop was) does not start it again", (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final robot = FakeConnection();
+    await tester.pumpWidget(MaterialApp(home: MainPage(ip: 'robot', port: '9090', connection: robot,
+        connectionFactory: (_, _) => FakeConnection(), presence: FakePresence())));
+    await tester.pump();
+    final state = tester.state(find.byType(MainPage)) as dynamic;
+    final session = state.session;
+    await session.routines.load();
+    await session.routines.save(Routine(id: 'p', name: 'patrol', steps: [const RoutineStep.call(SkillCall('get_status'))]));
+    final agent = state.robots[0].routineAgent;
+    final runs = <int>[];
+    var wasRunning = false;
+    agent.addListener(() {
+      final running = agent.progress != null;
+      if (running && !wasRunning) runs.add(runs.length);
+      wasRunning = running;
+    });
+    RobotWidget.debugTap('run:p');
+    for (var i = 0; i < 50 && (runs.isEmpty || agent.progress != null); i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(agent.progress, isNull, reason: 'the one-step routine has finished');
+    expect(runs, hasLength(1));
+    RobotWidget.debugTap('run:p'); // the Stop tap that met Run
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
+    await tester.pump();
+    expect(runs, hasLength(1), reason: 'not started again right after it ended');
+    // Earlier snack bars (the start notice) go first; then the person is told why nothing started.
+    var told = false;
+    for (var i = 0; i < 20 && !told; i++) {
+      await tester.pump(const Duration(milliseconds: 500));
+      told = find.textContaining('just ended').evaluate().isNotEmpty;
+    }
+    expect(told, isTrue);
+    await tester.pumpWidget(const SizedBox());
+    robot.close();
   });
 
   testWidgets('a running routine shows in the notification, whose Stop stops it', (tester) async {

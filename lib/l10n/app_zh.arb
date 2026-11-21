@@ -1025,5 +1025,8 @@
   "logRunRoutine": "运行例程“{name}”",
   "logRunRoutineTimes": "运行例程“{name}” {count} 次",
   "logRunRoutineUntilStopped": "运行例程“{name}”直到停止",
-  "logRoutineSteps": "例程“{name}”：{count} 个步骤"
+  "logRoutineSteps": "例程“{name}”：{count} 个步骤",
+  "routineJustEnded": "例程刚刚结束，因此没有再次启动。如需启动，请再点一次“运行”。",
+  "routineAlreadyRunning": "已有例程正在运行。",
+  "routineStartingFromWidget": "正在从小组件启动“{name}”。"
 }

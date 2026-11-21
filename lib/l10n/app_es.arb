@@ -1025,5 +1025,8 @@
   "logRunRoutine": "Ejecutar la rutina \"{name}\"",
   "logRunRoutineTimes": "Ejecutar la rutina \"{name}\" {count} veces",
   "logRunRoutineUntilStopped": "Ejecutar la rutina \"{name}\" hasta detenerla",
-  "logRoutineSteps": "Rutina \"{name}\": {count} pasos."
+  "logRoutineSteps": "Rutina \"{name}\": {count} pasos.",
+  "routineJustEnded": "La rutina acababa de terminar, así que no se volvió a iniciar. Pulsa Ejecutar otra vez para iniciarla.",
+  "routineAlreadyRunning": "Ya hay una rutina en marcha.",
+  "routineStartingFromWidget": "Iniciando \"{name}\" desde el widget."
 }

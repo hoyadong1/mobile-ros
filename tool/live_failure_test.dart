@@ -18,7 +18,9 @@ import 'package:ros_tester/ros_connection.dart';
 
 const host = String.fromEnvironment('ROBOT_HOST', defaultValue: '127.0.0.1');
 const port = String.fromEnvironment('ROBOT_PORT', defaultValue: '9090');
-const distro = String.fromEnvironment('DISTRO', defaultValue: 'jazzy');
+const distro = String.fromEnvironment('ROS_DISTRO', defaultValue: String.fromEnvironment('DISTRO', defaultValue: 'jazzy'));
+/// The WSL distro the robot runs in (sim_live_test.sh passes the one it started).
+const wslDistro = String.fromEnvironment('WSL_DISTRO', defaultValue: 'ros-$distro');
 
 class Scripted extends AgentBackend {
   List<SkillCall> next = const [];
@@ -106,7 +108,7 @@ void main() {
     session.requests.start();
     final repo = Directory.current.path.replaceAll(r'\', '/');
     final wslRepo = '/mnt/${repo[0].toLowerCase()}${repo.substring(2)}';
-    final helper = await Process.start('wsl.exe', ['-d', 'ros-$distro', '--', 'bash', '-lc',
+    final helper = await Process.start('wsl.exe', ['-d', wslDistro, '--', 'bash', '-lc',
       'source /opt/ros/$distro/setup.bash && python3 $wslRepo/robot_side/mobile_ros_phone.py ask Help Blocked Wait Reroute --timeout 6']);
     final out = helper.stdout.transform(utf8.decoder).join();
     final end = DateTime.now().add(const Duration(seconds: 20));
@@ -155,7 +157,7 @@ void main() {
     // The same with robot_side/cmd_vel_watchdog.py running on the robot.
     final repo = Directory.current.path.replaceAll(r'\', '/');
     final wslRepo = '/mnt/${repo[0].toLowerCase()}${repo.substring(2)}';
-    final watchdog = await Process.start('wsl.exe', ['-d', 'ros-$distro', '--', 'bash', '-lc',
+    final watchdog = await Process.start('wsl.exe', ['-d', wslDistro, '--', 'bash', '-lc',
       'source /opt/ros/$distro/setup.bash && exec python3 $wslRepo/robot_side/cmd_vel_watchdog.py '
           '--topic ${session.drive.profile!.commandTopic} --timeout 0.5']);
     addTearDown(watchdog.kill);
@@ -167,9 +169,10 @@ void main() {
     expect(rest, lessThan(0.01), reason: 'the watchdog stops a robot whose driver vanished');
     expect(guarded, lessThan(0.2), reason: 'within about a second at 0.15 m/s');
 
-    // And it must not get in the way of normal driving.
-    final ok = await run(const SkillCall('move', {'distance_m': 0.3}));
-    print('  with the watchdog running, move 0.3: ${ok.results.lastOrNull}');
+    // And it must not get in the way of normal driving. Backward: the drives above leave the robot
+    // facing the wall (seen: an obstacle 0.14 m ahead), which would fail a forward move by itself.
+    final ok = await run(const SkillCall('move', {'distance_m': -0.3}));
+    print('  with the watchdog running, move -0.3: ${ok.results.lastOrNull}');
     expect(ok.ok, isTrue);
   }, timeout: const Timeout(Duration(minutes: 2)));
 }

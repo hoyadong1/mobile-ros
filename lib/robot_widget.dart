@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io' show File, Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
@@ -41,6 +41,10 @@ class RobotWidget {
       if (uri != null && uri.host.isNotEmpty) _actions.add(_action(uri));
     }, onError: (_) {});
   }
+
+  /// A widget tap, for tests.
+  @visibleForTesting
+  static void debugTap(String action) => _actions.add(action);
 
   /// `mobileros://run?routine=ID` → `run:ID`.
   static String _action(Uri uri) => uri.host == 'run' ? 'run:${uri.queryParameters['routine'] ?? ''}' : uri.host;

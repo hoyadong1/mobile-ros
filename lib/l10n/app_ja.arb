@@ -1025,5 +1025,8 @@
   "logRunRoutine": "ルーチン「{name}」を実行",
   "logRunRoutineTimes": "ルーチン「{name}」を{count}回実行",
   "logRunRoutineUntilStopped": "ルーチン「{name}」を停止するまで実行",
-  "logRoutineSteps": "ルーチン「{name}」: {count}ステップ"
+  "logRoutineSteps": "ルーチン「{name}」: {count}ステップ",
+  "routineJustEnded": "ルーチンがちょうど終わったので、再開しませんでした。開始するにはもう一度「実行」を押してください。",
+  "routineAlreadyRunning": "すでに実行中のルーチンがあります。",
+  "routineStartingFromWidget": "ウィジェットから「{name}」を開始します。"
 }

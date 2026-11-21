@@ -15,7 +15,9 @@ import 'package:ros_tester/zenoh/zenoh_connection.dart';
 const host = String.fromEnvironment('ROBOT_HOST', defaultValue: '127.0.0.1');
 const port = String.fromEnvironment('ROBOT_PORT', defaultValue: '9090');
 const via = String.fromEnvironment('VIA', defaultValue: 'rosbridge');
-const distro = String.fromEnvironment('DISTRO', defaultValue: 'jazzy');
+const distro = String.fromEnvironment('ROS_DISTRO', defaultValue: String.fromEnvironment('DISTRO', defaultValue: 'jazzy'));
+/// The WSL distro the robot runs in (sim_live_test.sh passes the one it started).
+const wslDistro = String.fromEnvironment('WSL_DISTRO', defaultValue: 'ros-$distro');
 const rmw = String.fromEnvironment('RMW');
 
 /// Runs the robot-side helper in the ROS distro and returns its process.
@@ -23,7 +25,7 @@ Future<Process> robotHelper(List<String> args) {
   final repo = Directory.current.path.replaceAll(r'\', '/');
   final wslRepo = '/mnt/${repo[0].toLowerCase()}${repo.substring(2)}';
   final quoted = args.map((a) => "'${a.replaceAll("'", r"'\''")}'").join(' ');
-  return Process.start('wsl.exe', ['-d', 'ros-$distro', '--', 'bash', '-lc',
+  return Process.start('wsl.exe', ['-d', wslDistro, '--', 'bash', '-lc',
     'source /opt/ros/$distro/setup.bash && ${rmw.isEmpty ? '' : 'RMW_IMPLEMENTATION=$rmw '}'
         'python3 $wslRepo/robot_side/mobile_ros_phone.py $quoted']);
 }

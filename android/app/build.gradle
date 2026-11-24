@@ -38,7 +38,9 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // The Play upload key when android/key.properties exists (the maintainer's machine); otherwise the
+            // debug key, so anyone can build and try a release (optimised) build on their own phone.
+            signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
             // R8 shrinking + obfuscation (Play flags apps with no DEX optimization).
             minifyEnabled true
             shrinkResources true

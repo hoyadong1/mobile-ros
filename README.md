@@ -13,6 +13,22 @@ Full one-minute demo: https://youtu.be/iMq66I9VfAg*
 > Open source under the Apache License 2.0. The optional remote-access service (relay, accounts) runs at
 > mobile-ros.com and is not part of this repository; everything on-site works without it.
 
+## How it fits together
+
+```mermaid
+flowchart LR
+  app["Mobile ROS<br/>drive · map · assistant · debug"] -- "rosbridge (ROS 1 & 2)" --> robot["Your robot<br/>(nothing extra installed)"]
+  app -- "foxglove_bridge" --> robot
+  app -- "direct DDS (same Wi-Fi)" --> robot
+  app -- "Zenoh (rmw_zenoh)" --> robot
+  app -. "optional remote access" .-> relay["relay"]
+  relay -.-> robot
+```
+
+All four connections look the same inside the app, so every screen works on each. The assistant's models only
+propose steps; a validator checks each one against the robot's limits before anything moves.
+More in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
+
 ## Connect
 
 Pick the way your robot already runs. Nothing else is needed on the robot.
@@ -65,17 +81,18 @@ Then in the app: Assistant → Settings → online, `http://<pc>:8787/v1/plan` a
 
 ## Build from source
 
-Flutter (stable, 3.38+). Native parts (direct DDS, Zenoh) build with the Android NDK through CMake.
+Flutter 3.50+ is all you need: the native libraries (direct DDS, Zenoh, the on-device model) are committed prebuilt.
 
 ```sh
+git clone https://github.com/hoyadong1/mobile-ros.git && cd mobile-ros
 flutter pub get
-flutter analyze lib test tool
-flutter test
-flutter run
+flutter test                                   # ~600 tests, no robot needed
+pip install websockets && python scripts/fake_robot.py --port 9091   # a robot to talk to, no ROS needed
+flutter run                                    # phone, emulator (-d emulator-...), browser (-d chrome)
 ```
 
-Live end-to-end tests run against a TurtleBot3 + Nav2 simulation in a ROS 2 WSL distro on Windows
-(`scripts/dev-env/`): `bash scripts/dev-env/sim_live_test.sh` (see the header of that script).
+**[docs/BUILDING.md](docs/BUILDING.md)** walks through it step by step: phone, emulator, browser and Windows, a fake
+robot or a full TurtleBot3 + Nav2 simulation, the tests, and rebuilding the native libraries.
 
 ## Remote access is optional
 

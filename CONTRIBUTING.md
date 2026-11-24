@@ -1,6 +1,9 @@
 # Contributing
 
-Thanks for helping. A few things keep the app safe to point at real robots:
+Thanks for helping. To get started, [docs/BUILDING.md](docs/BUILDING.md) gets the app built and running against a
+fake or simulated robot, and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) shows how the parts fit.
+
+A few things keep the app safe to point at real robots:
 
 - **Robot motion only through the assistant's validated skills and the session controllers** (STOP > person >
   assistant). Anything the robot sends to the phone is displayed, never executed.

@@ -1058,5 +1058,15 @@
   "exportedMcap": "MCAP ファイルを保存しました。Foxglove で開くと再生できます。",
   "exportUnavailable": "ここではファイルを保存できません。コピーを使ってください。",
   "exportFailed": "ファイルを保存できませんでした。",
-  "incidentRecord": "インシデント記録"
+  "incidentRecord": "インシデント記録",
+  "robotDiagnostics": "ロボット診断",
+  "robotDiagnosticsHint": "ロボットが自分の部品について報告する情報(/diagnostics)",
+  "diagWarn": "警告",
+  "diagError": "エラー",
+  "diagStale": "更新なし",
+  "diagProblemsOnly": "問題のみ表示",
+  "diagNoProblems": "報告された問題はありません。",
+  "diagnosticsHint": "報告はロボットのドライバー(diagnostic_updater)や diagnostic_aggregator から届きます。「更新なし」は報告が届かなくなったことを示します。エラーは通知でも知らせ、インシデント記録にも残します。",
+  "diagErrorNotice": "ロボットがエラーを報告: {name}: {message}",
+  "diagErrorsNotice": "ロボットがエラーを{count}件報告: {names}"
 }

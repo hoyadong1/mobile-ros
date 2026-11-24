@@ -1058,5 +1058,15 @@
   "exportedMcap": "已保存 MCAP 文件。用 Foxglove 打开即可回放。",
   "exportUnavailable": "此处无法保存文件。请改用复制。",
   "exportFailed": "无法保存文件。",
-  "incidentRecord": "事件记录"
+  "incidentRecord": "事件记录",
+  "robotDiagnostics": "机器人诊断",
+  "robotDiagnosticsHint": "机器人对自身部件状态的报告(/diagnostics)",
+  "diagWarn": "警告",
+  "diagError": "错误",
+  "diagStale": "无更新",
+  "diagProblemsOnly": "只看问题",
+  "diagNoProblems": "没有报告问题。",
+  "diagnosticsHint": "报告来自机器人的驱动(diagnostic_updater)或 diagnostic_aggregator。“无更新”表示报告不再到达。错误也会发送通知并记入事件记录。",
+  "diagErrorNotice": "机器人报告错误:{name}:{message}",
+  "diagErrorsNotice": "机器人报告 {count} 个错误:{names}"
 }

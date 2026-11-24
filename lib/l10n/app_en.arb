@@ -2741,5 +2741,35 @@
   "exportedMcap": "Saved the MCAP file. Open it in Foxglove to replay.",
   "exportUnavailable": "Saving files is not available here. Use Copy instead.",
   "exportFailed": "Could not save the file.",
-  "incidentRecord": "Incident record"
+  "incidentRecord": "Incident record",
+  "robotDiagnostics": "Robot diagnostics",
+  "robotDiagnosticsHint": "What the robot reports about its own parts (/diagnostics)",
+  "diagWarn": "Warning",
+  "diagError": "Error",
+  "diagStale": "No update",
+  "diagProblemsOnly": "Problems only",
+  "diagNoProblems": "No problems reported.",
+  "diagnosticsHint": "Reports come from the robot’s drivers (diagnostic_updater) or diagnostic_aggregator. “No update” means a report stopped repeating. An error is also sent as a notification and kept in the incident record.",
+  "diagErrorNotice": "Robot reports an error: {name}: {message}",
+  "@diagErrorNotice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "diagErrorsNotice": "Robot reports {count} errors: {names}",
+  "@diagErrorsNotice": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "names": {
+        "type": "String"
+      }
+    }
+  }
 }

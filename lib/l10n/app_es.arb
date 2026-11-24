@@ -1058,5 +1058,15 @@
   "exportedMcap": "Archivo MCAP guardado. Ábrelo en Foxglove para reproducirlo.",
   "exportUnavailable": "Aquí no se pueden guardar archivos. Usa Copiar.",
   "exportFailed": "No se pudo guardar el archivo.",
-  "incidentRecord": "Registro del incidente"
+  "incidentRecord": "Registro del incidente",
+  "robotDiagnostics": "Diagnóstico del robot",
+  "robotDiagnosticsHint": "Lo que el robot informa sobre sus propias piezas (/diagnostics)",
+  "diagWarn": "Aviso",
+  "diagError": "Error",
+  "diagStale": "Sin actualizar",
+  "diagProblemsOnly": "Solo problemas",
+  "diagNoProblems": "No se informa de problemas.",
+  "diagnosticsHint": "Los informes vienen de los drivers del robot (diagnostic_updater) o de diagnostic_aggregator. \"Sin actualizar\" significa que un informe dejó de repetirse. Un error también se envía como notificación y queda en el registro de incidentes.",
+  "diagErrorNotice": "El robot informa de un error: {name}: {message}",
+  "diagErrorsNotice": "El robot informa de {count} errores: {names}"
 }

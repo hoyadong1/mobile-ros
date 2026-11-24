@@ -29,6 +29,7 @@ import 'status_page.dart';
 import 'assistant_page.dart';
 import 'fleet_page.dart';
 import 'foxglove_connection.dart';
+import 'diagnostics.dart';
 import 'incident_recorder.dart';
 import 'incidents_page.dart';
 import 'nav_progress.dart';
@@ -189,6 +190,47 @@ class _Robot {
     } catch (_) {}
   }
 
+  StreamSubscription<Map<String, dynamic>>? _diagnostics;
+  final _diagAlerts = DiagnosticsAlerts();
+  final _diagLevels = <String, DiagLevel>{};
+
+  /// Follows the robot's own health reports (/diagnostics): a part that turns to ERROR is a notice (once,
+  /// again only after it was OK), every change of level goes into the incident record.
+  Future<void> watchDiagnostics() async {
+    try {
+      final caps = await session.capabilities();
+      if (_disposed) return;
+      final all = caps.topicsOfType('diagnostic_msgs/DiagnosticArray');
+      // A robot in a namespace reads its own; a shared /diagnostics is only its own when it is alone.
+      final ns = session.namespace;
+      final own = ns.isEmpty || ns == '/' ? all : all.where((t) => t.startsWith('$ns/')).toList();
+      final mine = own.isNotEmpty ? own : caps.sharesNetwork ? const <String>[] : all;
+      final topics = {for (final t in mine) t: 'diagnostic_msgs/DiagnosticArray'};
+      final topic = pickDiagnosticsTopic(topics);
+      if (topic == null) return;
+      final board = DiagnosticsBoard();
+      _diagnostics = session.ros.subscribe(topic, throttleRate: 1000).listen((msg) {
+        if (_disposed) return;
+        final reports = board.update(msg, DateTime.now());
+        for (final r in reports) {
+          if (_diagLevels[r.name] == r.level) continue;
+          final before = _diagLevels[r.name];
+          _diagLevels[r.name] = r.level;
+          if (before == null && r.level == DiagLevel.ok) continue; // fine from the start: not news
+          recorder.record(IncidentKind.log, 'diagnostics ${r.name}: ${r.level.name.toUpperCase()} ${r.message}'.trim(),
+              level: switch (r.level) { DiagLevel.error => 'error', DiagLevel.warn || DiagLevel.stale => 'warning', _ => null });
+        }
+        final fresh = _diagAlerts.newErrors(reports);
+        if (fresh.isEmpty) return;
+        final first = fresh.first;
+        session.requests.add(RobotNotice(session.name, fresh.length == 1
+            ? appStrings.diagErrorNotice(first.shortName, first.message)
+            : appStrings.diagErrorsNotice(fresh.length, fresh.map((f) => f.shortName).take(3).join(', ')),
+            NoticeLevel.error));
+      }, onError: (_) {});
+    } catch (_) {}
+  }
+
   /// The assistant's history for this robot, kept while the workspace is open.
   final log = AuditLog();
   /// Runs saved routines (from the routines screen and on schedule), logged with the assistant's history.
@@ -225,6 +267,7 @@ class _Robot {
   void dispose() {
     _disposed = true;
     _battery?.cancel();
+    _diagnostics?.cancel();
     _progressTimer?.cancel();
     _poseTimer?.cancel();
     _noticeWatch?.cancel();
@@ -422,6 +465,7 @@ class _MainPageState extends State<MainPage> {
       ..start(_notifier);
     r.session.memory.load(); // its name for the title and the robot picker
     _watchRobot(r);
+    r.watchDiagnostics();
     r.watchBattery(() {
       _updatePresence();
       if (mounted) setState(() {}); // the battery in the status line

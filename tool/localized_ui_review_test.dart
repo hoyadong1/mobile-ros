@@ -27,6 +27,7 @@ import 'package:ros_tester/robot_profile.dart';
 import 'package:ros_tester/robot_session.dart';
 import 'package:ros_tester/robot_memory_page.dart';
 import 'package:ros_tester/topic_health_page.dart';
+import 'package:ros_tester/diagnostics_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../test/support/fake_cloud_session.dart';
@@ -54,7 +55,7 @@ void main() {
 
   for (final (size, scale) in [(const Size(320, 640), 2.0), (const Size(390, 844), 1.0), (const Size(1280, 800), 1.0)]) {
     for (final page in ['connect', 'workspace', 'drive', 'map', 'fleet', 'assistant', 'memory',
-      'sensors', 'log', 'tune', 'explorer', 'publish', 'account', 'incident', 'health']) {
+      'sensors', 'log', 'tune', 'explorer', 'publish', 'account', 'incident', 'health', 'diagnostics']) {
       testWidgets('$code $page at $size and ${scale}x', (tester) async {
         // ignore: invalid_use_of_visible_for_testing_member
         SharedPreferences.setMockInitialValues({});
@@ -100,6 +101,7 @@ void main() {
               .snapshot('robot1', messages.reasonNavFailed)), messages.reasonNavFailed),
           'health' => (TopicHealthPage(connection: link, topicTypes: const {
               '/scan': 'sensor_msgs/msg/LaserScan', '/robot1/odom': 'nav_msgs/msg/Odometry'}), messages.topicHealth),
+          'diagnostics' => (DiagnosticsPage(connection: link, topic: '/diagnostics'), messages.robotDiagnostics),
           _ => (FleetOverviewPage(sessions: [first, second]), messages.fleetOverview),
         };
         final base = buildTheme(Brightness.light);
@@ -135,6 +137,16 @@ void main() {
             child: RepaintBoundary(key: _capture, child: child!)),
           home: screen));
         await tester.pump();
+        if (page == 'diagnostics') {
+          // Long names, messages and every level, as a real robot's aggregator sends them.
+          link.events.add({'op': 'publish', 'topic': '/diagnostics', 'msg': {'status': [
+            {'name': '/Robot/Base/Motor controller (left wheel)', 'level': 2, 'message': 'Overcurrent: 12.4 A for 3 s',
+              'hardware_id': 'roboclaw-0', 'values': [{'key': 'Current', 'value': '12.4'}]},
+            {'name': '/Robot/Power/Battery', 'level': 1, 'message': 'Low voltage', 'hardware_id': '', 'values': []},
+            {'name': 'lidar: scan rate', 'level': 0, 'message': 'OK', 'hardware_id': '', 'values': []},
+          ]}});
+          await tester.pump();
+        }
         await tester.pump(const Duration(seconds: 1));
         final built = tester.takeException();
         if (built != null) await capture(page);

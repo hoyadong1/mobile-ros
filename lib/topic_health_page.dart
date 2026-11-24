@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_language.dart';
 import 'app_theme.dart';
+import 'diagnostics.dart';
+import 'diagnostics_page.dart';
 import 'explorer_page.dart' show isHeavyType;
 import 'message_schema.dart' show normalizeType;
 import 'ros_connection.dart';
@@ -132,6 +134,15 @@ class TopicHealthPageState extends State<TopicHealthPage> with ThrottledRebuild 
       body: !_loaded ? const Center(child: CircularProgressIndicator()) : ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
+          if (pickDiagnosticsTopic(widget.topicTypes) case final diag?) ...[
+            Card(margin: EdgeInsets.zero, child: ListTile(key: const Key('health-diagnostics'),
+              leading: const Icon(Icons.health_and_safety_outlined, color: Color(0xFF087F8C)),
+              title: Text(s.robotDiagnostics, style: const TextStyle(fontWeight: FontWeight.w700)),
+              subtitle: Text(s.robotDiagnosticsHint), trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.push(context, MaterialPageRoute<void>(
+                builder: (_) => DiagnosticsPage(connection: widget.connection, topic: diag))))),
+            const SizedBox(height: 12),
+          ],
           if (items.isEmpty) Padding(padding: const EdgeInsets.symmetric(vertical: 32), child: Column(children: [
             Text(s.noHealthTopics, textAlign: TextAlign.center, style: TextStyle(color: context.muted)),
             const SizedBox(height: 12),

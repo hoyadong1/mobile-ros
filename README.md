@@ -37,6 +37,8 @@ Drive commands need something on the robot that stops the base when commands sto
 - **Debug**: ROS explorer, publish messages, call services, tune parameters, robot log, message graphs.
 - **Topic health**: rate now vs usual, time since the last message, and what looks wrong: a topic that stopped,
   a lidar or IMU whose values froze while messages keep coming, timestamps that repeat or run backwards.
+- **Robot diagnostics**: `/diagnostics` or `/diagnostics_agg` worst first with details; a part that turns to
+  ERROR is a notification and goes into the incident record.
 - **Incident record**: the last 5 minutes (path, commands, trips, errors) saved when something goes wrong;
   export as MCAP to replay in Foxglove.
 - **Alerts**: low battery, stuck on the way, link lost while moving.

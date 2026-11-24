@@ -1058,5 +1058,15 @@
   "exportedMcap": "MCAP 파일을 저장했어요. Foxglove에서 열면 다시 볼 수 있어요.",
   "exportUnavailable": "여기서는 파일을 저장할 수 없어요. 복사를 사용하세요.",
   "exportFailed": "파일을 저장하지 못했어요.",
-  "incidentRecord": "사고 기록"
+  "incidentRecord": "사고 기록",
+  "robotDiagnostics": "로봇 진단",
+  "robotDiagnosticsHint": "로봇이 자기 부품 상태를 알려 주는 정보 (/diagnostics)",
+  "diagWarn": "경고",
+  "diagError": "오류",
+  "diagStale": "갱신 없음",
+  "diagProblemsOnly": "문제만 보기",
+  "diagNoProblems": "보고된 문제가 없어요.",
+  "diagnosticsHint": "보고는 로봇 드라이버(diagnostic_updater)나 diagnostic_aggregator가 보내요. \"갱신 없음\"은 보고가 더 이상 오지 않는다는 뜻이에요. 오류는 알림으로도 보내고 사고 기록에도 남겨요.",
+  "diagErrorNotice": "로봇 오류 보고: {name}: {message}",
+  "diagErrorsNotice": "로봇 오류 보고 {count}건: {names}"
 }

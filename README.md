@@ -35,7 +35,10 @@ Drive commands need something on the robot that stops the base when commands sto
   model handles harder requests. Every step is checked against the robot's limits before anything moves.
 - **Fleet**: a few robots in namespaces (`/robot1`, `/robot2`, …) on one screen, one assistant, STOP all.
 - **Debug**: ROS explorer, publish messages, call services, tune parameters, robot log, message graphs.
-- **Incident record**: the last 5 minutes (path, commands, trips, errors) saved when something goes wrong.
+- **Topic health**: rate now vs usual, time since the last message, and what looks wrong: a topic that stopped,
+  a lidar or IMU whose values froze while messages keep coming, timestamps that repeat or run backwards.
+- **Incident record**: the last 5 minutes (path, commands, trips, errors) saved when something goes wrong;
+  export as MCAP to replay in Foxglove.
 - **Alerts**: low battery, stuck on the way, link lost while moving.
 
 ## Robot-side scripts
@@ -93,7 +96,8 @@ Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 ## Report a problem
 
 Open an issue with: the connection mode, ROS distro, robot (or simulation), what you did and what happened.
-In the app, **Incident records → Copy** gives a JSON record of the last minutes that helps a lot.
+In the app, **Incident records → Copy** gives a JSON record of the last minutes that helps a lot
+(or **Export as MCAP** and attach the file).
 
 ## Privacy
 

@@ -6,7 +6,9 @@ import 'package:material_ui/material_ui.dart';
 
 import 'app_language.dart';
 import 'app_theme.dart';
+import 'file_export.dart';
 import 'incident_recorder.dart';
+import 'mcap_writer.dart';
 
 /// Saved incident records, newest first, with "save the last 5 minutes now".
 class IncidentsPage extends StatefulWidget {
@@ -87,9 +89,11 @@ String _two(int n) => n.toString().padLeft(2, '0');
 
 /// One record: the path, a time slider to step through it, and the events up to that moment.
 class IncidentPage extends StatefulWidget {
-  const IncidentPage({super.key, required this.incident, this.onDelete});
+  const IncidentPage({super.key, required this.incident, this.onDelete, this.saveFile = saveFileAs});
 
   final Incident incident;
+  /// Where an exported file goes: Android's "save as" (tests pass their own).
+  final Future<bool> Function(String name, Uint8List bytes) saveFile;
   final Future<void> Function()? onDelete;
 
   @override
@@ -106,7 +110,11 @@ class _IncidentPageState extends State<IncidentPage> {
     final upTo = events.isEmpty ? -1 : at.round();
     final shown = [for (var k = upTo; k >= 0 && k > upTo - 200; k--) if (events[k].kind != IncidentKind.pose) events[k]];
     return Scaffold(
-      appBar: AppBar(title: Text(i.reason, maxLines: 1, overflow: TextOverflow.ellipsis), actions: [
+      // The reason can be long and there are three actions: it goes in the page, the bar says what this is.
+      appBar: AppBar(title: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft,
+        child: Text(context.strings.incidentRecord)), actions: [
+        IconButton(key: const Key('incident-export'), tooltip: context.strings.exportMcap,
+          icon: const Icon(Icons.file_download_outlined), onPressed: () => _export(i)),
         IconButton(key: const Key('incident-copy'), tooltip: context.strings.copyRecord, icon: const Icon(Icons.copy),
           onPressed: () {
             Clipboard.setData(ClipboardData(text: const JsonEncoder.withIndent(' ').convert(i.toJson())));
@@ -119,6 +127,9 @@ class _IncidentPageState extends State<IncidentPage> {
           }),
       ]),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 24), children: [
+        Text(i.reason, key: const Key('incident-reason'),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 4),
         Text('${i.robot} · ${_when(i.time)}', style: TextStyle(color: context.muted)),
         const SizedBox(height: 12),
         AspectRatio(aspectRatio: 1.4, child: Card(margin: EdgeInsets.zero, clipBehavior: Clip.antiAlias,
@@ -140,6 +151,21 @@ class _IncidentPageState extends State<IncidentPage> {
               '${e.x == null ? '' : ' · (${e.x!.toStringAsFixed(2)}, ${e.y!.toStringAsFixed(2)})'}')),
       ]),
     );
+  }
+
+  Future<void> _export(Incident i) async {
+    final s = context.strings;
+    String message;
+    try {
+      final saved = await widget.saveFile(incidentFileName(i), incidentToMcap(i));
+      if (!saved) return; // cancelled
+      message = s.exportedMcap;
+    } on FileExportUnavailable {
+      message = s.exportUnavailable;
+    } catch (_) {
+      message = s.exportFailed;
+    }
+    if (mounted) ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(message)));
   }
 
   static IconData _icon(IncidentEvent e) => switch (e.kind) {

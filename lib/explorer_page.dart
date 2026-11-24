@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'message_schema.dart';
 import 'plot_page.dart';
 import 'plotting.dart';
+import 'relay_access.dart';
+import 'topic_health_page.dart';
 import 'ros_connection.dart';
 import 'widgets/status_panel.dart';
 import 'widgets/throttled_rebuild.dart';
@@ -131,7 +133,13 @@ class ExplorerPageState extends State<ExplorerPage> {
       appBar: AppBar(
         title: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft,
           child: Text(context.strings.rosExplorer, style: const TextStyle(fontWeight: FontWeight.w800))),
-        actions: [IconButton(key: const Key('explorer-refresh'), tooltip: context.strings.refresh,
+        actions: [
+          IconButton(key: const Key('explorer-health'), tooltip: context.strings.topicHealth,
+            icon: const Icon(Icons.monitor_heart_outlined),
+            onPressed: loading || connection == null || topicTypes.isEmpty ? null : () => Navigator.push(context,
+              MaterialPageRoute<void>(builder: (_) => TopicHealthPage(connection: connection!, topicTypes: topicTypes,
+                remote: RelayAccess.isRelay(widget.ip))))),
+          IconButton(key: const Key('explorer-refresh'), tooltip: context.strings.refresh,
           onPressed: loading ? null : refresh, icon: const Icon(Icons.refresh))],
         bottom: PreferredSize(preferredSize: const Size.fromHeight(112), child: Column(children: [
           Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 8), child: TextField(

@@ -2649,5 +2649,97 @@
         "type": "String"
       }
     }
-  }
+  },
+  "topicHealth": "Topic health",
+  "chooseTopics": "Choose topics",
+  "chooseTopicsCount": "Watching {count} of up to {max}",
+  "@chooseTopicsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "noHealthTopics": "No sensor or state topics were found on this robot. Choose the topics to watch.",
+  "topicsNeedAttention": "{count, plural, one {1 topic needs a look} other {{count} topics need a look}}",
+  "@topicsNeedAttention": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "topicsLookFine": "{count, plural, one {The topic looks fine} other {All {count} topics look fine}}",
+  "@topicsLookFine": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "healthRemoteNote": "Over the remote link messages are slowed down, so only \"still arriving\" is checked.",
+  "topicHealthHint": "The usual rate is learned while this screen is open. Sensors whose values never change (a lidar or IMU always jitters a little) and timestamps that stop or run backwards are flagged too.",
+  "healthOk": "OK",
+  "healthWaiting": "Waiting",
+  "healthSlow": "Slow",
+  "healthStale": "Stopped",
+  "healthFrozen": "Frozen",
+  "healthBadStamp": "Time",
+  "healthStillArriving": "Still arriving",
+  "healthRateUsual": "{now} Hz (usually {usual})",
+  "@healthRateUsual": {
+    "placeholders": {
+      "now": {
+        "type": "String"
+      },
+      "usual": {
+        "type": "String"
+      }
+    }
+  },
+  "healthLastAgo": "last {ago} ago",
+  "@healthLastAgo": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "healthUnderSecond": "under 1 s",
+  "healthSeconds": "{n} s",
+  "@healthSeconds": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "healthMinutes": "{n} min",
+  "@healthMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "healthStaleWhy": "No message for much longer than usual. Is the node or driver still running?",
+  "healthFrozenWhy": "Messages keep coming but the values have not changed for {time}. The driver may be re-sending an old reading.",
+  "@healthFrozenWhy": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "healthStampSameWhy": "The header time is not advancing: the same timestamp keeps repeating.",
+  "healthStampBackWhy": "The header time went backwards. Check the robot clock or use_sim_time.",
+  "healthSlowWhy": "Arriving at less than half the usual rate. The robot computer or Wi-Fi may be overloaded.",
+  "exportMcap": "Export as MCAP (Foxglove)",
+  "exportedMcap": "Saved the MCAP file. Open it in Foxglove to replay.",
+  "exportUnavailable": "Saving files is not available here. Use Copy instead.",
+  "exportFailed": "Could not save the file.",
+  "incidentRecord": "Incident record"
 }

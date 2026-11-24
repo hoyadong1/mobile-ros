@@ -26,6 +26,7 @@ import 'package:ros_tester/publish_page.dart';
 import 'package:ros_tester/robot_profile.dart';
 import 'package:ros_tester/robot_session.dart';
 import 'package:ros_tester/robot_memory_page.dart';
+import 'package:ros_tester/topic_health_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../test/support/fake_cloud_session.dart';
@@ -53,7 +54,7 @@ void main() {
 
   for (final (size, scale) in [(const Size(320, 640), 2.0), (const Size(390, 844), 1.0), (const Size(1280, 800), 1.0)]) {
     for (final page in ['connect', 'workspace', 'drive', 'map', 'fleet', 'assistant', 'memory',
-      'sensors', 'log', 'tune', 'explorer', 'publish', 'account', 'incident']) {
+      'sensors', 'log', 'tune', 'explorer', 'publish', 'account', 'incident', 'health']) {
       testWidgets('$code $page at $size and ${scale}x', (tester) async {
         // ignore: invalid_use_of_visible_for_testing_member
         SharedPreferences.setMockInitialValues({});
@@ -97,6 +98,8 @@ void main() {
           'incident' => (IncidentPage(incident: (IncidentRecorder()..pose(0, 0)..pose(1, 0.5)
               ..record(IncidentKind.log, 'controller_server: no valid control', level: 'error'))
               .snapshot('robot1', messages.reasonNavFailed)), messages.reasonNavFailed),
+          'health' => (TopicHealthPage(connection: link, topicTypes: const {
+              '/scan': 'sensor_msgs/msg/LaserScan', '/robot1/odom': 'nav_msgs/msg/Odometry'}), messages.topicHealth),
           _ => (FleetOverviewPage(sessions: [first, second]), messages.fleetOverview),
         };
         final base = buildTheme(Brightness.light);

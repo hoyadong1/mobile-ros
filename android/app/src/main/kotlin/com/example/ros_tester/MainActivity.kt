@@ -6,12 +6,16 @@ import android.net.wifi.WifiManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
     // Android drops incoming multicast on Wi-Fi unless an app holds this lock; ROS 2 (DDS) discovery
     // depends on multicast, so the direct connection holds it while connected.
     private var multicastLock: WifiManager.MulticastLock? = null
     private var links: MethodChannel? = null
+    // A file the person is choosing a place for (Android's "save as"): its bytes and the call to answer.
+    private var pendingSave: Pair<ByteArray, MethodChannel.Result>? = null
+    private val saveRequest = 4207
 
     /** An approval link (https://mobile-ros.com/link/...) that opened or reached the app; others are ignored. */
     private fun approvalLink(intent: Intent?): String? {
@@ -25,6 +29,25 @@ class MainActivity : FlutterActivity() {
         links = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "mobile_ros/links").apply {
             setMethodCallHandler { call, result ->
                 if (call.method == "initialLink") result.success(approvalLink(intent)) else result.notImplemented()
+            }
+        }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "mobile_ros/files").setMethodCallHandler { call, result ->
+            if (call.method != "saveAs") return@setMethodCallHandler result.notImplemented()
+            val bytes = call.argument<ByteArray>("bytes")
+            val name = call.argument<String>("name") ?: "file"
+            if (bytes == null) return@setMethodCallHandler result.error("args", "no bytes", null)
+            pendingSave?.second?.success(false) // a second request replaces an unanswered one
+            pendingSave = bytes to result
+            val pick = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = call.argument<String>("mime") ?: "application/octet-stream"
+                putExtra(Intent.EXTRA_TITLE, name)
+            }
+            try {
+                startActivityForResult(pick, saveRequest)
+            } catch (e: Exception) {
+                pendingSave = null
+                result.error("unavailable", e.message, null)
             }
         }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "mobile_ros/network").setMethodCallHandler { call, result ->
@@ -46,6 +69,24 @@ class MainActivity : FlutterActivity() {
                 }
                 else -> result.notImplemented()
             }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != saveRequest) return
+        val (bytes, result) = pendingSave ?: return
+        pendingSave = null
+        val uri = data?.data
+        if (resultCode != RESULT_OK || uri == null) return result.success(false)
+        Executors.newSingleThreadExecutor().execute {
+            val ok = try {
+                contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) } != null
+            } catch (e: Exception) {
+                false
+            }
+            runOnUiThread { result.success(ok) }
         }
     }
 

@@ -10,6 +10,10 @@ set(ZENOH_PICO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.build/zenoh-pico" CACHE PATH "z
 set(FRAG_MAX_SIZE 8388608 CACHE STRING "" FORCE)
 set(BATCH_UNICAST_SIZE 65535 CACHE STRING "" FORCE)
 # Advanced subscribers fetch what transient-local publishers kept (a latched /map). Unstable in 1.8.
+# zenoh-pico waits this long for each socket read, also for the router's answer while connecting. Its
+# default (100 ms) fails the connection outright when the round trip is longer (busy Wi-Fi, a mesh, a VPN or
+# mobile data). 1 s covers those; reads still return as soon as data arrives.
+set(Z_CONFIG_SOCKET_TIMEOUT 1000 CACHE STRING "" FORCE)
 set(Z_FEATURE_UNSTABLE_API 1 CACHE STRING "" FORCE)
 set(Z_FEATURE_ADVANCED_SUBSCRIPTION 1 CACHE STRING "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)

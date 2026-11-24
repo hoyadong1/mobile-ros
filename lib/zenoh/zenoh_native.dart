@@ -3,6 +3,7 @@ library;
 
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'zenoh_connection.dart';
@@ -189,7 +190,10 @@ class NativeZenohBackend implements ZenohBackend {
   void close() {
     if (_closed) return;
     _closed = true;
-    _lib.close(_h);
     calloc.free(_event);
+    // Closing waits for the session's read thread, which can sit in a socket read for up to the socket
+    // timeout (1 s): do it off this isolate so leaving a robot never freezes the screen.
+    final h = _h;
+    Isolate.run(() => _Lib.load()?.close(h)).catchError((_) => _lib.close(h));
   }
 }

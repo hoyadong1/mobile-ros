@@ -1068,5 +1068,17 @@
   "diagNoProblems": "No se informa de problemas.",
   "diagnosticsHint": "Los informes vienen de los drivers del robot (diagnostic_updater) o de diagnostic_aggregator. \"Sin actualizar\" significa que un informe dejó de repetirse. Un error también se envía como notificación y queda en el registro de incidentes.",
   "diagErrorNotice": "El robot informa de un error: {name}: {message}",
-  "diagErrorsNotice": "El robot informa de {count} errores: {names}"
+  "diagErrorsNotice": "El robot informa de {count} errores: {names}",
+  "navActPlanning": "Planificando la ruta…",
+  "navActFollowing": "Siguiendo la ruta",
+  "navActClearing": "Borrando obstáculos antiguos de su mapa",
+  "navActSpinning": "Recuperándose: girando en el sitio",
+  "navActBackingUp": "Recuperándose: retrocediendo",
+  "navActWaiting": "Recuperándose: esperando a que se despeje el camino",
+  "navActDriving": "Recuperándose: avanzando recto",
+  "navActRecovering": "Recuperándose",
+  "navAboutSeconds": "unos {seconds} s",
+  "navRecoveryCount": "{count, plural, one {1 recuperación} other {{count} recuperaciones}}",
+  "navEstimatedFromPosition": "estimado por la posición",
+  "navStuckNoticeWhy": "Hace un rato que no se acerca a su destino (faltan {left}). Nav2: {what}. Revísalo."
 }

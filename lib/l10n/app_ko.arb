@@ -1068,5 +1068,17 @@
   "diagNoProblems": "보고된 문제가 없어요.",
   "diagnosticsHint": "보고는 로봇 드라이버(diagnostic_updater)나 diagnostic_aggregator가 보내요. \"갱신 없음\"은 보고가 더 이상 오지 않는다는 뜻이에요. 오류는 알림으로도 보내고 사고 기록에도 남겨요.",
   "diagErrorNotice": "로봇 오류 보고: {name}: {message}",
-  "diagErrorsNotice": "로봇 오류 보고 {count}건: {names}"
+  "diagErrorsNotice": "로봇 오류 보고 {count}건: {names}",
+  "navActPlanning": "경로를 찾는 중…",
+  "navActFollowing": "경로를 따라가는 중",
+  "navActClearing": "지도에서 오래된 장애물을 지우는 중",
+  "navActSpinning": "복구 중: 제자리 회전",
+  "navActBackingUp": "복구 중: 뒤로 이동",
+  "navActWaiting": "복구 중: 길이 비기를 기다리는 중",
+  "navActDriving": "복구 중: 직진",
+  "navActRecovering": "복구 중",
+  "navAboutSeconds": "약 {seconds}초",
+  "navRecoveryCount": "복구 {count}번",
+  "navEstimatedFromPosition": "위치로 추정",
+  "navStuckNoticeWhy": "한동안 목적지에 가까워지지 않았어요(남은 거리 {left}). Nav2: {what}. 확인해 보세요."
 }

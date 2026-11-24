@@ -1068,5 +1068,17 @@
   "diagNoProblems": "報告された問題はありません。",
   "diagnosticsHint": "報告はロボットのドライバー(diagnostic_updater)や diagnostic_aggregator から届きます。「更新なし」は報告が届かなくなったことを示します。エラーは通知でも知らせ、インシデント記録にも残します。",
   "diagErrorNotice": "ロボットがエラーを報告: {name}: {message}",
-  "diagErrorsNotice": "ロボットがエラーを{count}件報告: {names}"
+  "diagErrorsNotice": "ロボットがエラーを{count}件報告: {names}",
+  "navActPlanning": "経路を計画中…",
+  "navActFollowing": "経路に沿って走行中",
+  "navActClearing": "地図から古い障害物を消去中",
+  "navActSpinning": "回復中: その場で回転",
+  "navActBackingUp": "回復中: 後退",
+  "navActWaiting": "回復中: 道が空くのを待機",
+  "navActDriving": "回復中: 直進",
+  "navActRecovering": "回復中",
+  "navAboutSeconds": "約{seconds}秒",
+  "navRecoveryCount": "回復 {count}回",
+  "navEstimatedFromPosition": "位置から推定",
+  "navStuckNoticeWhy": "しばらく目的地に近づいていません(残り {left})。Nav2: {what}。確認してください。"
 }

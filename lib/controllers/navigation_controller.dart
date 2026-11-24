@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import '../nav_activity.dart';
 import 'package:flutter/foundation.dart';
 import '../map_geometry.dart' show Pose2D;
 import '../navigation_goal.dart';
@@ -45,6 +47,9 @@ class NavigationController extends ChangeNotifier {
   String? _detail;
   ActionHandle? _handle;
   StreamSubscription<Map<String, dynamic>>? _feedback;
+  StreamSubscription<Map<String, dynamic>>? _treeLog;
+  /// What Nav2 is doing during a goal (planning, following, a recovery), from its behavior tree log.
+  final activityTracker = NavActivityTracker();
   Completer<NavStatus>? _finished;
   bool _disposed = false;
   bool _configured = false;
@@ -71,6 +76,8 @@ class NavigationController extends ChangeNotifier {
   /// The largest distance seen for this goal, for a progress bar.
   double? get startDistance => _startDistance;
   int get recoveries => _recoveries;
+  /// What Nav2 is doing now, when its behavior tree log is available (action mode, Nav2).
+  NavActivity? get activity => isActive ? activityTracker.current : null;
   /// Extra explanation of the outcome, if any.
   String? get detail => _detail;
 
@@ -149,7 +156,11 @@ class NavigationController extends ChangeNotifier {
     _etaSeconds = null;
     _distanceRemaining = from?.distanceTo(target);
     _startDistance = _distanceRemaining;
-    if (handle != null) _follow(handle, target, frame, retries: 1);
+    activityTracker.reset();
+    if (handle != null) {
+      _follow(handle, target, frame, retries: 1);
+      _watchTree();
+    }
     notifyListeners();
     return finished.future;
   }
@@ -241,6 +252,18 @@ class NavigationController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Follows bt_navigator's log while the goal runs. A robot without it (or a bridge that cannot read the
+  /// type) simply shows no activity.
+  void _watchTree() {
+    if (_treeLog != null) return;
+    try {
+      _treeLog = ros.subscribe(behaviorTreeLogTopic(_navigateAction), type: 'nav2_msgs/msg/BehaviorTreeLog')
+          .listen((msg) {
+        if (isActive && activityTracker.onLog(msg)) notifyListeners();
+      }, onError: (_) {});
+    } catch (_) {}
+  }
+
   void _onFeedback(Map<String, dynamic> values) {
     if (!isActive) return;
     _distanceRemaining = (values['distance_remaining'] as num?)?.toDouble() ?? _distanceRemaining;
@@ -265,6 +288,8 @@ class NavigationController extends ChangeNotifier {
   void _detach(NavStatus status) {
     _feedback?.cancel();
     _feedback = null;
+    _treeLog?.cancel();
+    _treeLog = null;
     _handle = null;
     final finished = _finished;
     _finished = null;

@@ -2771,5 +2771,41 @@
         "type": "String"
       }
     }
+  },
+  "navActPlanning": "Planning the route…",
+  "navActFollowing": "Following the route",
+  "navActClearing": "Clearing old obstacles from its map",
+  "navActSpinning": "Recovering: turning in place",
+  "navActBackingUp": "Recovering: backing up",
+  "navActWaiting": "Recovering: waiting for the way to clear",
+  "navActDriving": "Recovering: driving straight",
+  "navActRecovering": "Recovering",
+  "navAboutSeconds": "about {seconds} s",
+  "@navAboutSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "navRecoveryCount": "{count, plural, one {1 recovery} other {{count} recoveries}}",
+  "@navRecoveryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "navEstimatedFromPosition": "estimated from position",
+  "navStuckNoticeWhy": "It has not got closer to its goal for a while ({left} left). Nav2: {what}. Check on it.",
+  "@navStuckNoticeWhy": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      },
+      "what": {
+        "type": "String"
+      }
+    }
   }
 }

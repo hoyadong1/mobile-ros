@@ -31,6 +31,8 @@ Drive commands need something on the robot that stops the base when commands sto
 
 - **Drive**: live camera, on-screen sticks, keyboard (WASD / arrows) or a gamepad; STOP always on screen.
 - **Map and navigate**: make a map, tap to send the robot (Nav2), saved places and floors, 3D map.
+  While it goes, what Nav2 is doing (planning, following, turning in place, backing up, waiting) from its
+  behavior tree log.
 - **Assistant**: "go forward 1 m, turn left, then go to the kitchen". An on-device model works offline; an online
   model handles harder requests. Every step is checked against the robot's limits before anything moves.
 - **Fleet**: a few robots in namespaces (`/robot1`, `/robot2`, …) on one screen, one assistant, STOP all.

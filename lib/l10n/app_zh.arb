@@ -1068,5 +1068,17 @@
   "diagNoProblems": "没有报告问题。",
   "diagnosticsHint": "报告来自机器人的驱动(diagnostic_updater)或 diagnostic_aggregator。“无更新”表示报告不再到达。错误也会发送通知并记入事件记录。",
   "diagErrorNotice": "机器人报告错误:{name}:{message}",
-  "diagErrorsNotice": "机器人报告 {count} 个错误:{names}"
+  "diagErrorsNotice": "机器人报告 {count} 个错误:{names}",
+  "navActPlanning": "正在规划路线…",
+  "navActFollowing": "正在沿路线行驶",
+  "navActClearing": "正在清除地图上的旧障碍物",
+  "navActSpinning": "恢复中:原地旋转",
+  "navActBackingUp": "恢复中:后退",
+  "navActWaiting": "恢复中:等待道路畅通",
+  "navActDriving": "恢复中:直行",
+  "navActRecovering": "恢复中",
+  "navAboutSeconds": "约 {seconds} 秒",
+  "navRecoveryCount": "恢复 {count} 次",
+  "navEstimatedFromPosition": "根据位置估算",
+  "navStuckNoticeWhy": "一段时间没有靠近目的地(剩余 {left})。Nav2:{what}。请检查一下。"
 }

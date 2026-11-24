@@ -32,6 +32,8 @@ import 'foxglove_connection.dart';
 import 'diagnostics.dart';
 import 'incident_recorder.dart';
 import 'incidents_page.dart';
+import 'nav_activity.dart';
+import 'nav_activity_text.dart';
 import 'nav_progress.dart';
 import 'robot_log.dart' show LogLevel;
 import 'robot_requests.dart';
@@ -135,8 +137,17 @@ class _Robot {
     recorder.record(IncidentKind.command, text);
   }
 
+  NavActivity? _lastActivity;
+
   void _recordNav() {
     final nav = session.nav;
+    final activity = nav.activity;
+    if (activity != _lastActivity) {
+      _lastActivity = activity;
+      if (activity != null) {
+        recorder.record(IncidentKind.nav, 'Nav2: ${activity.name}', level: isRecovery(activity) ? 'warning' : null);
+      }
+    }
     if (nav.status == _lastNav) return;
     _lastNav = nav.status;
     final left = nav.distanceRemaining;
@@ -255,8 +266,12 @@ class _Robot {
       final nav = session.nav;
       final left = nav.isActive ? nav.distanceRemaining : null;
       if (_progress.update(left, DateTime.now(), goal: nav.goalCount) && !_disposed) {
-        session.requests.add(RobotNotice(session.name,
-            appStrings.navStuckNotice('${left!.toStringAsFixed(1)} m'), NoticeLevel.warning));
+        // Say what Nav2 was doing about it (turning in place, backing up…) when its tree log tells.
+        final what = nav.activityTracker.lastRecovery ?? nav.activity;
+        final leftText = '${left!.toStringAsFixed(1)} m';
+        session.requests.add(RobotNotice(session.name, what == null || what == NavActivity.following
+            ? appStrings.navStuckNotice(leftText)
+            : appStrings.navStuckNoticeWhy(leftText, navActivityText(appStrings, what)), NoticeLevel.warning));
         saveIncident(appStrings.reasonStuck);
       }
     });

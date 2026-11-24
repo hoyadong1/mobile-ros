@@ -463,7 +463,39 @@ void main() {
     expect(goal['action'], '/robot1/navigate_to_pose');
     await tester.tap(find.byKey(const Key('nav-cancel')));
     await tester.pump();
-    expect(robot.sent.last['action'], '/robot1/navigate_to_pose');
+    expect(robot.sent.lastWhere((m) => m['op'] == 'cancel_action_goal')['action'], '/robot1/navigate_to_pose');
+    expect(robot.sent.last, containsPair('op', 'unsubscribe'), reason: 'the behavior tree log ends with the goal');
+  });
+
+  testWidgets('while navigating, a Nav2 recovery from its behavior tree is shown under the distance', (tester) async {
+    final robot = FakeConnection()
+      ..serviceResponses['/rosapi/topics'] = {
+        'topics': ['/map', '/odom'], 'types': ['nav_msgs/msg/OccupancyGrid', 'nav_msgs/msg/Odometry']}
+      ..serviceResponses['/rosapi/action_servers'] = {'action_servers': ['/navigate_to_pose']};
+    addTearDown(robot.close);
+    await _open(tester, robot);
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pump();
+    robot.events.add(_grid(w: 4, h: 4)..['topic'] = '/map');
+    await tester.pumpAndSettle();
+    await _tapAndGo(tester);
+    expect(robot.sent, contains(predicate<Map>((m) => m['op'] == 'subscribe' && m['topic'] == '/behavior_tree_log')));
+    final goal = robot.sent.singleWhere((m) => m['op'] == 'send_action_goal');
+    robot.events.add({'op': 'action_feedback', 'id': goal['id'], 'values': {'distance_remaining': 1.5}});
+    robot.events.add({'op': 'publish', 'topic': '/behavior_tree_log', 'msg': {'event_log': [
+      {'node_name': 'Spin', 'previous_status': 'IDLE', 'current_status': 'RUNNING'}]}});
+    await tester.pump();
+    await tester.pump();
+    expect(tester.widget<Text>(find.byKey(const Key('nav-activity'))).data, 'Recovering: turning in place');
+    robot.events.add({'op': 'publish', 'topic': '/behavior_tree_log', 'msg': {'event_log': [
+      {'node_name': 'Spin', 'previous_status': 'RUNNING', 'current_status': 'SUCCESS'},
+      {'node_name': 'ComputePathToPose', 'previous_status': 'IDLE', 'current_status': 'RUNNING'},
+      {'node_name': 'ComputePathToPose', 'previous_status': 'RUNNING', 'current_status': 'SUCCESS'}]}});
+    await tester.pump();
+    await tester.pump();
+    expect(find.byKey(const Key('nav-activity')), findsNothing, reason: 'back on its way: nothing extra to say');
+    await tester.tap(find.byKey(const Key('nav-cancel')));
+    await tester.pump();
   });
 
   testWidgets('saved topic overrides are used instead of discovery', (tester) async {

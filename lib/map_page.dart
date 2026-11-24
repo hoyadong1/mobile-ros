@@ -25,6 +25,8 @@ import 'package:path_provider/path_provider.dart';
 import 'controllers/drive_controller.dart';
 import 'drive_command.dart';
 import 'mapping.dart';
+import 'nav_activity.dart';
+import 'nav_activity_text.dart';
 import 'robot_profile.dart';
 import 'widgets/control_stick.dart';
 import 'robot_log.dart';
@@ -145,6 +147,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
   double? get etaSeconds => nav?.etaSeconds;
   double? get _startDistance => nav?.startDistance; // for the progress bar
   int get recoveries => nav?.recoveries ?? 0;
+  NavActivity? get navActivity => nav?.activity;
   String? get resultDetail => nav?.detail;
   Offset? _dragAnchor; // long-press start (canvas coordinates)
   double? _dragYaw;
@@ -1371,12 +1374,16 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
           // Nav2 reports 0 m left while it plans or recovers; that is not "arrived", so say what is happening
           // (and keep the bar moving) unless the robot really is at the goal.
           final farFromGoal = g != null && robot != null && math.sqrt(math.pow(g.x - robot.x, 2) + math.pow(g.y - robot.y, 2)) > 0.3;
-          final planning = left == null || (left <= 0.01 && farFromGoal);
-          final progress = planning || start == null || start <= 0 ? null : (1 - left / start).clamp(0.0, 1.0);
+          final activity = navActivity;
+          final recovering = activity != null && isRecovery(activity);
+          final planning = !recovering && (left == null || (left <= 0.01 && farFromGoal));
+          final progress = planning || recovering || start == null || start <= 0 ? null : (1 - left! / start).clamp(0.0, 1.0);
           final notes = [
-            if (eta != null && eta > 0 && !planning) 'about ${eta.round()} s',
-            if (recoveries > 0) '$recoveries recover${recoveries == 1 ? 'y' : 'ies'}',
-            if (navMode != NavMode.action) 'estimated from position',
+            // What Nav2 is doing (from its behavior tree), unless it is the plain "following the route".
+            if (activity != null && activity != NavActivity.following && !planning && !recovering) navActivityText(context.strings, activity),
+            if (eta != null && eta > 0 && !planning && !recovering) context.strings.navAboutSeconds(eta.round()),
+            if (recoveries > 0) context.strings.navRecoveryCount(recoveries),
+            if (navMode != NavMode.action) context.strings.navEstimatedFromPosition,
           ];
           content = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Row(children: [
@@ -1384,6 +1391,8 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
                 Text(context.strings.navigating, style: TextStyle(fontSize: 11, letterSpacing: 1.2, fontWeight: FontWeight.w700,
                   color: context.muted)),
                 Text(planning ? context.strings.planningRoute : context.strings.distanceLeft(_meters(left)), key: const Key('nav-progress'), style: title),
+                if (recovering) Text(navActivityText(context.strings, activity), key: const Key('nav-activity'),
+                  style: sub.copyWith(color: const Color(0xFFB26A00), fontWeight: FontWeight.w700)),
                 if (notes.isNotEmpty) Text(notes.join(' · '), style: sub, maxLines: 1, overflow: TextOverflow.ellipsis),
               ])),
               FilledButton.icon(key: const Key('nav-cancel'),

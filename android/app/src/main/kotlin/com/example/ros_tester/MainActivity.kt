@@ -54,7 +54,9 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "acquireMulticast" -> {
                     if (multicastLock == null) {
-                        val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                        // Devices without Wi-Fi have no WifiManager: discovery then relies on other networks.
+                        val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
+                        if (wifi == null) { result.success(false); return@setMethodCallHandler }
                         multicastLock = wifi.createMulticastLock("mobile_ros_dds").apply {
                             setReferenceCounted(false)
                             acquire()

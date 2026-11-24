@@ -7,7 +7,9 @@ import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'app_language.dart';
 import 'cloud_session.dart';
+import 'relay_messages.dart';
 
 /// Turning on remote access for a robot the phone reaches nearby, from the app alone: it signs in to
 /// the robot computer over SSH once (password or private key), installs the Mobile ROS agent as a service
@@ -15,8 +17,11 @@ import 'cloud_session.dart';
 /// The password and key go only to SSH and to sudo's standard input; they are never stored, logged or
 /// put on a command line.
 class RemoteSetupFailure implements Exception {
-  const RemoteSetupFailure(this.message);
-  final String message;
+  const RemoteSetupFailure(this.text);
+  /// The fixed English message, or an installer's own failure line.
+  final String text;
+  /// [text] in the app's language.
+  String get message => relayMessageIn(text, appStrings);
   @override
   String toString() => message;
 }

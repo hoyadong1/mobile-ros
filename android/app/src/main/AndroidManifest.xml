@@ -3,6 +3,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- ROS 2 discovery (DDS) uses multicast on the local network -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <!-- The multicast permission implies Wi-Fi is required; remote access and Ethernet work without it. -->
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
     <!-- Questions and notices from the robot while the app is in the background (Android 13+ asks) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Routines keep running, and schedules fire, with the app in the background: a foreground

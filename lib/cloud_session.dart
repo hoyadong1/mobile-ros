@@ -4,13 +4,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'app_language.dart';
+import 'l10n/generated/app_localizations.dart';
 import 'relay_access.dart';
+import 'relay_messages.dart';
 import 'ros_connection.dart';
 
 class CloudFailure implements Exception {
-  const CloudFailure(this.message, {this.signInRequired = false});
-  final String message;
+  const CloudFailure(this.text, {this.signInRequired = false});
+  /// The message as written here or sent by the server (English for fixed messages).
+  final String text;
   final bool signInRequired;
+  /// [text] in the app's language.
+  String get message => relayMessageIn(text, appStrings);
   @override
   String toString() => message;
 }
@@ -66,11 +72,11 @@ class CloudUsage {
   final String? plan;
   final int? maxActiveRobots;
   bool get exhausted => !available || usedBytes >= limitBytes;
-  String get summary {
+  String summaryIn(AppLocalizations s) {
     final (unit, divisor) = limitBytes >= 1000000000 ? ('GB', 1000000000)
       : limitBytes >= 1000000 ? ('MB', 1000000) : limitBytes >= 1000 ? ('KB', 1000) : ('bytes', 1);
     final limit = (limitBytes / divisor).toStringAsFixed(limitBytes % divisor == 0 ? 0 : 2);
-    return '${(usedBytes / divisor).toStringAsFixed(2)} of $limit $unit this month';
+    return s.remoteUsageSummary((usedBytes / divisor).toStringAsFixed(2), limit, unit);
   }
 }
 
@@ -132,7 +138,7 @@ class CloudSession extends ChangeNotifier with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused || state == AppLifecycleState.hidden || state == AppLifecycleState.detached) {
       for (final connection in _connections.toList()) {
-        connection.lastError = 'Remote access paused. Reconnect when you return to the app.';
+        connection.lastError = relayMessageIn('Remote access paused. Reconnect when you return to the app.', appStrings);
         connection.close();
       }
     }
@@ -383,7 +389,7 @@ class CloudRosConnection extends RosBridgeConnection {
   CloudRosConnection(this.session, this.robot, String address, {required this.onClosed}) : super(address, '443') {
     _renewal = Timer.periodic(const Duration(minutes: 5), (_) => _renew());
     _expiry = Timer(const Duration(minutes: 30), () {
-      lastError = 'Your 30-minute remote session ended. Reconnect from My robots.';
+      lastError = relayMessageIn('Your 30-minute remote session ended. Reconnect from My robots.', appStrings);
       close();
     });
     messages.listen((message) {
@@ -392,7 +398,7 @@ class CloudRosConnection extends RosBridgeConnection {
         if (!_challengeReady.isCompleted) _challengeReady.complete();
       }
       if (message['op'] == 'relay_end') {
-        lastError = message['msg'] is String ? message['msg'] as String : 'Your remote session ended.';
+        lastError = relayMessageIn(message['msg'] is String ? message['msg'] as String : 'Your remote session ended.', appStrings);
         close();
       }
     }, onDone: _finish);
@@ -408,7 +414,7 @@ class CloudRosConnection extends RosBridgeConnection {
   Future<void> get ready async {
     await super.ready;
     await _challengeReady.future.timeout(timeout);
-    if (isClosed) throw StateError(lastError ?? 'Remote connection closed.');
+    if (isClosed) throw StateError(lastError ?? relayMessageIn('Remote connection closed.', appStrings));
   }
   Future<void> _renew() async {
     if (isClosed || _renewing) return;
@@ -417,7 +423,7 @@ class CloudRosConnection extends RosBridgeConnection {
       final access = await session.ticket(robot);
       if (!isClosed) send({'op': 'relay_renew', 'token': access['token']});
     } catch (_) {
-      lastError = 'Your remote session ended. Reconnect from My robots.';
+      lastError = relayMessageIn('Your remote session ended. Reconnect from My robots.', appStrings);
       close();
     } finally { _renewing = false; }
   }

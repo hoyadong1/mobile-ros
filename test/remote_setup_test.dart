@@ -233,7 +233,7 @@ void main() {
       addTearDown(session.dispose);
       await tester.pumpWidget(MaterialApp(home: LinkRobotPage(code: 'K7QM-4XTD', session: session)));
       await tester.pumpAndSettle();
-      expect(find.textContaining('invalid or expired'), findsOneWidget);
+      expect(find.textContaining('wrong or has expired'), findsOneWidget);
       expect(find.byKey(const Key('link-add')), findsNothing);
       await tester.pumpWidget(MaterialApp(home: LinkRobotPage(key: const Key('bad'), code: '<script>', session: session)));
       await tester.pumpAndSettle();

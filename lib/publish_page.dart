@@ -1,4 +1,5 @@
 import 'app_language.dart';
+import 'relay_messages.dart';
 import 'dart:async';
 import 'app_theme.dart';
 import 'dart:convert';
@@ -123,9 +124,10 @@ class _PublishPageState extends State<PublishPage> {
       _subscription = client.messages.listen(
         (message) {
           if (!mounted) return;
-          if (message['level'] == 'error') {
+          final refused = statusErrorIn(message, context.strings);
+          if (refused != null) {
             _showStatus(
-              context.strings.robotRejected('${message['msg'] ?? message}'),
+              context.strings.robotRejected(refused),
               error: true,
             );
           }

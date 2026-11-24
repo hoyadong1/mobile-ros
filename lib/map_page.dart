@@ -1,4 +1,5 @@
 import 'app_language.dart';
+import 'relay_messages.dart';
 import 'dart:async';
 import 'app_theme.dart';
 import 'dart:math' as math;
@@ -503,7 +504,8 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
     try {
       final op = event['op'];
       if (op == 'action_feedback' || op == 'action_result') return; // followed by the navigation controller
-      if (event['level'] == 'error') throw StateError('${event['msg']}');
+      final refused = statusErrorIn(event, context.strings);
+      if (refused != null) throw StateError(refused);
       final msg = event['msg'];
       if (msg is! Map) return;
       final topic = event['topic'];
@@ -1505,7 +1507,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
   /// Which way the robot faces on arrival: a dial to drag (it turns the arrow on the map too), 45° steps,
   /// and back to the direction of travel. Pressing and dragging on the map still works as well.
   Widget _headingControl(Pose2D g, Pose2D? robot,
-      {ValueChanged<double>? onChanged, String label = 'Faces', String keyPrefix = 'goal'}) {
+      {ValueChanged<double>? onChanged, String? label, String keyPrefix = 'goal'}) {
     final cs = Theme.of(context).colorScheme;
     // Shown 0..359 (people read "270°" more easily than "-90°"); the 45° steps work from the same value.
     final degrees = ((g.yaw * 180 / math.pi).round() % 360 + 360) % 360;
@@ -1529,7 +1531,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
         child: HeadingDial(key: Key('$keyPrefix-heading-dial'), yaw: g.yaw, onChanged: setYaw, size: 56)),
       const SizedBox(width: 12),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Text(keyPrefix == 'goal' ? '$label $degrees° on arrival' : '$label $degrees°', key: Key('$keyPrefix-heading'),
+        Text(keyPrefix == 'goal' ? context.strings.goalFacesOnArrival('$degrees') : '${label ?? context.strings.faces} $degrees°', key: Key('$keyPrefix-heading'),
           style: TextStyle(fontWeight: FontWeight.w700, color: context.ink)),
         Wrap(spacing: 10, children: [
           Text('X ${g.x.toStringAsFixed(2)} m', key: Key('$keyPrefix-metric-X'), style: small),

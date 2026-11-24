@@ -550,7 +550,7 @@ class _CloudRobotsPageState extends State<CloudRobotsPage> {
               const SizedBox(height: 8),
               if (_usage!.plan == 'free') Text(context.strings.freeAllowance),
               if (_usage!.plan == 'subscriber') Text(context.strings.subscriberAllowance),
-              Text(_usage!.summary),
+              Text(_usage!.summaryIn(context.strings)),
               if (_usage!.maxActiveRobots != null) Text(context.strings.remoteRobotsAtATime(_usage!.maxActiveRobots!)),
               const SizedBox(height: 8),
               Text(_usage!.exhausted ? context.strings.remotePaused

@@ -3,8 +3,6 @@
 //   pip install websockets && python scripts/fake_robot.py --port 9091
 //   flutter test tool/live_quickstart_test.dart --dart-define=PORT=9091
 // Lists topics, reads odometry, drives 1 s forward and sees the odometry change, then stops.
-import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ros_tester/ros_client.dart';
 import 'package:ros_tester/ros_connection.dart';

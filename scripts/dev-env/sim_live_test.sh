@@ -5,6 +5,7 @@
 # Nav2 cannot plan, so always go through this script. Run from Git Bash on Windows:
 #   bash scripts/dev-env/sim_live_test.sh [test file]      (default tool/live_robot_test.dart)
 #   DISTRO=jazzy        ros-jazzy distro (Gazebo Harmonic) instead of ros-humble (Gazebo Classic)
+#   DISTRO=lyrical      ros-lyrical distro (ROS 2 Lyrical Luth, Ubuntu 26.04; create_ros_wsl.sh lyrical)
 #   RMW=rmw_zenoh_cpp   Jazzy robot on Zenoh (add DEFINES="--dart-define=VIA=zenoh" to connect the app over Zenoh too)
 #   FLUTTER=<path>      Flutter executable if `flutter` is not on PATH
 #   DEFINES="..."       extra flutter test flags, e.g. DEFINES="--dart-define=PROXY_TOKEN=secret"
@@ -31,7 +32,8 @@ DISTRO="${DISTRO:-humble}"
 case "$DISTRO" in
   humble) WSL=ros-humble; SIM=scripts/ros2_sim.sh ;;
   jazzy)  WSL=ros-jazzy;  SIM=scripts/ros2_jazzy_sim.sh ;;
-  *) echo "DISTRO must be humble or jazzy"; exit 2 ;;
+  lyrical) WSL=ros-lyrical; SIM=scripts/ros2_jazzy_sim.sh ;;
+  *) echo "DISTRO must be humble, jazzy or lyrical"; exit 2 ;;
 esac
 WSL="${WSL_DISTRO:-$WSL}"
 # Fail immediately when the selected distro is absent, rather than waiting five minutes for Ready.
@@ -47,12 +49,14 @@ fi
 # SIM_SCRIPT="scripts/ros2_vehicle_sim.sh car": another robot's simulation (with its arguments) instead
 [ -n "${SIM_SCRIPT:-}" ] && SIM="$SIM_SCRIPT"
 ENVS="HEADLESS=1"
+[ "$DISTRO" = lyrical ] && ENVS="$ENVS ROS_DISTRO_NAME=lyrical"
 [ -n "${RMW:-}" ] && ENVS="$ENVS RMW_IMPLEMENTATION=$RMW"
 [ -n "${ROBOTS:-}" ] && ENVS="$ENVS ROBOTS=$ROBOTS"
 
 # Only one simulation at a time: both distros share the network and ROS domain 0.
 wsl.exe --terminate ros-humble >/dev/null 2>&1
 wsl.exe --terminate ros-jazzy >/dev/null 2>&1
+wsl.exe --terminate ros-lyrical >/dev/null 2>&1
 if [ "$WSL" != ros-humble ] && [ "$WSL" != ros-jazzy ]; then
   wsl.exe --terminate "$WSL" >/dev/null 2>&1
 fi

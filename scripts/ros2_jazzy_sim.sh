@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # ROS 2 Jazzy test robot for Mobile ROS: TurtleBot3 (waffle) in Gazebo Harmonic + Nav2 + rosbridge.
 # The Jazzy counterpart of ros2_sim.sh (Humble + Gazebo Classic), so the app can be checked on both.
+# ROS_DISTRO_NAME=lyrical runs the same robot on ROS 2 Lyrical Luth (Ubuntu 26.04, the ros-lyrical distro).
 # Run inside a WSL Ubuntu 24.04:   bash scripts/ros2_jazzy_sim.sh            (Gazebo GUI via WSLg)
 #                                   HEADLESS=1 bash scripts/ros2_jazzy_sim.sh (no windows)
 # Middleware: RMW_IMPLEMENTATION=rmw_zenoh_cpp runs the whole robot on Zenoh instead of DDS (a Zenoh
@@ -10,7 +11,8 @@
 #        ros-jazzy-nav2-minimal-tb3-sim ros-jazzy-ros-gz ros-jazzy-rosbridge-suite ros-jazzy-rmw-zenoh-cpp
 set -eo pipefail
 
-source /opt/ros/jazzy/setup.bash
+DISTRO_NAME="${ROS_DISTRO_NAME:-jazzy}"
+source "/opt/ros/$DISTRO_NAME/setup.bash"
 timeout 10 ros2 daemon stop >/dev/null 2>&1 || true
 export TURTLEBOT3_MODEL=waffle
 PORT="${PORT:-9090}"
@@ -74,7 +76,7 @@ pids+=($!)
 
 echo
 echo "=== Ready ==="
-echo "distro    : ROS 2 Jazzy (${RMW_IMPLEMENTATION:-default DDS})"
+echo "distro    : ROS 2 $DISTRO_NAME (${RMW_IMPLEMENTATION:-default DDS})"
 echo "rosbridge : ws://$(hostname -I | awk '{print $1}'):$PORT  (WSL mirrored networking: same as the Windows PC IP)"
 echo "camera    : /demo_camera/image_raw (+ /compressed JPEG, which the app picks)"
 echo "Press Ctrl+C to stop."

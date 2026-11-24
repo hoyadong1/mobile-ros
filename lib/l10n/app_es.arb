@@ -1153,5 +1153,6 @@
   "navAboutSeconds": "unos {seconds} s",
   "navRecoveryCount": "{count, plural, one {1 recuperación} other {{count} recuperaciones}}",
   "navEstimatedFromPosition": "estimado por la posición",
-  "navStuckNoticeWhy": "Hace un rato que no se acerca a su destino (faltan {left}). Nav2: {what}. Revísalo."
+  "navStuckNoticeWhy": "Hace un rato que no se acerca a su destino (faltan {left}). Nav2: {what}. Revísalo.",
+  "nodeNotListed": "Este nodo no se está ejecutando ahora, o ROS lo oculta de la lista de nodos, así que no se pueden mostrar sus detalles."
 }

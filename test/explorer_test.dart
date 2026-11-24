@@ -85,6 +85,19 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
+  testWidgets('a node rosapi does not list (stopped or hidden) is not asked about: that would crash rosapi',
+      (tester) async {
+    final r = await open(tester);
+    await tester.tap(find.text('/odom'));
+    await tester.pumpAndSettle();
+    r.serviceResponses['/rosapi/nodes'] = {'nodes': ['/camera_driver']}; // the driver stopped meanwhile
+    await tester.tap(find.text('/turtlebot3_diff_drive'));
+    await tester.pumpAndSettle();
+    expect(r.calls.map((c) => c.$1), isNot(contains('/rosapi/node_details')));
+    expect(find.textContaining('is not running right now'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('a service shows its type, pre-fills the request and shows the response', (tester) async {
     final r = await open(tester);
     await tester.tap(find.text('Services 2'));

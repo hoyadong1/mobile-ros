@@ -2914,5 +2914,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "nodeNotListed": "This node is not running right now, or ROS hides it from the node list, so its details cannot be shown."
 }

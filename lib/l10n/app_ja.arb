@@ -1153,5 +1153,6 @@
   "navAboutSeconds": "約{seconds}秒",
   "navRecoveryCount": "回復 {count}回",
   "navEstimatedFromPosition": "位置から推定",
-  "navStuckNoticeWhy": "しばらく目的地に近づいていません(残り {left})。Nav2: {what}。確認してください。"
+  "navStuckNoticeWhy": "しばらく目的地に近づいていません(残り {left})。Nav2: {what}。確認してください。",
+  "nodeNotListed": "このノードは今動いていないか、ROS がノード一覧から隠しているため、詳細を表示できません。"
 }

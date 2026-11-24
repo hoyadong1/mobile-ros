@@ -1153,5 +1153,6 @@
   "navAboutSeconds": "约 {seconds} 秒",
   "navRecoveryCount": "恢复 {count} 次",
   "navEstimatedFromPosition": "根据位置估算",
-  "navStuckNoticeWhy": "一段时间没有靠近目的地(剩余 {left})。Nav2:{what}。请检查一下。"
+  "navStuckNoticeWhy": "一段时间没有靠近目的地(剩余 {left})。Nav2:{what}。请检查一下。",
+  "nodeNotListed": "该节点当前未运行,或被 ROS 从节点列表中隐藏,因此无法显示详细信息。"
 }

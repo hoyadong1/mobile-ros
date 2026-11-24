@@ -364,6 +364,14 @@ class _NodeDetailPageState extends State<NodeDetailPage> {
 
   Future<void> _load() async {
     try {
+      // rosbridge's rosapi crashes (and stays down for every client) when asked about a node it does not
+      // list: one that just stopped, or a hidden one (`_…`, e.g. the ros2 CLI daemon) seen as a publisher.
+      // Ask only about nodes in its current list.
+      final listed = (await widget.connection.call('/rosapi/nodes'))['nodes'];
+      if (listed is List && !listed.contains(widget.node)) {
+        if (mounted) setState(() => error = context.strings.nodeNotListed);
+        return;
+      }
       final v = await widget.connection.call('/rosapi/node_details', {'node': widget.node});
       if (!mounted) return;
       setState(() => details = {

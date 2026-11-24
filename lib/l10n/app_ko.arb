@@ -1153,5 +1153,6 @@
   "navAboutSeconds": "약 {seconds}초",
   "navRecoveryCount": "복구 {count}번",
   "navEstimatedFromPosition": "위치로 추정",
-  "navStuckNoticeWhy": "한동안 목적지에 가까워지지 않았어요(남은 거리 {left}). Nav2: {what}. 확인해 보세요."
+  "navStuckNoticeWhy": "한동안 목적지에 가까워지지 않았어요(남은 거리 {left}). Nav2: {what}. 확인해 보세요.",
+  "nodeNotListed": "이 노드는 지금 실행 중이 아니거나 ROS가 노드 목록에서 숨기고 있어서 자세한 정보를 볼 수 없어요."
 }

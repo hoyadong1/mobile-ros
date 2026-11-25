@@ -26,7 +26,10 @@ import 'package:path_provider/path_provider.dart';
 import 'controllers/drive_controller.dart';
 import 'drive_command.dart';
 import 'mapping.dart';
+import 'costmap_layer.dart';
 import 'nav_activity.dart';
+import 'nav_tools.dart';
+import 'patrol.dart';
 import 'nav_activity_text.dart';
 import 'robot_profile.dart';
 import 'widgets/control_stick.dart';
@@ -137,6 +140,14 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
   Set<String> _subscribed = {};
   final Map<String, String> _advertised = {};
   bool showPath = true, showScan = true;
+
+  /// Nav2's costmaps over the map (Layers menu): off until asked for, because they arrive as a grid every
+  /// second or so. The topic is the robot's own, found by name among its OccupancyGrid topics.
+  final costmapTopics = <CostmapKind, String?>{};
+  final showCostmap = <CostmapKind, bool>{CostmapKind.local: false, CostmapKind.global: false};
+  final _costmaps = <CostmapKind, Costmap?>{};
+  final _costmapImages = <CostmapKind, ui.Image?>{};
+  final _costmapTooLarge = <CostmapKind>{};
   List<math.Point<double>> path = [];
   List<math.Point<double>> scanPoints = [];
 
@@ -188,6 +199,123 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
   String? _savedOnRobot;
   Future<String?>? _loader;
   bool switchingFloor = false;
+
+  /// A round through several saved places (Nav2 FollowWaypoints), when the robot has that action.
+  PatrolController? patrol;
+
+  /// Which places the person ticked for a patrol, in the order they ticked them.
+  Future<void> _openPatrolSetup() async {
+    final places = [for (final p in placeBook.usable) if (p.frame == mapFrame) p];
+    final chosen = <String>[];
+    var loop = false;
+    final go = await showModalBottomSheet<bool>(context: context, isScrollControlled: true, showDragHandle: true,
+      builder: (sheet) => StatefulBuilder(builder: (sheet, setSheet) {
+        final s = sheet.strings;
+        // Everything but the button scrolls, so a short sheet (large text) still reaches every place.
+        return SafeArea(child: Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), child: Column(
+          mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Flexible(child: ListView(shrinkWrap: true, children: [
+              Text(s.patrol, style: Theme.of(sheet).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+              const SizedBox(height: 4),
+              Text(s.patrolPickPlaces, style: TextStyle(color: sheet.muted)),
+              const SizedBox(height: 8),
+              for (final p in places) CheckboxListTile(key: Key('patrol-pick-${p.name}'), dense: true,
+                value: chosen.contains(p.name), controlAffinity: ListTileControlAffinity.leading,
+                title: Text(p.name),
+                secondary: chosen.contains(p.name) ? CircleAvatar(radius: 12, child: Text('${chosen.indexOf(p.name) + 1}')) : null,
+                onChanged: (v) => setSheet(() => v == true ? chosen.add(p.name) : chosen.remove(p.name))),
+              SwitchListTile(key: const Key('patrol-loop'), dense: true, contentPadding: EdgeInsets.zero,
+                title: Text(s.patrolLoop), value: loop, onChanged: (v) => setSheet(() => loop = v)),
+            ])),
+            Align(alignment: Alignment.centerRight, child: FilledButton.icon(key: const Key('patrol-start'),
+              icon: const Icon(Icons.route), label: Text(chosen.length < 2 ? s.patrolNeedTwo : s.patrolStart),
+              onPressed: chosen.length < 2 ? null : () => Navigator.pop(sheet, true))),
+          ])));
+      }));
+    if (go != true || !mounted) return;
+    final stops = [for (final name in chosen) PatrolStop(name, places.firstWhere((p) => p.name == name).pose)];
+    nav?.cancel(); // one thing at a time: a single trip and a round would pull the robot two ways
+    setState(() { goal = null; navState = NavState.idle; });
+    try {
+      unawaited(patrol!.start(stops, frame: mapFrame, loop: loop));
+    } catch (e) {
+      setState(() => errorMessage = context.strings.sendGoalFailed('$e'));
+    }
+  }
+
+  Widget _patrolCard(TextStyle title, TextStyle sub) {
+    final p = patrol!, s = context.strings;
+    if (p.isRunning) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        Row(children: [
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(s.patrol.toUpperCase(), style: TextStyle(fontSize: 11, letterSpacing: 1.2, fontWeight: FontWeight.w700, color: context.muted)),
+            Text(s.patrolHeadingFor(p.currentName ?? '', p.current + 1, p.stops.length), key: const Key('patrol-progress'), style: title),
+            if (p.loop) Text(s.patrolRound(p.laps + 1), style: sub),
+          ])),
+          FilledButton.icon(key: const Key('patrol-stop'),
+            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFB3261E), foregroundColor: Colors.white,
+              visualDensity: VisualDensity.compact),
+            onPressed: p.cancel, icon: const Icon(Icons.stop, size: 18), label: Text(s.cancel)),
+        ]),
+        const SizedBox(height: 10),
+        ClipRRect(borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(value: p.stops.isEmpty ? null : p.current / p.stops.length, minHeight: 6)),
+      ]);
+    }
+    final (icon, color, text) = switch (p.status) {
+      PatrolStatus.finished => (Icons.check_circle, const Color(0xFF2E7D32), s.patrolFinished),
+      PatrolStatus.canceled => (Icons.cancel_outlined, Colors.blueGrey, s.patrolStopped),
+      _ => (Icons.error, const Color(0xFFB3261E), s.patrolFailed),
+    };
+    final missed = [for (final i in p.missed) if (i >= 0 && i < p.stops.length) p.stops[i].name];
+    return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Row(children: [
+        Icon(icon, color: color), const SizedBox(width: 10),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(text, key: const Key('patrol-result'), style: title),
+          if (missed.isNotEmpty) Text(s.patrolMissed(missed.join(', ')), style: sub),
+          if (p.detail != null) Text(p.detail!, style: sub),
+        ])),
+      ]),
+      Align(alignment: Alignment.centerRight, child: TextButton(key: const Key('patrol-dismiss'),
+        onPressed: p.reset, child: Text(s.ok))),
+    ]);
+  }
+
+  /// What Nav2 offers to un-stick the robot (clear the costmaps), looked up once the robot is connected.
+  NavTools navTools = NavTools.none;
+  bool clearingCostmaps = false;
+
+  Future<void> _findNavTools(RosConnection client) async {
+    final found = navToolsIn(await robotServices(client), namespace: widget.namespace);
+    if (mounted) setState(() => navTools = found);
+  }
+
+  /// Clears what the costmaps remember, so Nav2 plans again on what the robot sees now.
+  Future<void> clearCostmapsNow() async {
+    final ros = _ros ??= RosClient(connection!);
+    final s = context.strings;
+    setState(() => clearingCostmaps = true);
+    String message;
+    try {
+      await clearCostmaps(ros, navTools);
+      message = s.costmapsCleared;
+    } catch (_) {
+      message = s.costmapsClearFailed;
+    }
+    if (!mounted) return;
+    setState(() => clearingCostmaps = false);
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Widget _clearCostmapsButton() => TextButton.icon(
+    key: const Key('nav-clear-costmaps'),
+    icon: clearingCostmaps
+        ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
+        : const Icon(Icons.cleaning_services_outlined, size: 18),
+    label: Text(context.strings.clearObstacleMemory),
+    onPressed: clearingCostmaps ? null : clearCostmapsNow);
 
   /// The robot's map loader (Nav2 map_server), looked up once.
   Future<String?> get mapLoader => _loader ??= () async {
@@ -364,6 +492,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       connection = client;
       final controller = nav = widget.nav ?? NavigationController(_ros = RosClient(client));
       controller.addListener(_onNav);
+      patrol = PatrolController(_ros ??= RosClient(client))..addListener(() { if (mounted) setState(() {}); });
       if (controller.status != NavStatus.idle) {
         goal = controller.goal; // a goal sent earlier (by this page or the agent) is still shown
         _onNav();
@@ -375,6 +504,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       if (!mounted) return;
       final caps = await (widget.capabilities?.call() ?? RobotCapabilities.discover(client));
       _nodes = caps.nodes;
+      unawaited(_findNavTools(client));
       // A robot running SLAM is making its map: open there (only with a stick to drive it).
       if (!limitedRemote && (mapping || (widget.drive != null && mapperIn(caps.nodes) != null))) {
         mapping = true;
@@ -389,6 +519,10 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       // Pick by type, preferring conventional names, and skip topics nobody publishes (or listens) on.
       Future<String?> pick(String type, String name, {TopicRole role = TopicRole.read}) =>
           caps.pick(type, name, role: role);
+      final namesToTypes = {for (var i = 0; i < names.length && i < types.length; i++) names[i]: types[i]};
+      for (final k in CostmapKind.values) {
+        costmapTopics[k] = costmapTopicIn(namesToTypes, k, namespace: widget.namespace);
+      }
       final auto = <MapSlot, String?>{
         MapSlot.map: await pick('nav_msgs/OccupancyGrid', 'map'),
         MapSlot.odom: await pick('nav_msgs/Odometry', 'odom'),
@@ -416,6 +550,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       if (!mounted || client.isClosed) return;
       _topicsInfo = topics;
       _actionNames = actions;
+      patrol?.configure(actions, namespace: widget.namespace);
       automaticTopics = auto;
       topicOverrides = overrides;
       _discovered = true;
@@ -452,6 +587,8 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       mapTopic: 500, odomTopic: 100, tfTopic: null, tfStaticTopic: null,
       ?scanTopic: 200,
       ?planTopic: 500,
+      for (final k in CostmapKind.values)
+        if (showCostmap[k] == true && costmapTopics[k] != null) costmapTopics[k]!: 1000,
     };
     for (final t in _subscribed.difference(wantSubs.keys.toSet())) {
       try { client.send({'op': 'unsubscribe', 'topic': t}); } catch (_) {}
@@ -511,6 +648,8 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       final topic = event['topic'];
       if (topic == mapTopic) {
         _onMap(msg);
+      } else if (costmapTopics.containsValue(topic)) {
+        _onCostmap(costmapTopics.entries.firstWhere((e) => e.value == topic).key, msg);
       } else if (topic == odomTopic) {
         final p = msg['pose']['pose'];
         odomPose = Pose2D((p['position']['x'] as num).toDouble(), (p['position']['y'] as num).toDouble(),
@@ -560,6 +699,55 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
     } catch (e) {
       if (mounted) setState(() => errorMessage = context.strings.mapDataError('$e'));
     }
+  }
+
+  void _onCostmap(CostmapKind kind, Map msg) {
+    if (showCostmap[kind] != true) return;
+    final costmap = Costmap.fromMessage(msg);
+    if (costmap == null) {
+      // Too large to draw (a big global costmap arrives as JSON every second): stop asking for it.
+      final cells = ((msg['info'] as Map?)?['width'] as int? ?? 0) * ((msg['info'] as Map?)?['height'] as int? ?? 0);
+      if (cells > Costmap.maxCells) {
+        _costmapTooLarge.add(kind);
+        showCostmap[kind] = false;
+        _applyTopics();
+      }
+      return;
+    }
+    _costmaps[kind] = costmap;
+    ui.decodeImageFromPixels(costmap.rgba(), costmap.width, costmap.height, ui.PixelFormat.rgba8888, (image) {
+      if (!mounted || _costmaps[kind] != costmap) { image.dispose(); return; }
+      final previous = _costmapImages[kind];
+      setState(() => _costmapImages[kind] = image);
+      WidgetsBinding.instance.addPostFrameCallback((_) => previous?.dispose());
+    });
+  }
+
+  /// The costmaps ready to draw, each placed in the map frame by the current TF.
+  List<CostmapOverlay> _costmapOverlays() {
+    final out = <CostmapOverlay>[];
+    for (final kind in [CostmapKind.global, CostmapKind.local]) { // local on top
+      final map = _costmaps[kind], image = _costmapImages[kind];
+      if (showCostmap[kind] != true || map == null || image == null) continue;
+      final frame = TfTree.clean(map.frame);
+      final toMap = frame.isEmpty || frame == mapFrame ? Pose2D.identity : tf.lookup(mapFrame, frame);
+      if (toMap == null) continue;
+      out.add(CostmapOverlay(image: image, width: map.width, height: map.height, resolution: map.resolution,
+          origin: map.origin, toMap: toMap));
+    }
+    return out;
+  }
+
+  void _toggleCostmap(CostmapKind kind) {
+    final on = !(showCostmap[kind] ?? false);
+    setState(() {
+      showCostmap[kind] = on;
+      if (!on) {
+        _costmaps[kind] = null;
+        _costmapImages.remove(kind)?.dispose();
+      }
+    });
+    _applyTopics();
   }
 
   void _onMap(Map msg) {
@@ -991,6 +1179,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       return;
     }
     try {
+      patrol?.cancel(); // a trip of its own ends a round: one thing at a time
       controller.goTo(g, frame: mapFrame, from: robotPose);
       setState(() => errorMessage = null);
     } catch (e) {
@@ -1025,6 +1214,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
 
   @override
   void dispose() {
+    for (final image in _costmapImages.values) { image?.dispose(); }
     _releaseStick();
     _mapSlowTimer?.cancel();
     placeBook.removeListener(_onPlaces);
@@ -1036,6 +1226,8 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       try { connection?.send({'op': 'unadvertise', 'topic': t}); } catch (_) {}
     }
     nav?.removeListener(_onNav);
+    if (patrol?.isRunning == true) patrol!.cancel(); // leaving the screen does not leave a round running unseen
+    patrol?.dispose();
     if (widget.nav == null) {
       nav?.dispose(); // withdraws its goal topics; a running goal keeps going on the robot
       _ros?.dispose();
@@ -1210,10 +1402,14 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
           path: showPath ? path : const [], scan: showScan ? scanPoints : const [],
           dragAnchor: _dragAnchor, dragYaw: _dragYaw, setPose: tool == MapTool.setPose,
           pendingPose: tool == MapTool.setPose ? pendingPose : null, palette: _palette, previewScan: previewScan,
+          costmaps: _costmapOverlays(),
         )),
       ),
     );
   }
+
+  String _costmapName(CostmapKind k) =>
+      k == CostmapKind.local ? context.strings.localCostmap : context.strings.globalCostmap;
 
   Widget _glass({required Widget child, EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8)}) =>
       Container(
@@ -1275,15 +1471,26 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
           child: Text(planTopic == null ? context.strings.plannedPathNone : context.strings.plannedPath)),
         CheckedPopupMenuItem(value: 'scan', checked: showScan, enabled: scanTopic != null,
           child: Text(scanTopic == null ? 'LiDAR (none)' : 'LiDAR $scanTopic')),
+        for (final k in [CostmapKind.local, CostmapKind.global])
+          CheckedPopupMenuItem(key: Key('layer-costmap-${k.name}'), value: 'costmap-${k.name}',
+            checked: showCostmap[k] == true, enabled: costmapTopics[k] != null && !_costmapTooLarge.contains(k),
+            child: Text(costmapTopics[k] == null ? context.strings.costmapNone(_costmapName(k))
+                : _costmapTooLarge.contains(k) ? context.strings.costmapTooLarge(_costmapName(k)) : _costmapName(k))),
         const PopupMenuDivider(),
         CheckedPopupMenuItem(key: const Key('map-3d-toggle'), value: '3d', checked: view3d, enabled: mapData.isNotEmpty,
           child: Text(context.strings.view3d)),
       ],
-      onSelected: (v) => setState(() {
+      onSelected: (v) {
+        if (v.startsWith('costmap-')) {
+          _toggleCostmap(CostmapKind.values.firstWhere((k) => 'costmap-${k.name}' == v));
+          return;
+        }
+        setState(() {
         if (v == 'path') showPath = !showPath;
         if (v == 'scan') { showScan = !showScan; if (!showScan) scanPoints = []; }
         if (v == '3d') view3d = !view3d;
-      }),
+        });
+      },
     );
     final back = IconButton(tooltip: context.strings.back, icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.maybePop(context));
     final settings = IconButton(key: const Key('map-topics'), tooltip: context.strings.topics,
@@ -1332,6 +1539,8 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
     Widget content;
     if (tool == MapTool.setPose) {
       content = _setPoseCard(title, sub);
+    } else if (patrol != null && patrol!.status != PatrolStatus.idle) {
+      content = _patrolCard(title, sub);
     } else {
       switch (navState) {
         case NavState.idle when mapping:
@@ -1342,6 +1551,9 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
             if (robot == null) Padding(padding: const EdgeInsets.only(top: 4),
               child: Text(context.strings.robotPositionUnknown, key: const Key('robot-unknown'),
                 style: TextStyle(color: Colors.orange.shade800, fontSize: 12))),
+            if (patrol?.available == true && placeBook.usable.where((p) => p.frame == mapFrame).length >= 2)
+              Align(alignment: Alignment.centerRight, child: TextButton.icon(key: const Key('patrol-open'),
+                icon: const Icon(Icons.route, size: 18), label: Text(context.strings.patrol), onPressed: _openPatrolSetup)),
           ]);
         case NavState.preview:
           content = Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
@@ -1409,6 +1621,9 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
             if (recoveries >= 3) Padding(padding: const EdgeInsets.only(top: 8), child: Text(
               mapping ? context.strings.mappingFailHint : context.strings.lostHint,
               key: const Key('nav-stuck-hint'), style: sub)),
+            // Something remembered in a costmap can be what blocks the way: offered once it keeps recovering.
+            if ((recovering || recoveries >= 1) && navTools.canClearCostmaps) Align(alignment: Alignment.centerRight,
+              child: _clearCostmapsButton()),
           ]);
         case NavState.succeeded:
         case NavState.canceled:
@@ -1431,6 +1646,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
             if (navState == NavState.failed && widget.robotLog != null) TextButton.icon(
               key: const Key('nav-open-log'), icon: const Icon(Icons.receipt_long_outlined), label: Text(context.strings.robotLog),
               onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => RobotLogPage(log: widget.robotLog!)))),
+            if (navState == NavState.failed && navTools.canClearCostmaps) _clearCostmapsButton(),
             TextButton(key: const Key('nav-dismiss'),
               onPressed: () { nav?.reset(); setState(() { navState = NavState.idle; goal = null; }); },
               child: Text(context.strings.ok)),
@@ -1620,7 +1836,10 @@ class MapPainter extends CustomPainter {
     required this.resolution, required this.origin, required this.robot, required this.goal,
     this.goalActive = false, this.path = const [], this.scan = const [], this.dragAnchor, this.dragYaw,
     this.setPose = false, this.places = const [], this.fleetRobots = const [], this.pendingPose,
-    this.palette = MapPalette.light, this.previewScan = const []});
+    this.palette = MapPalette.light, this.previewScan = const [], this.costmaps = const []});
+
+  /// Nav2's costmaps, drawn over the grid and under everything else.
+  final List<CostmapOverlay> costmaps;
 
   /// The laser as it would sit with the robot at [pendingPose] (Set pose), drawn in purple.
   final List<math.Point<double>> previewScan;
@@ -1678,6 +1897,24 @@ class MapPainter extends CustomPainter {
       }
     }
     final metre = cell / resolution; // canvas px per metre
+    for (final c in costmaps) {
+      final (topLeft, topRight, bottomLeft) = c.corners();
+      final p0 = _px(size, topLeft.x, topLeft.y), p1 = _px(size, topRight.x, topRight.y);
+      final p2 = _px(size, bottomLeft.x, bottomLeft.y);
+      final w = c.width.toDouble(), h = c.height.toDouble();
+      // Picture pixels → canvas: the picture's own x and y axes land on the vectors p0→p1 and p0→p2.
+      final m = Float64List.fromList([
+        (p1.dx - p0.dx) / w, (p1.dy - p0.dy) / w, 0, 0,
+        (p2.dx - p0.dx) / h, (p2.dy - p0.dy) / h, 0, 0,
+        0, 0, 1, 0,
+        p0.dx, p0.dy, 0, 1,
+      ]);
+      canvas.save();
+      canvas.transform(m);
+      canvas.drawImageRect(c.image, Rect.fromLTWH(0, 0, w, h), Rect.fromLTWH(0, 0, w, h),
+          Paint()..filterQuality = FilterQuality.low);
+      canvas.restore();
+    }
 
     if (scan.isNotEmpty) {
       final dots = Paint()..color = const Color(0xFFFF6D3F).withValues(alpha: 0.75)..strokeCap = StrokeCap.round

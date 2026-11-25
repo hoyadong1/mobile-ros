@@ -2915,5 +2915,64 @@
       }
     }
   },
-  "nodeNotListed": "This node is not running right now, or ROS hides it from the node list, so its details cannot be shown."
+  "nodeNotListed": "This node is not running right now, or ROS hides it from the node list, so its details cannot be shown.",
+  "clearObstacleMemory": "Clear obstacle memory",
+  "costmapsCleared": "Cleared. The robot plans again on what it sees now.",
+  "costmapsClearFailed": "Could not clear the costmaps.",
+  "localCostmap": "Local costmap (obstacles it avoids now)",
+  "globalCostmap": "Global costmap (what it plans around)",
+  "costmapNone": "{name}: not found on this robot",
+  "@costmapNone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "costmapTooLarge": "{name}: too large to show",
+  "@costmapTooLarge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "patrol": "Patrol",
+  "patrolPickPlaces": "Tick the places in the order to visit. The robot stops at each one.",
+  "patrolLoop": "Repeat until stopped",
+  "patrolStart": "Start patrol",
+  "patrolNeedTwo": "Pick at least two places",
+  "patrolHeadingFor": "Going to {name} ({n} of {total})",
+  "@patrolHeadingFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "patrolRound": "Round {n}",
+  "@patrolRound": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "patrolFinished": "Patrol finished",
+  "patrolStopped": "Patrol stopped",
+  "patrolFailed": "Patrol failed",
+  "patrolMissed": "Could not reach: {names}",
+  "@patrolMissed": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  }
 }

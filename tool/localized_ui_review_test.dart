@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -58,7 +59,12 @@ void main() {
       'sensors', 'log', 'tune', 'explorer', 'publish', 'account', 'incident', 'health', 'diagnostics']) {
       testWidgets('$code $page at $size and ${scale}x', (tester) async {
         // ignore: invalid_use_of_visible_for_testing_member
-        SharedPreferences.setMockInitialValues({});
+        SharedPreferences.setMockInitialValues({
+          if (page == 'map') 'places:qa-robot:9090': jsonEncode([
+            {'name': 'A long place name for the entrance hall', 'x': 2.5, 'y': 2.5, 'yaw': 0.0, 'frame': 'map'},
+            {'name': 'Kitchen', 'x': 6.5, 'y': 3.5, 'yaw': 1.0, 'frame': 'map'},
+          ]),
+        });
         final viewport = page == 'drive' && size.width < size.height ? Size(size.height, size.width) : size;
         tester.view.devicePixelRatio = 1;
         tester.view.physicalSize = viewport;
@@ -69,6 +75,11 @@ void main() {
           'types': ['geometry_msgs/msg/Twist', 'nav_msgs/msg/Odometry',
             'geometry_msgs/msg/Twist', 'nav_msgs/msg/Odometry', 'nav_msgs/msg/OccupancyGrid'],
         };
+        if (page == 'map') {
+          link.serviceResponses['/rosapi/action_servers'] = {'action_servers': ['/robot1/navigate_to_pose', '/robot1/follow_waypoints']};
+          link.serviceResponses['/rosapi/services'] = {'services': [
+            '/robot1/local_costmap/clear_entirely_local_costmap', '/robot1/global_costmap/clear_entirely_global_costmap']};
+        }
         final first = RobotSession(connection: link, ip: 'qa-robot', port: '9090', namespace: '/robot1');
         final second = RobotSession(connection: link, ip: 'qa-robot', port: '9090', namespace: '/robot2');
         addTearDown(() {
@@ -152,6 +163,7 @@ void main() {
         if (built != null) await capture(page);
         expect(built, isNull);
         Future<void> checkLabel(String value) async {
+          expect(find.text(value), findsAtLeastNWidgets(1), reason: 'label "$value" is not on $page');
           final label = find.text(value).first;
           expect(label, findsOneWidget);
           await tester.ensureVisible(label);
@@ -212,6 +224,60 @@ void main() {
           await checkLabel(messages.go);
           expect(find.byKey(const Key('goal-go')).hitTestable(), findsOneWidget);
           await capture('map-goal');
+
+          // Patrol: the button, the sheet with long names, the running card, the result with a missed place.
+          await tester.ensureVisible(find.byKey(const Key('goal-clear')));
+          await tester.tap(find.byKey(const Key('goal-clear')));
+          await tester.pumpAndSettle();
+          await checkLabel(messages.patrol);
+          await tester.ensureVisible(find.byKey(const Key('patrol-open')));
+          await tester.tap(find.byKey(const Key('patrol-open')));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await checkLabel(messages.patrolPickPlaces);
+          await checkLabel(messages.patrolNeedTwo);
+          await capture('patrol-sheet');
+          // The sheet may be short (large text): a place scrolled out of view is reached by scrolling.
+          for (final name in ['Kitchen', 'A long place name for the entrance hall']) {
+            await tester.ensureVisible(find.byKey(Key('patrol-pick-$name')));
+            await tester.tap(find.byKey(Key('patrol-pick-$name')));
+            await tester.pumpAndSettle();
+          }
+          expect(tester.takeException(), isNull);
+          await checkLabel(messages.patrolStart);
+          await tester.ensureVisible(find.byKey(const Key('patrol-start')));
+          await tester.tap(find.byKey(const Key('patrol-start')));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await checkLabel(messages.patrolHeadingFor('Kitchen', 1, 2));
+          await capture('patrol-running');
+          final goal = link.sent.lastWhere((m) => m['op'] == 'send_action_goal');
+          link.events.add({'op': 'action_result', 'id': goal['id'], 'status': 4, 'result': true,
+            'values': {'missed_waypoints': [1]}});
+          await tester.pump();
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          await checkLabel(messages.patrolFinished);
+          await checkLabel(messages.patrolMissed('A long place name for the entrance hall'));
+          await capture('patrol-result');
+          await tester.tap(find.byKey(const Key('patrol-dismiss')));
+          await tester.pump();
+
+          // Clear obstacle memory: shown after a failed trip, with the robot's Nav2 services.
+          link.serviceResponses['/robot1/local_costmap/clear_entirely_local_costmap'] = {};
+          link.serviceResponses['/robot1/global_costmap/clear_entirely_global_costmap'] = {};
+          await tester.tapAt(box.localToGlobal(state.toCanvas(3.5, 4.5)));
+          await tester.pump(const Duration(milliseconds: 500));
+          await tester.ensureVisible(find.byKey(const Key('goal-go')));
+          await tester.tap(find.byKey(const Key('goal-go')));
+          await tester.pump();
+          final trip = link.sent.lastWhere((m) => m['op'] == 'send_action_goal');
+          link.events.add({'op': 'action_result', 'id': trip['id'], 'status': 6, 'result': true, 'values': {}});
+          await tester.pump();
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          await checkLabel(messages.clearObstacleMemory);
+          await capture('map-failed-clear');
         }
         await tester.pumpWidget(const SizedBox());
       });

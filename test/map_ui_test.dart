@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -241,6 +242,146 @@ void main() {
     await tester.tap(find.byKey(const Key('nav-retry')));
     await tester.pump();
     expect(robot.sent.where((m) => m['op'] == 'send_action_goal'), hasLength(2));
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('after a failed trip, "Clear obstacle memory" clears the costmaps (only when the robot has them)',
+      (tester) async {
+    final robot = FakeConnection()
+      ..serviceResponses['/rosapi/action_servers'] = {'action_servers': ['/navigate_to_pose']}
+      ..serviceResponses['/rosapi/services'] = {'services': [
+        '/local_costmap/clear_entirely_local_costmap', '/global_costmap/clear_entirely_global_costmap']}
+      ..serviceResponses['/local_costmap/clear_entirely_local_costmap'] = {}
+      ..serviceResponses['/global_costmap/clear_entirely_global_costmap'] = {};
+    addTearDown(robot.close);
+    await _open(tester, robot);
+    robot.events.add(_grid());
+    await tester.pumpAndSettle();
+    await _tapAndGo(tester);
+    final id = robot.sent.lastWhere((m) => m['op'] == 'send_action_goal')['id'];
+    robot.events.add({'op': 'action_result', 'id': id, 'status': 6, 'result': true, 'values': {}});
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('nav-clear-costmaps')));
+    await tester.pumpAndSettle();
+    expect(robot.calls.map((c) => c.$1), containsAll(['/local_costmap/clear_entirely_local_costmap',
+      '/global_costmap/clear_entirely_global_costmap']));
+    expect(find.textContaining('plans again'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('no costmap services, no clear button', (tester) async {
+    final robot = FakeConnection()
+      ..serviceResponses['/rosapi/action_servers'] = {'action_servers': ['/navigate_to_pose']};
+    addTearDown(robot.close);
+    await _open(tester, robot);
+    robot.events.add(_grid());
+    await tester.pumpAndSettle();
+    await _tapAndGo(tester);
+    final id = robot.sent.lastWhere((m) => m['op'] == 'send_action_goal')['id'];
+    robot.events.add({'op': 'action_result', 'id': id, 'status': 6, 'result': true, 'values': {}});
+    await tester.pump();
+    expect(find.text('Navigation failed'), findsOneWidget);
+    expect(find.byKey(const Key('nav-clear-costmaps')), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('Layers > Local costmap subscribes only then, and draws what arrives over the map', (tester) async {
+    final robot = FakeConnection()
+      ..serviceResponses['/rosapi/topics'] = {
+        'topics': ['/map', '/odom', '/local_costmap/costmap', '/global_costmap/costmap'],
+        'types': ['nav_msgs/msg/OccupancyGrid', 'nav_msgs/msg/Odometry', 'nav_msgs/msg/OccupancyGrid',
+          'nav_msgs/msg/OccupancyGrid']};
+    addTearDown(robot.close);
+    await _open(tester, robot);
+    await tester.pump(const Duration(milliseconds: 50));
+    robot.events.add(_grid());
+    await tester.pumpAndSettle();
+    expect(robot.sent.where((m) => m['op'] == 'subscribe' && '${m['topic']}'.contains('costmap')), isEmpty,
+        reason: 'a costmap is a big message every second: not asked for until the layer is on');
+
+    await tester.tap(find.byKey(const Key('map-layers')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('layer-costmap-local')));
+    await tester.pumpAndSettle();
+    final sub = robot.sent.lastWhere((m) => m['op'] == 'subscribe' && m['topic'] == '/local_costmap/costmap');
+    expect(sub['throttle_rate'], 1000);
+    expect(robot.sent.where((m) => m['op'] == 'subscribe' && m['topic'] == '/global_costmap/costmap'), isEmpty);
+
+    robot.events.add({'op': 'publish', 'topic': '/local_costmap/costmap', 'msg': {
+      'header': {'frame_id': 'map'},
+      'info': {'width': 2, 'height': 2, 'resolution': 0.5, 'origin': {
+        'position': {'x': 0.0, 'y': 0.0, 'z': 0.0}, 'orientation': {'x': 0.0, 'y': 0.0, 'z': 0.0, 'w': 1.0}}},
+      'data': [100, 50, 0, 0]}});
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+    await tester.pump();
+    await tester.pump();
+    final painters = tester.widgetList<CustomPaint>(find.byType(CustomPaint)).map((c) => c.painter).whereType<MapPainter>();
+    expect(painters.single.costmaps, hasLength(1));
+
+    await tester.tap(find.byKey(const Key('map-layers')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('layer-costmap-local')));
+    await tester.pumpAndSettle();
+    expect(robot.sent.last, containsPair('op', 'unsubscribe'));
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('Patrol: tick two places, start, follow the feedback, stop; offered only with FollowWaypoints',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({'places:robot:9090': jsonEncode([
+      {'name': 'door', 'x': 0.5, 'y': 0.5, 'yaw': 0.0, 'frame': 'map'},
+      {'name': 'desk', 'x': 1.5, 'y': 1.0, 'yaw': 1.0, 'frame': 'map'},
+      {'name': 'kitchen', 'x': 1.0, 'y': 1.5, 'yaw': 2.0, 'frame': 'map'},
+    ])});
+    final robot = FakeConnection()
+      ..serviceResponses['/rosapi/action_servers'] = {'action_servers': ['/navigate_to_pose', '/follow_waypoints']};
+    addTearDown(robot.close);
+    await _open(tester, robot);
+    robot.events.add(_grid());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('patrol-open')));
+    await tester.pumpAndSettle();
+    expect(tester.widget<FilledButton>(find.byKey(const Key('patrol-start'))).onPressed, isNull,
+        reason: 'two places at least');
+    await tester.tap(find.byKey(const Key('patrol-pick-kitchen')));
+    await tester.tap(find.byKey(const Key('patrol-pick-door')));
+    await tester.pumpAndSettle();
+    expect(find.text('1'), findsOneWidget, reason: 'numbered in the order ticked');
+    await tester.tap(find.byKey(const Key('patrol-start')));
+    await tester.pumpAndSettle();
+
+    final goal = robot.sent.lastWhere((m) => m['op'] == 'send_action_goal');
+    expect(goal['action'], '/follow_waypoints');
+    final poses = goal['args']['poses'] as List;
+    expect(poses.map((p) => p['pose']['position']['x']), [1.0, 0.5], reason: 'kitchen, then door');
+    expect(find.text('Going to kitchen (1 of 2)'), findsOneWidget);
+    robot.events.add({'op': 'action_feedback', 'id': goal['id'], 'values': {'current_waypoint': 1}});
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Going to door (2 of 2)'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('patrol-stop')));
+    await tester.pump();
+    expect(robot.sent.where((m) => m['op'] == 'cancel_action_goal'), isNotEmpty);
+    expect(find.text('Patrol stopped'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('patrol-dismiss')));
+    await tester.pump();
+    expect(find.byKey(const Key('patrol-result')), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('no FollowWaypoints, no Patrol button', (tester) async {
+    SharedPreferences.setMockInitialValues({'places:robot:9090': jsonEncode([
+      {'name': 'door', 'x': 0.5, 'y': 0.5, 'yaw': 0.0, 'frame': 'map'},
+      {'name': 'desk', 'x': 1.5, 'y': 1.0, 'yaw': 1.0, 'frame': 'map'},
+    ])});
+    final robot = FakeConnection()
+      ..serviceResponses['/rosapi/action_servers'] = {'action_servers': ['/navigate_to_pose']};
+    addTearDown(robot.close);
+    await _open(tester, robot);
+    robot.events.add(_grid());
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('patrol-open')), findsNothing);
     await tester.pumpWidget(const SizedBox());
   });
 

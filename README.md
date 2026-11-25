@@ -46,9 +46,12 @@ Drive commands need something on the robot that stops the base when commands sto
 ## What it does
 
 - **Drive**: live camera, on-screen sticks, keyboard (WASD / arrows) or a gamepad; STOP always on screen.
+  A chip says when Nav2's collision monitor is holding the robot back.
 - **Map and navigate**: make a map, tap to send the robot (Nav2), saved places and floors, 3D map.
   While it goes, what Nav2 is doing (planning, following, turning in place, backing up, waiting) from its
-  behavior tree log.
+  behavior tree log. Layers show the planned path and Nav2's local and global costmaps; **Clear obstacle
+  memory** after a failed trip; **Patrol** through several saved places (FollowWaypoints); **Go to charger /
+  Leave charger** (Nav2 docking server). Each appears only when the robot has it.
 - **Assistant**: "go forward 1 m, turn left, then go to the kitchen". An on-device model works offline; an online
   model handles harder requests. Every step is checked against the robot's limits before anything moves.
 - **Fleet**: a few robots in namespaces (`/robot1`, `/robot2`, …) on one screen, one assistant, STOP all.

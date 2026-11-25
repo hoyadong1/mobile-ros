@@ -19,7 +19,6 @@ import 'package:gamepads/gamepads.dart' show GamepadAxis, GamepadButton;
 import 'keyboard_drive.dart';
 import 'link_quality.dart';
 import 'mjpeg.dart';
-import 'topic_discovery.dart';
 import 'drone.dart';
 import 'navigation_goal.dart' show RosVersion;
 import 'robot_capabilities.dart';
@@ -242,8 +241,11 @@ class ControlScreenState extends State<ControlScreen> with WidgetsBindingObserve
     _init();
   }
 
+  RobotCapabilities? _caps;
+
   Future<void> _init() async {
     final caps = await (widget.capabilities?.call() ?? RobotCapabilities.discover(widget.channel));
+    _caps = caps;
     final topics = caps.topics;
     _actionServers = caps.actionServers; // empty on ROS 1 or an older rosapi: no gripper suggestion
     final nodes = caps.nodes;
@@ -268,7 +270,7 @@ class ControlScreenState extends State<ControlScreen> with WidgetsBindingObserve
           host: cameraHost);
       // A Twist topic nobody subscribes to (e.g. a stale /cmd_vel next to /robot1/cmd_vel) moves nothing.
       if (suggested.drive == DriveType.differential || suggested.drive == DriveType.holonomic) {
-        final command = await caps.pick('geometry_msgs/Twist', 'cmd_vel', role: TopicRole.write);
+        final command = await caps.pickVelocityCommand();
         if (command != null) suggested = suggested.copyWith(commandTopic: command);
       }
       if (!mounted) return;
@@ -300,7 +302,8 @@ class ControlScreenState extends State<ControlScreen> with WidgetsBindingObserve
   void _apply(RobotProfile next, {bool persist = false}) {
     final previous = profile;
     _stop(latch: false);
-    drive.configure(next, rosVersion); // re-advertises when the command topic or type changes
+    // Re-advertises when the command topic or type changes; a TwistStamped topic gets stamped commands.
+    drive.configure(next, rosVersion, commandTopicType: _caps?.typeOf(next.commandTopic));
     if (drive.lastError != null) controlError = drive.lastError;
     final cameraChanged = previous == null || previous.cameraSource != next.cameraSource ||
         previous.cameraTopic != next.cameraTopic || previous.rtspUrl != next.rtspUrl ||

@@ -100,12 +100,20 @@ class DriveController extends ChangeNotifier {
 
   bool get _arbitrated => _profile != null && _profile!.hasBase && _profile!.drive != DriveType.aerial;
 
-  /// Uses [profile]'s command topic and message type. Stops the base first.
-  void configure(RobotProfile? profile, RosVersion version) {
+  bool _stamped = false;
+  /// Whether commands go out as `geometry_msgs/TwistStamped` (the robot's command topic is of that type).
+  bool get stamped => _stamped;
+
+  /// Uses [profile]'s command topic and message type. Stops the base first. [commandTopicType] is the type
+  /// the robot lists for that topic, when known: a `TwistStamped` topic gets stamped commands (a plain
+  /// Twist there is refused by rosbridge and moves nothing).
+  void configure(RobotProfile? profile, RosVersion version, {String? commandTopicType}) {
     stop();
     _profile = profile;
     _version = version;
-    final want = profile != null && profile.hasBase ? (profile.commandTopic, profile.commandType) : null;
+    final type = profile?.commandTypeOn(commandTopicType);
+    _stamped = isTwistStamped(type);
+    final want = profile != null && profile.hasBase ? (profile.commandTopic, type!) : null;
     try {
       if (want == null) {
         _publisher?.close();
@@ -220,7 +228,7 @@ class DriveController extends ChangeNotifier {
     final p = _profile, publisher = _publisher;
     if (p == null || publisher == null || ros.isClosed) return;
     try {
-      publisher.publish(commandMessage(p, command, _version));
+      publisher.publish(commandMessage(p, command, _version, stamped: _stamped));
       if (!command.isStop) _lastMotionAt = DateTime.now();
     } catch (e) {
       _lastError = '$e';

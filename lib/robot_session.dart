@@ -111,10 +111,12 @@ class RobotSession {
       final stored = await ProfileStore.loadAt(storeAddress);
       var profile = stored ?? suggestProfile(caps.topics, actionServers: caps.actionServers, nodes: caps.nodes);
       if (stored == null && (profile.drive == DriveType.differential || profile.drive == DriveType.holonomic)) {
-        final command = await caps.pick('geometry_msgs/Twist', 'cmd_vel', role: TopicRole.write);
+        final command = await caps.pickVelocityCommand();
         if (command != null) profile = profile.copyWith(commandTopic: command);
       }
-      if (drive.profile == null) drive.configure(profile, caps.rosVersion); // a screen may have won the race
+      if (drive.profile == null) { // a screen may have won the race
+        drive.configure(profile, caps.rosVersion, commandTopicType: caps.typeOf(profile.commandTopic));
+      }
     }
     if (!places.loaded) await places.load();
     await memory.load();

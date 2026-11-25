@@ -3,7 +3,12 @@
 //   pip install websockets && python scripts/fake_robot.py --port 9091
 //   flutter test tool/live_quickstart_test.dart --dart-define=PORT=9091
 // Lists topics, reads odometry, drives 1 s forward and sees the odometry change, then stops.
+import 'dart:math' as math;
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ros_tester/drive_command.dart';
+import 'package:ros_tester/navigation_goal.dart' show RosVersion;
+import 'package:ros_tester/robot_profile.dart';
 import 'package:ros_tester/ros_client.dart';
 import 'package:ros_tester/ros_connection.dart';
 
@@ -18,30 +23,42 @@ void main() {
     addTearDown(connection.close);
     await connection.ready;
     final ros = RosClient(connection);
-    final topics = List<String>.from((await connection.call('/rosapi/topics'))['topics'] as List);
+    final listed = await connection.call('/rosapi/topics');
+    final topics = List<String>.from(listed['topics'] as List);
+    final types = List<String>.from(listed['types'] as List);
+    // Newer Nav2 / ros2_control robots take TwistStamped on /cmd_vel.
+    final stamped = isTwistStamped(types[topics.indexOf('/cmd_vel')]);
     print('connected to $host:$port, ${topics.length} topics: ${topics.take(12).join(', ')}');
     expect(topics, contains('/odom'));
 
-    double? x;
-    final odom = ros.subscribe('/odom').listen((m) => x = ((m['pose'] as Map)['pose'] as Map)['position']['x'] as double?);
+    double? x, y;
+    final odom = ros.subscribe('/odom').listen((m) {
+      final p = ((m['pose'] as Map)['pose'] as Map)['position'] as Map;
+      x = (p['x'] as num).toDouble();
+      y = (p['y'] as num).toDouble();
+    });
     addTearDown(odom.cancel);
     for (var i = 0; i < 50 && x == null; i++) {
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
     expect(x, isNotNull, reason: 'odometry arrives');
-    final start = x!;
-    print('odometry x = ${start.toStringAsFixed(2)} m');
+    final (x0, y0) = (x!, y!);
+    print('odometry at (${x0.toStringAsFixed(2)}, ${y0.toStringAsFixed(2)})');
 
-    final cmd = ros.advertise('/cmd_vel', 'geometry_msgs/msg/Twist');
-    Map<String, Object> twist(double v) =>
-        {'linear': {'x': v, 'y': 0.0, 'z': 0.0}, 'angular': {'x': 0.0, 'y': 0.0, 'z': 0.0}};
+    print('/cmd_vel takes ${stamped ? 'TwistStamped' : 'Twist'}');
+    final cmd = ros.advertise('/cmd_vel', stamped ? 'geometry_msgs/msg/TwistStamped' : 'geometry_msgs/msg/Twist');
+    final profile = RobotProfile.defaults(DriveType.differential);
+    Map<String, dynamic> twist(double v) =>
+        commandMessage(profile, DriveCommand(linearX: v), RosVersion.ros2, stamped: stamped);
     for (var i = 0; i < 10; i++) {
       cmd.publish(twist(0.2));
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
     cmd.publish(twist(0));
     await Future<void>.delayed(const Duration(milliseconds: 500));
-    print('after 1 s at 0.2 m/s: x = ${x!.toStringAsFixed(2)} m');
-    expect(x! - start, greaterThan(0.05), reason: 'the robot moved forward');
+    // Forward is the robot's heading, not the odometry x axis: measure the distance covered.
+    final moved = math.sqrt(math.pow(x! - x0, 2) + math.pow(y! - y0, 2));
+    print('after 1 s at 0.2 m/s: moved ${moved.toStringAsFixed(2)} m');
+    expect(moved, greaterThan(0.05), reason: 'the robot moved');
   });
 }

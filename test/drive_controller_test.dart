@@ -27,6 +27,27 @@ void main() {
   ];
   Future<void> wait(int ms) => Future<void>.delayed(Duration(milliseconds: ms));
 
+  test('a TwistStamped command topic (newer Nav2 / ros2_control) gets stamped commands with a zero stamp', () async {
+    drive.configure(base, RosVersion.ros2, commandTopicType: 'geometry_msgs/msg/TwistStamped');
+    expect(drive.stamped, isTrue);
+    expect(robot.sent.lastWhere((m) => m['op'] == 'advertise')['type'], 'geometry_msgs/TwistStamped');
+    manual = const DriveCommand(linearX: 0.2, angularZ: 0.5);
+    await wait(40);
+    final msg = robot.sent.lastWhere((m) => m['op'] == 'publish' && m['topic'] == '/cmd_vel')['msg'] as Map;
+    expect(msg['twist']['linear']['x'], 0.2);
+    expect(msg['twist']['angular']['z'], 0.5);
+    expect(msg['header']['stamp'], {'sec': 0, 'nanosec': 0}, reason: 'the robot fills in its own time');
+    expect(msg['header']['frame_id'], 'base_link');
+    manual = DriveCommand.stop;
+
+    drive.configure(base, RosVersion.ros2, commandTopicType: 'geometry_msgs/msg/Twist');
+    expect(drive.stamped, isFalse);
+    expect(robot.sent.lastWhere((m) => m['op'] == 'advertise')['type'], 'geometry_msgs/Twist');
+    drive.configure(RobotProfile.defaults(DriveType.ackermann), RosVersion.ros2,
+        commandTopicType: 'geometry_msgs/msg/TwistStamped');
+    expect(drive.stamped, isFalse, reason: 'Ackermann keeps its own message');
+  });
+
   test('motion on the base topic that this app did not send means another driver', () {
     final now = DateTime.now();
     final moving = {'linear': {'x': 0.2, 'y': 0.0, 'z': 0.0}, 'angular': {'x': 0.0, 'y': 0.0, 'z': 0.0}};

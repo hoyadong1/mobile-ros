@@ -52,6 +52,20 @@ class RobotCapabilities {
   /// Topics of [type], ROS 1 or ROS 2 spelling.
   List<String> topicsOfType(String type) => _topicsOfType(topics, type);
 
+  /// The type the robot lists for [topic], or null when it is not there.
+  String? typeOf(String topic) {
+    final names = (topics?['topics'] as List?) ?? const [];
+    final types = (topics?['types'] as List?) ?? const [];
+    final i = names.indexOf(topic);
+    return i >= 0 && i < types.length ? '${types[i]}' : null;
+  }
+
+  /// A velocity command topic to write to: Twist first, else TwistStamped (Nav2 and ros2_control set up
+  /// stamped, the default from Kilted on).
+  Future<String?> pickVelocityCommand() async =>
+      await pick('geometry_msgs/Twist', 'cmd_vel', role: TopicRole.write) ??
+      await pick('geometry_msgs/TwistStamped', 'cmd_vel', role: TopicRole.write);
+
   /// The topic of [type] to use, preferring the [conventional] name and skipping topics nobody
   /// publishes (for [TopicRole.read]) or listens (for [TopicRole.write]) on. See [pickTopic].
   /// Answers are remembered, so screens asking the same question share one set of rosapi calls.
@@ -73,7 +87,8 @@ class RobotCapabilities {
   List<String> robotNamespaces() {
     final names = topicNames.toSet();
     final found = <String>{};
-    for (final t in [...topicsOfType('geometry_msgs/Twist'), ...topicsOfType('trajectory_msgs/JointTrajectory')]) {
+    for (final t in [...topicsOfType('geometry_msgs/Twist'), ...topicsOfType('geometry_msgs/TwistStamped'),
+      ...topicsOfType('trajectory_msgs/JointTrajectory')]) {
       final slash = t.lastIndexOf('/');
       var ns = t.substring(0, slash);
       // e.g. /robot1/arm_controller/joint_trajectory: the robot is the first segment.

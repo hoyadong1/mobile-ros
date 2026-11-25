@@ -52,14 +52,24 @@ DriveCommand commandFor(RobotProfile profile, SpeedPreset preset, StickInput inp
 }
 
 /// The rosbridge `msg` for [profile]'s command topic.
-Map<String, dynamic> commandMessage(RobotProfile profile, DriveCommand command, RosVersion version) {
+/// The message for [command]. [stamped]: the robot's command topic is `geometry_msgs/TwistStamped` (Nav2 and
+/// ros2_control since Jazzy can be set up that way, and do by default from Kilted on). Its stamp is left at zero:
+/// the phone's clock is not the robot's (nor sim time), and drivers such as ros2_control's diff_drive_controller
+/// take a zero stamp as "now".
+Map<String, dynamic> commandMessage(RobotProfile profile, DriveCommand command, RosVersion version,
+    {bool stamped = false}) {
+  final stamp = version == RosVersion.ros2 ? {'sec': 0, 'nanosec': 0} : {'secs': 0, 'nsecs': 0};
   if (profile.drive != DriveType.ackermann) {
-    return {
+    final twist = {
       'linear': {'x': command.linearX, 'y': command.linearY, 'z': command.linearZ},
       'angular': {'x': 0.0, 'y': 0.0, 'z': command.angularZ},
     };
+    if (!stamped) return twist;
+    return {
+      'header': {'stamp': stamp, 'frame_id': 'base_link', if (version == RosVersion.ros1) 'seq': 0},
+      'twist': twist,
+    };
   }
-  final stamp = version == RosVersion.ros2 ? {'sec': 0, 'nanosec': 0} : {'secs': 0, 'nsecs': 0};
   return {
     'header': {'stamp': stamp, 'frame_id': 'base_link', if (version == RosVersion.ros1) 'seq': 0},
     'drive': {'steering_angle': command.steering, 'steering_angle_velocity': 0.0,

@@ -16,6 +16,8 @@
 #   Several test files may be given: they run one after another on the same simulation (only for tests
 #   that leave the robot where it was, or whose order you chose with that in mind).
 #   LOGS=<dir>          where sim.log and live-test.log go (default: build/sim-logs)
+#   SIM_ENV="A=1 B=2"   extra environment for the simulation, e.g. SIM_ENV=FASTDDS_BUILTIN_TRANSPORTS=SHM where
+#                      Fast DDS discovery over UDP fails inside WSL (seen with Lyrical on mirrored networking)
 #   WSL_DISTRO=<name>   installed WSL distro override (e.g. Ubuntu-22.04 with DISTRO=humble).
 #                      This distro is restarted too; all its existing processes will stop.
 # The simulation keeps running afterwards; stop it with:  wsl --terminate ros-humble   (or ros-jazzy)
@@ -50,6 +52,7 @@ fi
 [ -n "${SIM_SCRIPT:-}" ] && SIM="$SIM_SCRIPT"
 ENVS="HEADLESS=1"
 [ "$DISTRO" = lyrical ] && ENVS="$ENVS ROS_DISTRO_NAME=lyrical"
+[ -n "${SIM_ENV:-}" ] && ENVS="$ENVS $SIM_ENV"
 [ -n "${RMW:-}" ] && ENVS="$ENVS RMW_IMPLEMENTATION=$RMW"
 [ -n "${ROBOTS:-}" ] && ENVS="$ENVS ROBOTS=$ROBOTS"
 

@@ -83,6 +83,11 @@ class RobotProfile {
   String get commandType => drive == DriveType.ackermann
       ? 'ackermann_msgs/AckermannDriveStamped' : 'geometry_msgs/Twist';
 
+  /// [commandType] for a robot whose command topic is of [topicType] (as the robot lists it): a velocity
+  /// topic typed `TwistStamped` gets stamped messages, everything else stays as configured.
+  String commandTypeOn(String? topicType) =>
+      drive != DriveType.ackermann && isTwistStamped(topicType) ? 'geometry_msgs/TwistStamped' : commandType;
+
   RobotProfile copyWith({DriveType? drive, String? commandTopic, CameraSource? cameraSource, String? cameraTopic,
       String? rtspUrl, String? mjpegUrl, double? maxLinear, double? maxAngular, double? maxSteering, ArmConfig? arm,
       bool clearArm = false, String? odomTopic, String? jointStatesTopic}) => RobotProfile(
@@ -217,10 +222,13 @@ RobotProfile _suggestBase(Map<String, dynamic>? topicsResponse, {String rtspUrl 
         rtspUrl: rtspUrl, arm: arm);
   }
   final twist = topics.contains('/cmd_vel') ? '/cmd_vel' : firstOfType('geometry_msgs/Twist',
-      prefer: (t) => t.endsWith('cmd_vel'));
+      prefer: (t) => t.endsWith('cmd_vel')) ?? firstOfType('geometry_msgs/TwistStamped', prefer: (t) => t.endsWith('cmd_vel'));
   if (twist == null && arm != null) {
     return RobotProfile.defaults(DriveType.none, cameraTopic: camera, rtspUrl: rtspUrl, arm: arm);
   }
   return RobotProfile.defaults(DriveType.differential, commandTopic: twist, cameraTopic: camera,
       rtspUrl: rtspUrl, arm: arm);
 }
+
+/// Whether a topic type (either spelling) is `geometry_msgs/TwistStamped`.
+bool isTwistStamped(String? type) => type?.replaceFirst('/msg/', '/') == 'geometry_msgs/TwistStamped';

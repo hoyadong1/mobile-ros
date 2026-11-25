@@ -14,6 +14,7 @@ import 'controllers/arm_controller.dart';
 import 'controllers/drive_controller.dart';
 import 'controllers/navigation_controller.dart';
 import 'disconnect_safety.dart';
+import 'collision_watch.dart';
 import 'drive_command.dart';
 import 'package:gamepads/gamepads.dart' show GamepadAxis, GamepadButton;
 import 'keyboard_drive.dart';
@@ -135,6 +136,10 @@ class ControlScreenState extends State<ControlScreen> with WidgetsBindingObserve
   /// Nothing found on the robot that stops it when commands stop: shown once per robot until dismissed.
   bool showLinkLossNotice = false;
   StreamSubscription? _controlSubscription;
+
+  /// Nav2's collision monitor, when the robot has one: what it is holding the robot back for.
+  final collisionWatch = CollisionWatch();
+  String? collisionTopic;
   String odomTopic = '/odom', jointStatesTopic = '/joint_states';
   String _autoOdom = '/odom', _autoJointStates = '/joint_states'; // what discovery found
   String robotDescriptionTopic = '/robot_description';
@@ -215,6 +220,10 @@ class ControlScreenState extends State<ControlScreen> with WidgetsBindingObserve
           setState(() => drone = drone.copyWith(battery: (msg['percentage'] as num).toDouble()));
         }
       }
+      if (collisionTopic != null && event['topic'] == collisionTopic &&
+          collisionWatch.onMessage(event['msg'])) {
+        setState(() {});
+      }
       if (event['topic'] == odomTopic && event['msg'] is Map) {
         final twist = event['msg']['twist']?['twist'];
         if (twist is Map) {
@@ -259,6 +268,10 @@ class ControlScreenState extends State<ControlScreen> with WidgetsBindingObserve
     if (!mounted) return;
     _checkLinkLossGuard(caps);
     try { widget.channel.send({'op': 'subscribe', 'topic': odomTopic, 'throttle_rate': 200}); } catch (_) {}
+    collisionTopic = collisionTopicIn({for (final t in caps.topicNames) t: caps.typeOf(t) ?? ''}, namespace: widget.namespace);
+    if (collisionTopic != null) {
+      try { widget.channel.send({'op': 'subscribe', 'topic': collisionTopic, 'throttle_rate': 200}); } catch (_) {}
+    }
     final stored = await ProfileStore.loadAt(widget.savedAs);
     if (!mounted) return;
     final cameraHost = robotHost(widget.ip);
@@ -948,11 +961,39 @@ class ControlScreenState extends State<ControlScreen> with WidgetsBindingObserve
         ])));
   });
 
+  /// "Blocked" or "Slowed" while Nav2's collision monitor holds the robot back; the tooltip says for which zone.
+  Widget _collisionChip() {
+    final now = collisionWatch.current();
+    if (now == null) return const SizedBox.shrink();
+    final (action, zone) = now;
+    final s = context.strings;
+    final (label, help, color) = switch (action) {
+      CollisionAction.stop => (s.collisionBlocked, s.collisionHelpStop(zone), const Color(0xFFFF6B6B)),
+      CollisionAction.slowdown => (s.collisionSlowed, s.collisionHelpSlow(zone), const Color(0xFFFFC857)),
+      CollisionAction.approach => (s.collisionSlowed, s.collisionHelpApproach(zone), const Color(0xFFFFC857)),
+      _ => (s.collisionSlowed, s.collisionHelpLimit(zone), const Color(0xFFFFC857)),
+    };
+    // On a narrow bar (a phone in landscape with large text) only the icon fits: the label stays in the
+    // tooltip and for screen readers.
+    final narrow = MediaQuery.sizeOf(context).width < 700;
+    return Tooltip(message: help, triggerMode: TooltipTriggerMode.tap,
+      child: Semantics(label: label, child: Padding(key: const Key('drive-collision'),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Icon(Icons.sensors, color: color, size: 16),
+          if (!narrow) ...[
+            const SizedBox(width: 2),
+            Text(label, maxLines: 1, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
+          ],
+        ]))));
+  }
+
   Widget _topBar(RobotProfile? p) {
     return Row(children: [
       IconButton(tooltip: context.strings.back, color: Colors.white, icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.maybePop(context)),
       _lagChip(),
+      _collisionChip(),
       // The type label gives way first on narrow screens; STOP and presets always stay visible.
       if (p != null) Flexible(flex: 3, child: _pill(Row(mainAxisSize: MainAxisSize.min, children: [
         Tooltip(message: '${_typeName(p.drive)} · ${p.commandTopic}',

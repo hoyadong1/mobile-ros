@@ -23,11 +23,13 @@ import 'map3d.dart';
 import 'dart:io' show Directory;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'controllers/drive_controller.dart';
 import 'drive_command.dart';
 import 'mapping.dart';
 import 'costmap_layer.dart';
 import 'nav_activity.dart';
+import 'docking.dart';
 import 'nav_tools.dart';
 import 'patrol.dart';
 import 'nav_activity_text.dart';
@@ -202,6 +204,112 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
 
   /// A round through several saved places (Nav2 FollowWaypoints), when the robot has that action.
   PatrolController? patrol;
+
+  /// Driving to the charger and off it (Nav2 docking server), when the robot has one.
+  DockController? dock;
+
+  String get _dockIdKey => 'dock_id:${widget.ip}:${widget.port}${widget.namespace}';
+
+  /// Asks for the dock's name in the robot's dock database (remembered), then docks.
+  Future<void> _openDock() async {
+    String remembered = '';
+    try {
+      remembered = (await SharedPreferences.getInstance()).getString(_dockIdKey) ?? '';
+    } catch (_) {}
+    if (!mounted) return;
+    final name = await showDialog<String>(context: context,
+      builder: (_) => _DockNameDialog(initial: dock?.dockId ?? remembered));
+    if (name == null || name.isEmpty || !mounted) return;
+    try {
+      await (await SharedPreferences.getInstance()).setString(_dockIdKey, name);
+    } catch (_) {}
+    nav?.cancel();
+    patrol?.cancel();
+    setState(() { goal = null; navState = NavState.idle; });
+    try {
+      unawaited(dock!.dockAt(name));
+    } catch (e) {
+      if (mounted) setState(() => errorMessage = context.strings.sendGoalFailed('$e'));
+    }
+  }
+
+  void _undock() {
+    nav?.cancel();
+    patrol?.cancel();
+    setState(() { goal = null; navState = NavState.idle; });
+    try {
+      unawaited(dock!.undock());
+    } catch (e) {
+      setState(() => errorMessage = context.strings.sendGoalFailed('$e'));
+    }
+  }
+
+  String _dockStageText(DockStage stage) {
+    final s = context.strings;
+    return switch (stage) {
+      DockStage.starting => s.dockStarting,
+      DockStage.navigating => s.dockNavigating,
+      DockStage.detecting => s.dockDetecting,
+      DockStage.controlling => s.dockControlling,
+      DockStage.waitingForCharge => s.dockWaitingForCharge,
+      DockStage.retrying => s.dockRetrying,
+    };
+  }
+
+  String? _dockErrorText(DockController d) {
+    final s = context.strings;
+    return switch (d.errorCode) {
+      901 => s.dockErr901,
+      902 => s.dockErr902,
+      903 => s.dockErr903,
+      904 => s.dockErr904,
+      905 => s.dockErr905,
+      906 => s.dockErr906,
+      null => d.detail,
+      _ => s.dockErrOther(d.errorCode!),
+    };
+  }
+
+  Widget _dockCard(TextStyle title, TextStyle sub) {
+    final d = dock!, s = context.strings;
+    if (d.isBusy) {
+      final docking = d.status == DockStatus.docking;
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        Row(children: [
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text((docking ? s.dockAtCharger : s.undockFromCharger).toUpperCase(),
+              style: TextStyle(fontSize: 11, letterSpacing: 1.2, fontWeight: FontWeight.w700, color: context.muted)),
+            Text(docking ? _dockStageText(d.stage) : s.undocking, key: const Key('dock-progress'), style: title),
+            if (d.retries > 0) Text(s.dockRetryCount(d.retries), style: sub),
+          ])),
+          FilledButton.icon(key: const Key('dock-stop'),
+            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFB3261E), foregroundColor: Colors.white,
+              visualDensity: VisualDensity.compact),
+            onPressed: d.cancel, icon: const Icon(Icons.stop, size: 18), label: Text(s.cancel)),
+        ]),
+        const SizedBox(height: 10),
+        const ClipRRect(borderRadius: BorderRadius.all(Radius.circular(4)), child: LinearProgressIndicator(minHeight: 6)),
+      ]);
+    }
+    final (icon, color, text) = switch (d.status) {
+      DockStatus.docked => (Icons.battery_charging_full, const Color(0xFF2E7D32), s.dockDocked),
+      DockStatus.undocked => (Icons.check_circle, const Color(0xFF2E7D32), s.dockUndocked),
+      DockStatus.canceled => (Icons.cancel_outlined, Colors.blueGrey, s.dockStopped),
+      _ => (Icons.error, const Color(0xFFB3261E), s.dockFailed),
+    };
+    final why = d.status == DockStatus.failed ? _dockErrorText(d) : null;
+    return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Row(children: [
+        Icon(icon, color: color), const SizedBox(width: 10),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(text, key: const Key('dock-result'), style: title),
+          if (why != null) Text(why, style: sub),
+        ])),
+      ]),
+      Align(alignment: Alignment.centerRight, child: TextButton(key: const Key('dock-dismiss'),
+        onPressed: d.reset, child: Text(s.ok))),
+    ]);
+  }
 
   /// Which places the person ticked for a patrol, in the order they ticked them.
   Future<void> _openPatrolSetup() async {
@@ -493,6 +601,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       final controller = nav = widget.nav ?? NavigationController(_ros = RosClient(client));
       controller.addListener(_onNav);
       patrol = PatrolController(_ros ??= RosClient(client))..addListener(() { if (mounted) setState(() {}); });
+      dock = DockController(_ros!)..addListener(() { if (mounted) setState(() {}); });
       if (controller.status != NavStatus.idle) {
         goal = controller.goal; // a goal sent earlier (by this page or the agent) is still shown
         _onNav();
@@ -551,6 +660,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       _topicsInfo = topics;
       _actionNames = actions;
       patrol?.configure(actions, namespace: widget.namespace);
+      dock?.configure(actions, namespace: widget.namespace);
       automaticTopics = auto;
       topicOverrides = overrides;
       _discovered = true;
@@ -1180,6 +1290,7 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
     }
     try {
       patrol?.cancel(); // a trip of its own ends a round: one thing at a time
+      dock?.cancel();
       controller.goTo(g, frame: mapFrame, from: robotPose);
       setState(() => errorMessage = null);
     } catch (e) {
@@ -1227,7 +1338,9 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
     }
     nav?.removeListener(_onNav);
     if (patrol?.isRunning == true) patrol!.cancel(); // leaving the screen does not leave a round running unseen
+    if (dock?.isBusy == true) dock!.cancel();
     patrol?.dispose();
+    dock?.dispose();
     if (widget.nav == null) {
       nav?.dispose(); // withdraws its goal topics; a running goal keeps going on the robot
       _ros?.dispose();
@@ -1541,6 +1654,8 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
       content = _setPoseCard(title, sub);
     } else if (patrol != null && patrol!.status != PatrolStatus.idle) {
       content = _patrolCard(title, sub);
+    } else if (dock != null && dock!.status != DockStatus.idle) {
+      content = _dockCard(title, sub);
     } else {
       switch (navState) {
         case NavState.idle when mapping:
@@ -1551,9 +1666,17 @@ class MapPageState extends State<MapVisualizationPage> with ThrottledRebuild {
             if (robot == null) Padding(padding: const EdgeInsets.only(top: 4),
               child: Text(context.strings.robotPositionUnknown, key: const Key('robot-unknown'),
                 style: TextStyle(color: Colors.orange.shade800, fontSize: 12))),
-            if (patrol?.available == true && placeBook.usable.where((p) => p.frame == mapFrame).length >= 2)
-              Align(alignment: Alignment.centerRight, child: TextButton.icon(key: const Key('patrol-open'),
-                icon: const Icon(Icons.route, size: 18), label: Text(context.strings.patrol), onPressed: _openPatrolSetup)),
+            Wrap(alignment: WrapAlignment.end, children: [
+              if (patrol?.available == true && placeBook.usable.where((p) => p.frame == mapFrame).length >= 2)
+                TextButton.icon(key: const Key('patrol-open'),
+                  icon: const Icon(Icons.route, size: 18), label: Text(context.strings.patrol), onPressed: _openPatrolSetup),
+              if (dock?.canDock == true)
+                TextButton.icon(key: const Key('dock-open'), icon: const Icon(Icons.battery_charging_full, size: 18),
+                  label: Text(context.strings.dockAtCharger), onPressed: _openDock),
+              if (dock?.canUndock == true)
+                TextButton.icon(key: const Key('undock-open'), icon: const Icon(Icons.logout, size: 18),
+                  label: Text(context.strings.undockFromCharger), onPressed: _undock),
+            ]),
           ]);
         case NavState.preview:
           content = Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
@@ -2226,5 +2349,43 @@ class _FloorNameDialogState extends State<_FloorNameDialog> {
     actions: [
       TextButton(onPressed: () => Navigator.pop(context), child: Text(context.strings.cancel)),
       FilledButton(onPressed: () => Navigator.pop(context, (name.text, file.text)), child: Text(context.strings.save)),
+    ]);
+}
+
+/// Asks for the dock's name in the robot's dock database. Owns its text controller: the field is still
+/// built while the dialog closes, so the controller cannot be disposed by whoever opened it.
+class _DockNameDialog extends StatefulWidget {
+  const _DockNameDialog({required this.initial});
+
+  final String initial;
+
+  @override
+  State<_DockNameDialog> createState() => _DockNameDialogState();
+}
+
+class _DockNameDialogState extends State<_DockNameDialog> {
+  late final controller = TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(context.strings.dockAtCharger),
+    // The hint is plain text below the field, in a scrollable body: a helper line would be cut at large text.
+    content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start, children: [
+        TextField(key: const Key('dock-name'), controller: controller, autofocus: true,
+          decoration: InputDecoration(labelText: context.strings.dockName)),
+        const SizedBox(height: 8),
+        Text(context.strings.dockNameHint, style: TextStyle(fontSize: 12, color: context.muted)),
+      ])),
+    actions: [
+      TextButton(onPressed: () => Navigator.pop(context), child: Text(context.strings.cancel)),
+      FilledButton(key: const Key('dock-go'), onPressed: () => Navigator.pop(context, controller.text.trim()),
+        child: Text(context.strings.go)),
     ]);
 }

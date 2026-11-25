@@ -48,6 +48,42 @@ Future<TestGesture> _drag(WidgetTester tester, String stick, Offset by) async {
 }
 
 void main() {
+  testWidgets('a robot with a collision monitor shows "Blocked" or "Slowed" from its report until it lets go',
+      (tester) async {
+    final (robot, _) = await _open(tester, topics: {
+      'topics': [...ros2Topics['topics']! as List, '/collision_monitor_state'],
+      'types': [...ros2Topics['types']! as List, 'nav2_msgs/msg/CollisionMonitorState'],
+    });
+    expect(robot.sent, contains(predicate<Map>((m) => m['op'] == 'subscribe' && m['topic'] == '/collision_monitor_state')));
+    expect(find.byKey(const Key('drive-collision')), findsNothing);
+    robot.events.add({'op': 'publish', 'topic': '/collision_monitor_state',
+      'msg': {'action_type': 1, 'polygon_name': 'stop_zone'}});
+    await tester.pump();
+    await tester.pump();
+    expect(find.byKey(const Key('drive-collision')), findsOneWidget);
+    expect(find.text('Blocked'), findsOneWidget);
+    robot.events.add({'op': 'publish', 'topic': '/collision_monitor_state',
+      'msg': {'action_type': 2, 'polygon_name': 'slowdown_zone'}});
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Slowed'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 30));
+    expect(find.text('Slowed'), findsOneWidget, reason: 'the monitor speaks only on change: it holds');
+    robot.events.add({'op': 'publish', 'topic': '/collision_monitor_state',
+      'msg': {'action_type': 0, 'polygon_name': ''}});
+    await tester.pump();
+    await tester.pump();
+    expect(find.byKey(const Key('drive-collision')), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('no collision monitor, nothing subscribed and no chip', (tester) async {
+    final (robot, _) = await _open(tester);
+    expect(robot.sent.where((m) => m['op'] == 'subscribe' && '${m['topic']}'.contains('collision')), isEmpty);
+    expect(find.byKey(const Key('drive-collision')), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   testWidgets('a camera that sends nothing says so and offers the camera choice', (tester) async {

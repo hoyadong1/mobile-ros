@@ -2974,5 +2974,76 @@
         "type": "String"
       }
     }
+  },
+  "dockAtCharger": "Go to charger",
+  "undockFromCharger": "Leave charger",
+  "dockName": "Dock name",
+  "dockNameHint": "The dock's id in the robot's dock database (its docks parameter), e.g. home_dock.",
+  "dockStarting": "Starting…",
+  "dockNavigating": "Driving to the dock",
+  "dockDetecting": "Looking for the dock",
+  "dockControlling": "Driving onto the dock",
+  "dockWaitingForCharge": "Waiting for charging to start",
+  "dockRetrying": "Trying again",
+  "dockRetryCount": "{count, plural, one {1 retry} other {{count} retries}}",
+  "@dockRetryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "undocking": "Backing off the charger",
+  "dockDocked": "Docked and charging",
+  "dockUndocked": "Left the charger",
+  "dockStopped": "Docking stopped",
+  "dockFailed": "Docking failed",
+  "dockErr901": "That dock is not in the robot's dock database.",
+  "dockErr902": "The dock is not valid.",
+  "dockErr903": "The robot could not get to the dock's staging pose.",
+  "dockErr904": "The robot could not see the dock.",
+  "dockErr905": "The robot could not drive onto the dock.",
+  "dockErr906": "The robot reached the dock but is not charging.",
+  "dockErrOther": "Docking stopped (error {code}).",
+  "@dockErrOther": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "collisionBlocked": "Blocked",
+  "collisionSlowed": "Slowed",
+  "collisionHelpStop": "The robot's collision monitor stopped it: something is inside the zone \"{zone}\". Take the obstacle away, or drive away from it.",
+  "@collisionHelpStop": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "collisionHelpSlow": "The collision monitor is slowing the robot down: something is near, in the zone \"{zone}\".",
+  "@collisionHelpSlow": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "collisionHelpApproach": "The collision monitor limits the speed so the robot can stop in time before the obstacle in \"{zone}\".",
+  "@collisionHelpApproach": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "collisionHelpLimit": "The collision monitor limits the robot's speed because of \"{zone}\".",
+  "@collisionHelpLimit": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
   }
 }

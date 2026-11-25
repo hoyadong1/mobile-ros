@@ -370,6 +370,60 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
+  testWidgets('Dock: ask for the dock name once, dock, follow the stages, and undock', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final robot = FakeConnection()
+      ..serviceResponses['/rosapi/action_servers'] = {'action_servers': [
+        '/navigate_to_pose', '/dock_robot', '/undock_robot']};
+    addTearDown(robot.close);
+    await _open(tester, robot);
+    robot.events.add(_grid());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('dock-open')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('dock-name')), 'home_dock');
+    await tester.tap(find.byKey(const Key('dock-go')));
+    // Docking shows an indeterminate bar that never settles: step the dialog's close by hand.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final goal = robot.sent.lastWhere((m) => m['op'] == 'send_action_goal');
+    expect(goal['action'], '/dock_robot');
+    expect(goal['args']['dock_id'], 'home_dock');
+    expect(find.text('Starting…'), findsOneWidget);
+    robot.events.add({'op': 'action_feedback', 'id': goal['id'], 'values': {'state': 2, 'num_retries': 1}});
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Looking for the dock'), findsOneWidget);
+    expect(find.text('1 retry'), findsOneWidget);
+    robot.events.add({'op': 'action_result', 'id': goal['id'], 'status': 6, 'result': true,
+      'values': {'success': false, 'error_code': 904, 'num_retries': 1, 'error_msg': ''}});
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Docking failed'), findsOneWidget);
+    expect(find.text('The robot could not see the dock.'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('dock-dismiss')));
+    await tester.pump();
+
+    await tester.tap(find.byKey(const Key('dock-open')));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(find.byKey(const Key('dock-name'))).controller!.text, 'home_dock',
+        reason: 'remembered');
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('undock-open')));
+    await tester.pump();
+    final undock = robot.sent.lastWhere((m) => m['op'] == 'send_action_goal');
+    expect(undock['action'], '/undock_robot');
+    robot.events.add({'op': 'action_result', 'id': undock['id'], 'status': 4, 'result': true,
+      'values': {'success': true, 'error_code': 0, 'error_msg': ''}});
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Left the charger'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('no FollowWaypoints, no Patrol button', (tester) async {
     SharedPreferences.setMockInitialValues({'places:robot:9090': jsonEncode([
       {'name': 'door', 'x': 0.5, 'y': 0.5, 'yaw': 0.0, 'frame': 'map'},

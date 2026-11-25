@@ -71,12 +71,15 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
         final link = FakeConnection()..serviceResponses['/rosapi/topics'] = {
-          'topics': ['/robot1/cmd_vel', '/robot1/odom', '/robot2/cmd_vel', '/robot2/odom', '/map'],
+          'topics': ['/robot1/cmd_vel', '/robot1/odom', '/robot2/cmd_vel', '/robot2/odom', '/map',
+            '/robot1/collision_monitor_state'],
           'types': ['geometry_msgs/msg/Twist', 'nav_msgs/msg/Odometry',
-            'geometry_msgs/msg/Twist', 'nav_msgs/msg/Odometry', 'nav_msgs/msg/OccupancyGrid'],
+            'geometry_msgs/msg/Twist', 'nav_msgs/msg/Odometry', 'nav_msgs/msg/OccupancyGrid',
+            'nav2_msgs/msg/CollisionMonitorState'],
         };
         if (page == 'map') {
-          link.serviceResponses['/rosapi/action_servers'] = {'action_servers': ['/robot1/navigate_to_pose', '/robot1/follow_waypoints']};
+          link.serviceResponses['/rosapi/action_servers'] = {'action_servers': ['/robot1/navigate_to_pose', '/robot1/follow_waypoints',
+            '/robot1/dock_robot', '/robot1/undock_robot']};
           link.serviceResponses['/rosapi/services'] = {'services': [
             '/robot1/local_costmap/clear_entirely_local_costmap', '/robot1/global_costmap/clear_entirely_global_costmap']};
         }
@@ -202,6 +205,16 @@ void main() {
           await capture('language');
         }
         if (page == 'drive') {
+          link.events.add({'op': 'publish', 'topic': '/robot1/collision_monitor_state',
+            'msg': {'action_type': 1, 'polygon_name': 'a_rather_long_zone_name'}});
+          await tester.pump();
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          // Wide enough: the word; on a narrow bar the chip is the icon alone (the word is in its tooltip).
+          if (viewport.width >= 700) await checkLabel(messages.collisionBlocked);
+          final chip = find.byKey(const Key('drive-collision'));
+          expect(tester.getRect(chip).right, lessThanOrEqualTo(viewport.width));
+          await capture('drive-collision');
           final stop = find.byKey(const Key('estop'));
           expect(tester.getRect(stop).right, lessThanOrEqualTo(viewport.width));
           expect(tester.getRect(stop).width, greaterThanOrEqualTo(48));
@@ -262,6 +275,37 @@ void main() {
           await capture('patrol-result');
           await tester.tap(find.byKey(const Key('patrol-dismiss')));
           await tester.pump();
+
+          // Dock: the dialog with its hint, the stages, a failure with its reason, and leaving the charger.
+          await tester.ensureVisible(find.byKey(const Key('dock-open')));
+          await tester.tap(find.byKey(const Key('dock-open')));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await checkLabel(messages.dockNameHint);
+          await capture('dock-dialog');
+          await tester.enterText(find.byKey(const Key('dock-name')), 'home_dock');
+          await tester.tap(find.byKey(const Key('dock-go')));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 500));
+          expect(tester.takeException(), isNull);
+          final dockGoal = link.sent.lastWhere((m) => m['op'] == 'send_action_goal');
+          link.events.add({'op': 'action_feedback', 'id': dockGoal['id'], 'values': {'state': 4, 'num_retries': 2}});
+          await tester.pump();
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          await checkLabel(messages.dockWaitingForCharge);
+          await capture('dock-running');
+          link.events.add({'op': 'action_result', 'id': dockGoal['id'], 'status': 6, 'result': true,
+            'values': {'success': false, 'error_code': 906, 'num_retries': 2, 'error_msg': ''}});
+          await tester.pump();
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          await checkLabel(messages.dockFailed);
+          await checkLabel(messages.dockErr906);
+          await capture('dock-failed');
+          await tester.tap(find.byKey(const Key('dock-dismiss')));
+          await tester.pump();
+          await checkLabel(messages.undockFromCharger);
 
           // Clear obstacle memory: shown after a failed trip, with the robot's Nav2 services.
           link.serviceResponses['/robot1/local_costmap/clear_entirely_local_costmap'] = {};
